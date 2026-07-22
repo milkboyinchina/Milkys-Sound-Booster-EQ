@@ -51,8 +51,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -198,6 +200,9 @@ fun DashboardScreen(
     var showSettings by remember { mutableStateOf(false) }
     var showOnboardingManually by remember { mutableStateOf(false) }
     var isSoundTesting by remember { mutableStateOf(false) }
+    var showAdsDisableNoticeDialog by remember { mutableStateOf(false) }
+    var showPrivacyTermsDialog by remember { mutableStateOf(false) }
+    var showLicenseDialog by remember { mutableStateOf(false) }
 
     val isDarkTheme by AudioEffectManager.isDarkTheme.collectAsState()
 
@@ -1176,62 +1181,242 @@ fun DashboardScreen(
                         }
                     }
 
+                    // Ads Setting Section (Rendered only when AdMob is included in build, removed for F-Droid target)
+                    if (isAdsIncluded) {
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text(
+                            text = "GOOGLE ADMOB PREFERENCE",
+                            color = Color(0xFFD0BCFF),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            shape = RoundedCornerShape(24.dp),
+                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = "Enable Google AdMob",
+                                            color = Color(0xFFE6E1E5),
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = "Support developer by showing AdMob banner ads at the bottom.",
+                                            color = Color(0xFFCAC4D0),
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                    Switch(
+                                        checked = isAdsEnabled && isAdsIncluded,
+                                        onCheckedChange = { checked ->
+                                            if (!checked) {
+                                                showAdsDisableNoticeDialog = true
+                                            } else {
+                                                AudioEffectManager.setAdsEnabled(true)
+                                            }
+                                        },
+                                        enabled = isAdsIncluded,
+                                        colors = SwitchDefaults.colors(
+                                            checkedThumbColor = Color(0xFFD0BCFF),
+                                            checkedTrackColor = Color(0xFF49454F),
+                                            uncheckedThumbColor = Color(0xFFCAC4D0),
+                                            uncheckedTrackColor = Color(0xFF49454F)
+                                        ),
+                                        modifier = Modifier.testTag("ads_enable_toggle")
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Ads Setting Section
+                    // Developer & Legal Section
                     Text(
-                        text = "GOOGLE ADMOB PREFERENCE",
+                        text = "DEVELOPER & LEGAL",
                         color = Color(0xFFD0BCFF),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
                     )
-
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
-                        shape = RoundedCornerShape(24.dp),
-                        border = BorderStroke(1.dp, Color(0xFF49454F))
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        // Developer Website Link Button
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    try {
+                                        val devUrl = BuildConfig.DEVELOPER_WEBSITE_URL
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(devUrl))
+                                        context.startActivity(intent)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                                .testTag("developer_website_button"),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            shape = RoundedCornerShape(20.dp),
+                            border = BorderStroke(1.dp, Color(0xFF49454F))
                         ) {
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = "Enable Google AdMob",
-                                        color = if (isAdsIncluded) Color(0xFFE6E1E5) else Color(0xFFCAC4D0).copy(alpha = 0.5f),
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Medium
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Language,
+                                        contentDescription = null,
+                                        tint = Color(0xFFD0BCFF),
+                                        modifier = Modifier.size(22.dp)
                                     )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = if (isAdsIncluded) {
-                                            "Support developer by showing AdMob banner ads at the bottom."
-                                        } else {
-                                            "Google AdMob ads are physically excluded in this build configuration (.env INCLUDE_GOOGLE_ADS = false)."
-                                        },
-                                        color = Color(0xFFCAC4D0),
-                                        fontSize = 12.sp
-                                    )
+                                    Column {
+                                        Text(
+                                            text = "Developer Website",
+                                            color = Color(0xFFE6E1E5),
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Text(
+                                            text = BuildConfig.DEVELOPER_WEBSITE_URL,
+                                            color = Color(0xFFD0BCFF),
+                                            fontSize = 12.sp
+                                        )
+                                    }
                                 }
-                                Switch(
-                                    checked = isAdsEnabled && isAdsIncluded,
-                                    onCheckedChange = { AudioEffectManager.setAdsEnabled(it) },
-                                    enabled = isAdsIncluded,
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color(0xFFD0BCFF),
-                                        checkedTrackColor = Color(0xFF49454F),
-                                        uncheckedThumbColor = Color(0xFFCAC4D0),
-                                        uncheckedTrackColor = Color(0xFF49454F)
-                                    ),
-                                    modifier = Modifier.testTag("ads_enable_toggle")
+                                Icon(
+                                    imageVector = Icons.Default.OpenInNew,
+                                    contentDescription = "Open Developer Website",
+                                    tint = Color(0xFFCAC4D0),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+
+                        // Privacy Policy & Terms Button
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showPrivacyTermsDialog = true
+                                }
+                                .testTag("privacy_terms_button"),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            shape = RoundedCornerShape(20.dp),
+                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Policy,
+                                        contentDescription = null,
+                                        tint = Color(0xFFD0BCFF),
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Column {
+                                        Text(
+                                            text = "Privacy Policy & Terms",
+                                            color = Color(0xFFE6E1E5),
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Text(
+                                            text = "View privacy terms & data handling disclosures",
+                                            color = Color(0xFFCAC4D0),
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = "Open Privacy Policy & Terms",
+                                    tint = Color(0xFFCAC4D0),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+
+                        // Open Source License (GPLv3) Button
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showLicenseDialog = true
+                                }
+                                .testTag("open_source_license_button"),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            shape = RoundedCornerShape(20.dp),
+                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Gavel,
+                                        contentDescription = null,
+                                        tint = Color(0xFFD0BCFF),
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Column {
+                                        Text(
+                                            text = "Open Source License",
+                                            color = Color(0xFFE6E1E5),
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Text(
+                                            text = "GNU General Public License v3.0 (GPLv3)",
+                                            color = Color(0xFFCAC4D0),
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = "Open License Page",
+                                    tint = Color(0xFFCAC4D0),
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
                         }
@@ -1349,6 +1534,373 @@ fun DashboardScreen(
                 }
             },
             containerColor = Color(0xFF1E1C28)
+        )
+    }
+
+    // Voluntary Development & Developer Support Notice Dialog (When turning off ads)
+    if (showAdsDisableNoticeDialog) {
+        AlertDialog(
+            onDismissRequest = { showAdsDisableNoticeDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = null,
+                    tint = Color(0xFFEC4899),
+                    modifier = Modifier.size(32.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Developer Support Notice",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Text(
+                    text = "This application is developed voluntarily as a free utility for the Android audio community.\n\n" +
+                            "Ads are completely optional, but keeping them enabled directly supports ongoing voluntary development, updates, and maintenance.\n\n" +
+                            "Would you like to keep ads enabled to show support to the developer, or proceed to turn them off?",
+                    color = Color(0xFFE6E1E5),
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp,
+                    textAlign = TextAlign.Start
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        AudioEffectManager.setAdsEnabled(true)
+                        showAdsDisableNoticeDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
+                    modifier = Modifier.testTag("keep_ads_on_button")
+                ) {
+                    Text("Keep Ads On (Support)", color = Color(0xFF381E72), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        AudioEffectManager.setAdsEnabled(false)
+                        showAdsDisableNoticeDialog = false
+                    },
+                    border = BorderStroke(1.dp, Color(0xFFCAC4D0)),
+                    modifier = Modifier.testTag("confirm_disable_ads_button")
+                ) {
+                    Text("Turn Off Ads", color = Color(0xFFCAC4D0))
+                }
+            },
+            containerColor = Color(0xFF2B2930),
+            shape = RoundedCornerShape(24.dp)
+        )
+    }
+
+    // Privacy Policy & Terms Page Dialog
+    if (showPrivacyTermsDialog) {
+        AlertDialog(
+            onDismissRequest = { showPrivacyTermsDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Security,
+                        contentDescription = null,
+                        tint = Color(0xFFD0BCFF),
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "Privacy Policy & Terms",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "1. Voluntary Development & Service",
+                        color = Color(0xFFD0BCFF),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Milkys Sound Booster & EQ is an independent, voluntarily developed application provided to enhance device volume and frequency response. The app is provided 'as-is' for personal utility.",
+                        color = Color(0xFFE6E1E5),
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
+
+                    Text(
+                        text = "2. Data Privacy & Processing",
+                        color = Color(0xFFD0BCFF),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "• Zero Personal Data Collection: Milkys App does not collect, record, transmit, or store any personal user identifiers, location data, or private audio recordings.\n" +
+                                "• On-Device Processing: All audio amplification and 5-band graphic equalization occur 100% locally on your device via standard Android system DSP engines.\n" +
+                                "• Local Storage: User preferences (volume boost levels, equalizer band profiles, theme settings) are saved strictly inside private local device storage.",
+                        color = Color(0xFFE6E1E5),
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
+
+                    Text(
+                        text = "3. Google AdMob Advertising",
+                        color = Color(0xFFD0BCFF),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Optional banner advertisements are served via the Google AdMob SDK to help sustain voluntary development and server infrastructure. Google AdMob may process non-personalized diagnostic metrics in accordance with Google's Privacy Policy. Users can disable ads anytime in the app Settings menu.",
+                        color = Color(0xFFE6E1E5),
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
+
+                    Text(
+                        text = "4. Device Permissions Disclosure",
+                        color = Color(0xFFD0BCFF),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "• Modify Audio Settings: Required to modify equalization frequency bands and master output gains.\n" +
+                                "• Foreground Service & Tile: Keeps volume processing active when minimized and supports Android notification drawer controls.\n" +
+                                "• System Overlay: Optional permission used solely to render floating overlay volume controls above active apps.",
+                        color = Color(0xFFE6E1E5),
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Privacy Policy Web Link Box
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                try {
+                                    val privacyUrl = BuildConfig.PRIVACY_POLICY_URL
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(privacyUrl))
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                            .testTag("privacy_policy_web_link"),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1B1F)),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, Color(0xFFD0BCFF))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Official Privacy Policy Web Page",
+                                    color = Color(0xFFD0BCFF),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = BuildConfig.PRIVACY_POLICY_URL,
+                                    color = Color(0xFFCAC4D0),
+                                    fontSize = 11.sp
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Default.OpenInNew,
+                                contentDescription = "Open Privacy Policy URL",
+                                tint = Color(0xFFD0BCFF),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showPrivacyTermsDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
+                    modifier = Modifier.testTag("close_privacy_terms_button")
+                ) {
+                    Text("Close", color = Color(0xFF381E72), fontWeight = FontWeight.Bold)
+                }
+            },
+            containerColor = Color(0xFF2B2930),
+            shape = RoundedCornerShape(24.dp)
+        )
+    }
+
+    // Open Source License Page Dialog (GPLv3 & GitHub Repo Link)
+    if (showLicenseDialog) {
+        AlertDialog(
+            onDismissRequest = { showLicenseDialog = false },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Gavel,
+                        contentDescription = null,
+                        tint = Color(0xFFD0BCFF),
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "Open Source License",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // GitHub Repository Link Button with Icon
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                try {
+                                    val githubUrl = BuildConfig.GITHUB_REPO_URL
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl))
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                            .testTag("github_repo_link_button"),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1B1F)),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(1.dp, Color(0xFFD0BCFF))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Code,
+                                    contentDescription = "GitHub Repository",
+                                    tint = Color(0xFFD0BCFF),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Column {
+                                    Text(
+                                        text = "GitHub Repository",
+                                        color = Color.White,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = BuildConfig.GITHUB_REPO_URL,
+                                        color = Color(0xFFD0BCFF),
+                                        fontSize = 11.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                            Icon(
+                                imageVector = Icons.Default.OpenInNew,
+                                contentDescription = "Open GitHub Repo",
+                                tint = Color(0xFFD0BCFF),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = "GNU GENERAL PUBLIC LICENSE v3.0",
+                        color = Color(0xFFD0BCFF),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
+                    )
+
+                    // Scrollable GPLv3 License Text Container
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(260.dp),
+                        color = Color(0xFF1C1B1F),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, Color(0xFF49454F))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            Text(
+                                text = "GNU GENERAL PUBLIC LICENSE\n" +
+                                        "Version 3, 29 June 2007\n\n" +
+                                        "Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>\n" +
+                                        "Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.\n\n" +
+                                        "Preamble\n\n" +
+                                        "The GNU General Public License is a free, copyleft license for software and other kinds of works.\n\n" +
+                                        "The licenses for most software and other practical works are designed to take away your freedom to share and change the works. By contrast, the GNU General Public License is intended to guarantee your freedom to share and change all versions of a program--to make sure it remains free software for all its users. We, the Free Software Foundation, use the GNU General Public License for most of our software; it applies also to any other work released this way by its authors. You can apply it to your programs, too.\n\n" +
+                                        "When we speak of free software, we are referring to freedom, not price. Our General Public Licenses are designed to make sure that you have the freedom to distribute copies of free software, that you receive source code or can get it if you want it, that you can change the software, and that you know you can do these things.\n\n" +
+                                        "TERMS AND CONDITIONS\n\n" +
+                                        "0. Definitions.\n" +
+                                        "\"This License\" refers to version 3 of the GNU General Public License.\n" +
+                                        "\"The Program\" refers to any copyrightable work licensed under this License. Each licensee is addressed as \"you\".\n\n" +
+                                        "1. Source Code.\n" +
+                                        "The \"source code\" for a work means the preferred form of the work for making modifications to it. \"Object code\" means any non-source form of a work.\n\n" +
+                                        "2. Basic Permissions.\n" +
+                                        "All rights granted under this License are granted for the term of copyright on the Program, and are irrevocable provided the stated conditions are met.\n\n" +
+                                        "3. Conveying Verbatim Copies.\n" +
+                                        "You may convey verbatim copies of the Program's source code as you receive it, in any medium, provided that you conspicuously and appropriately publish on each copy an appropriate copyright notice.\n\n" +
+                                        "4. Conveying Modified Source Versions.\n" +
+                                        "You may convey a work based on the Program, or the modifications to produce it from the Program, in the form of source code under the terms of section 3, provided that you also license the entire work under this License.\n\n" +
+                                        "5. Disclaimer of Warranty.\n" +
+                                        "THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY OF ANY KIND.",
+                                color = Color(0xFFE6E1E5),
+                                fontSize = 11.sp,
+                                lineHeight = 15.sp,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showLicenseDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
+                    modifier = Modifier.testTag("close_license_button")
+                ) {
+                    Text("Close", color = Color(0xFF381E72), fontWeight = FontWeight.Bold)
+                }
+            },
+            containerColor = Color(0xFF2B2930),
+            shape = RoundedCornerShape(24.dp)
         )
     }
 

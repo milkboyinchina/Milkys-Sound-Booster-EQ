@@ -49,8 +49,14 @@ Welcome to the general technical and functional overview for **Milkys Sound Boos
 ### 7. Quick Settings Notification Tile Service
 - Integrated Android Quick Settings Tile (`VolumeBoosterTileService`) allowing one-tap activation directly from the Android quick notifications drawer.
 
-### 8. Environment-Driven AdMob Integration
-- Full runtime and compile-time AdMob support toggle controlled via `INCLUDE_GOOGLE_ADS` in `.env`.
+### 8. Environment-Driven AdMob & Target Build Strategy
+- **Dual Distribution Targets**: Supports `playstore` (AdMob enabled), `fdroid` (AdMob disabled), and `both` (sequential build for both stores).
+- Full runtime and compile-time AdMob support toggle controlled via `BUILD_TARGET` and `INCLUDE_GOOGLE_ADS` in `.env`.
+- F-Droid builds automatically exclude Google AdMob SDK dependencies and remove the AdMob toggle from the app settings.
+
+### 9. Open Source Licensing & Transparency
+- Licensed under **GNU General Public License v3.0 (GPLv3)**.
+- Integrated Open Source License viewer with full scrollable GPLv3 terms and direct GitHub repository link button (`https://github.com/milkys/sound-booster-eq`).
 
 ---
 

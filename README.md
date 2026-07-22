@@ -65,6 +65,8 @@ The project uses `.env` variables for build versioning, file output directories,
    | `BUILD_LOGS_DIR` | Target folder where build log files are created | `logs` |
    | `GOOGLE_ADS_API_KEY` | Google AdMob App ID (Test ID pre-configured) | `ca-app-pub-3940256099942544~3347511713` |
    | `INCLUDE_GOOGLE_ADS` | Set `true` to include AdMob, `false` to exclude | `true` |
+   | `DEVELOPER_WEBSITE_URL` | Developer website URL link in Settings | `https://milkys.app` |
+   | `PRIVACY_POLICY_URL` | Privacy Policy URL link in Settings & Privacy Page | `https://milkys.app/privacy` |
 
 ---
 
