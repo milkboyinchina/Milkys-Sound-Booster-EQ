@@ -66,6 +66,7 @@ The project uses `.env` files to configure build versioning, output directories,
    # Custom Directory Locations
    BUILD_OUTPUT_DIR=.build-outputs
    BUILD_LOGS_DIR=logs
+   SCREENSHOT_OUTPUT_DIR=screenshots
 
    # Developer, Privacy Policy, and Repository URLs
    DEVELOPER_WEBSITE_URL=https://milkys.app
@@ -164,6 +165,23 @@ gradle assembleDebug
 # Windows CMD
 gradle.bat assembleDebug
 ```
+
+---
+
+## 📸 Play Console & Store Screenshot Generation
+
+To capture high-resolution Play Console screenshots for all app screens/modals:
+
+```bash
+# Make screenshot script executable
+chmod +x scripts/generate_screenshots.sh
+
+# Run automated screenshot capture
+./scripts/generate_screenshots.sh
+```
+
+All screenshots will be exported to the directory configured by `SCREENSHOT_OUTPUT_DIR` in `.env` (default: `screenshots/`).
+
 
 ---
 

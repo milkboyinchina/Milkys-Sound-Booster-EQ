@@ -67,6 +67,7 @@ This guide details the exact mapping between files/directories in this repositor
 | `scripts/build.sh` | Automated build script for **Linux & macOS** that loads `.env` versioning, runs environment checks, executes Gradle tasks, outputs timestamped log files to `logs/`, and copies compiled APKs to `.build-outputs/`. |
 | `scripts/build.bat` | Automated build script for **Windows CMD** with logging and APK copy pipeline. |
 | `scripts/build.ps1` | Automated build script for **PowerShell** with logging and output copying. |
+| `scripts/generate_screenshots.sh` | Automated screenshot generator script using Roborazzi/Robolectric to capture and export all app screen views/modals to `SCREENSHOT_OUTPUT_DIR` (default: `screenshots/`). |
 
 ---
 
@@ -86,3 +87,4 @@ This guide details the exact mapping between files/directories in this repositor
 | :--- | :--- |
 | `.build-outputs/` | Target folder where compiled `.apk` files (e.g., `app-debug.apk`) are automatically exported after successful builds. |
 | `logs/` | Target folder containing timestamped build execution logs (e.g., `build_YYYYMMDD_HHMMSS.log`) and `latest_build.log`. |
+| `screenshots/` | Target folder (configurable via `SCREENSHOT_OUTPUT_DIR` in `.env`) where Play Console app screenshots are saved. |
