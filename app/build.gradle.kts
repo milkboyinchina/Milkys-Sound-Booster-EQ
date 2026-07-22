@@ -29,6 +29,16 @@ val envVersionCode = getEnvVar("VERSION_CODE", "3").toIntOrNull() ?: 3
 val envVersionName = getEnvVar("VERSION_NAME", "3.0")
 val envBuildOutputDir = getEnvVar("BUILD_OUTPUT_DIR", ".build-outputs")
 val envBuildLogsDir = getEnvVar("BUILD_LOGS_DIR", "logs")
+val envBuildTarget = getEnvVar("BUILD_TARGET", "playstore").lowercase()
+val rawIncludeAds = getEnvVar("INCLUDE_GOOGLE_ADS", "")
+val envIncludeGoogleAds = if (rawIncludeAds.isNotEmpty()) {
+  rawIncludeAds.lowercase() == "true"
+} else {
+  envBuildTarget != "fdroid"
+}
+val envGithubRepoUrl = getEnvVar("GITHUB_REPO_URL", "https://github.com/milkys/sound-booster-eq")
+val envDevWebsiteUrl = getEnvVar("DEVELOPER_WEBSITE_URL", "https://milkys.app")
+val envPrivacyPolicyUrl = getEnvVar("PRIVACY_POLICY_URL", "https://milkys.app/privacy")
 
 android {
   namespace = "com.example"
@@ -40,6 +50,12 @@ android {
     targetSdk = 36
     versionCode = envVersionCode
     versionName = envVersionName
+
+    buildConfigField("String", "BUILD_TARGET", "\"$envBuildTarget\"")
+    buildConfigField("Boolean", "INCLUDE_GOOGLE_ADS", envIncludeGoogleAds.toString())
+    buildConfigField("String", "GITHUB_REPO_URL", "\"$envGithubRepoUrl\"")
+    buildConfigField("String", "DEVELOPER_WEBSITE_URL", "\"$envDevWebsiteUrl\"")
+    buildConfigField("String", "PRIVACY_POLICY_URL", "\"$envPrivacyPolicyUrl\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

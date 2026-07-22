@@ -50,7 +50,13 @@ The project uses `.env` files to configure build versioning, output directories,
    # GOOGLE_ADS_API_KEY: Google AdMob App ID
    GOOGLE_ADS_API_KEY=ca-app-pub-3940256099942544~3347511713
 
-   # INCLUDE_GOOGLE_ADS: Set to "true" to enable AdMob banners, "false" to exclude
+   # BUILD_TARGET: Distribution target ("playstore", "fdroid", or "both")
+   # - playstore: Compiles with Google AdMob & shows AdMob settings toggle
+   # - fdroid: Compiles without Google AdMob & removes AdMob settings toggle
+   # - both: Sequentially builds separate APK packages for both Play Store and F-Droid
+   BUILD_TARGET=playstore
+
+   # INCLUDE_GOOGLE_ADS: Auto-configured based on BUILD_TARGET, or manually overridden ("true"/"false")
    INCLUDE_GOOGLE_ADS=true
 
    # Build Versioning Parameters
@@ -60,6 +66,11 @@ The project uses `.env` files to configure build versioning, output directories,
    # Custom Directory Locations
    BUILD_OUTPUT_DIR=.build-outputs
    BUILD_LOGS_DIR=logs
+
+   # Developer, Privacy Policy, and Repository URLs
+   DEVELOPER_WEBSITE_URL=https://milkys.app
+   PRIVACY_POLICY_URL=https://milkys.app/privacy
+   GITHUB_REPO_URL=https://github.com/milkys/sound-booster-eq
    ```
 
 ---

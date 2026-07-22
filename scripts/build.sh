@@ -35,6 +35,7 @@ BUILD_LOGS_DIR=$(get_env_var "BUILD_LOGS_DIR" "logs")
 BUILD_OUTPUT_DIR=$(get_env_var "BUILD_OUTPUT_DIR" ".build-outputs")
 VERSION_CODE=$(get_env_var "VERSION_CODE" "3")
 VERSION_NAME=$(get_env_var "VERSION_NAME" "3.0")
+BUILD_TARGET=$(get_env_var "BUILD_TARGET" "playstore" | tr '[:upper:]' '[:lower:]')
 
 mkdir -p "${BUILD_LOGS_DIR}"
 mkdir -p "${BUILD_OUTPUT_DIR}"
@@ -47,6 +48,7 @@ echo "=======================================================" | tee "${LOG_FILE
 echo "   Milkys Sound Booster & EQ - Build Execution" | tee -a "${LOG_FILE}"
 echo "=======================================================" | tee -a "${LOG_FILE}"
 echo "   Build Timestamp : ${TIMESTAMP}" | tee -a "${LOG_FILE}"
+echo "   Build Target    : ${BUILD_TARGET}" | tee -a "${LOG_FILE}"
 echo "   Version Code    : ${VERSION_CODE}" | tee -a "${LOG_FILE}"
 echo "   Version Name    : ${VERSION_NAME}" | tee -a "${LOG_FILE}"
 echo "   Logs Directory  : ${BUILD_LOGS_DIR}" | tee -a "${LOG_FILE}"
@@ -71,33 +73,55 @@ if ! command -v gradle >/dev/null 2>&1; then
     fi
 fi
 
-# 4. Execute Build
+# 4. Execute Build according to BUILD_TARGET
 BUILD_TASK="${1:-assembleDebug}"
-echo -e "\n[*] Executing Gradle Task: ${GRADLE_CMD} ${BUILD_TASK}..." | tee -a "${LOG_FILE}"
 
-if ${GRADLE_CMD} ${BUILD_TASK} 2>&1 | tee -a "${LOG_FILE}"; then
-    echo -e "\n[+] Gradle build succeeded!" | tee -a "${LOG_FILE}"
-else
-    echo -e "\n[!] Build FAILED. Check log file at: ${LOG_FILE}" | tee -a "${LOG_FILE}"
-    cp "${LOG_FILE}" "${LATEST_LOG_FILE}"
-    exit 1
-fi
+run_gradle_build() {
+    local target_name="$1"
+    local include_ads="$2"
+    echo -e "\n[*] Building for Distribution Target: [${target_name}] (INCLUDE_GOOGLE_ADS=${include_ads})..." | tee -a "${LOG_FILE}"
+    
+    export BUILD_TARGET="${target_name}"
+    export INCLUDE_GOOGLE_ADS="${include_ads}"
 
-# 5. Copy Build Outputs
-echo -e "\n[*] Copying built APKs to ${BUILD_OUTPUT_DIR}..." | tee -a "${LOG_FILE}"
-if [ -d "app/build/outputs/apk" ]; then
-    cp -r app/build/outputs/apk/* "${BUILD_OUTPUT_DIR}/"
-    echo "    [+] APKs successfully copied to ${BUILD_OUTPUT_DIR}:" | tee -a "${LOG_FILE}"
-    find "${BUILD_OUTPUT_DIR}" -name "*.apk" | while read -r apk; do
-        echo "        - ${apk}" | tee -a "${LOG_FILE}"
-    done
-fi
+    if ${GRADLE_CMD} ${BUILD_TASK} 2>&1 | tee -a "${LOG_FILE}"; then
+        echo "    [+] Gradle build for [${target_name}] succeeded!" | tee -a "${LOG_FILE}"
+        if [ -d "app/build/outputs/apk/debug" ]; then
+            mkdir -p "${BUILD_OUTPUT_DIR}/${target_name}"
+            cp app/build/outputs/apk/debug/*.apk "${BUILD_OUTPUT_DIR}/${target_name}/" 2>/dev/null || true
+            cp app/build/outputs/apk/debug/app-debug.apk "${BUILD_OUTPUT_DIR}/app-${target_name}-debug.apk" 2>/dev/null || true
+        elif [ -d "app/build/outputs/apk" ]; then
+            mkdir -p "${BUILD_OUTPUT_DIR}/${target_name}"
+            cp -r app/build/outputs/apk/* "${BUILD_OUTPUT_DIR}/${target_name}/" 2>/dev/null || true
+            find app/build/outputs/apk -name "*.apk" -exec cp {} "${BUILD_OUTPUT_DIR}/app-${target_name}-debug.apk" \; 2>/dev/null || true
+        fi
+    else
+        echo "[!] Build for [${target_name}] FAILED. Check log file at: ${LOG_FILE}" | tee -a "${LOG_FILE}"
+        cp "${LOG_FILE}" "${LATEST_LOG_FILE}"
+        exit 1
+    fi
+}
+
+case "${BUILD_TARGET}" in
+    "fdroid")
+        run_gradle_build "fdroid" "false"
+        ;;
+    "both")
+        echo -e "\n[*] 'both' target specified: Building Play Store and F-Droid packages sequentially..." | tee -a "${LOG_FILE}"
+        run_gradle_build "playstore" "true"
+        run_gradle_build "fdroid" "false"
+        ;;
+    *)
+        run_gradle_build "playstore" "true"
+        ;;
+esac
 
 cp "${LOG_FILE}" "${LATEST_LOG_FILE}"
 
 echo -e "\n=======================================================" | tee -a "${LOG_FILE}"
 echo "   BUILD SUCCESSFUL" | tee -a "${LOG_FILE}"
-echo "   Log File  : ${LOG_FILE}" | tee -a "${LOG_FILE}"
-echo "   Latest Log: ${LATEST_LOG_FILE}" | tee -a "${LOG_FILE}"
-echo "   APK Output: ${BUILD_OUTPUT_DIR}" | tee -a "${LOG_FILE}"
+echo "   Build Target: ${BUILD_TARGET}" | tee -a "${LOG_FILE}"
+echo "   Log File    : ${LOG_FILE}" | tee -a "${LOG_FILE}"
+echo "   Latest Log  : ${LATEST_LOG_FILE}" | tee -a "${LOG_FILE}"
+echo "   APK Output  : ${BUILD_OUTPUT_DIR}" | tee -a "${LOG_FILE}"
 echo "=======================================================" | tee -a "${LOG_FILE}"
