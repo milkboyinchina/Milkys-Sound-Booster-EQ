@@ -1,0 +1,103 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Headphones Arc Overhead -->
+    <path
+        android:pathData="M22,58 A34,34 0 0,1 80,48"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:strokeColor="#3A384A" />
+    <path
+        android:pathData="M22,58 A34,34 0 0,1 80,48"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeColor="#FF6D00" />
+
+    <!-- Left Ear Cup -->
+    <path
+        android:pathData="M18,52 L26,50 L28,66 L20,68 Z"
+        android:fillColor="#2A2836"
+        android:strokeWidth="1.5"
+        android:strokeColor="#FF6D00" />
+
+    <!-- Orange UP Arc Gauge Meter -->
+    <path
+        android:pathData="M32,32 A 26,26 0 0,1 70,26"
+        android:strokeWidth="4"
+        android:strokeColor="#FFB300"
+        android:strokeLineCap="round" />
+    <!-- UP Text Accent -->
+    <path
+        android:pathData="M46,26 L46,20 M44,20 L48,20 M46,20 L43,23 M46,20 L49,23 M52,20 L52,26 L56,26 L56,20 L52,20"
+        android:strokeWidth="1.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Outer Speaker Box Frame -->
+    <path
+        android:pathData="M32,44 L60,34 L66,74 L38,84 Z"
+        android:fillColor="#2D2B3B"
+        android:strokeWidth="2"
+        android:strokeColor="#FF6D00" />
+
+    <!-- Speaker Cone (Glow Orange Gradient) -->
+    <path
+        android:pathData="M38,48 A16,16 0 1,1 58,70 A16,16 0 1,1 38,48 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="38"
+                android:startY="48"
+                android:endX="58"
+                android:endY="70"
+                android:type="radial"
+                android:gradientRadius="16">
+                <item android:offset="0.0" android:color="#FFE082" />
+                <item android:offset="0.5" android:color="#FF6D00" />
+                <item android:offset="1.0" android:color="#D84315" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Center Dust Cap -->
+    <path
+        android:pathData="M45,56 A6,6 0 1,1 51,62 A6,6 0 1,1 45,56 Z"
+        android:fillColor="#1E1C28"
+        android:strokeWidth="1"
+        android:strokeColor="#FFB300" />
+
+    <!-- Speaker Body Cracks -->
+    <path
+        android:pathData="M34,46 L44,52 M46,62 L38,76 M52,42 L50,50 M60,54 L52,58 M62,68 L54,72"
+        android:strokeWidth="1.5"
+        android:strokeColor="#120D1A"
+        android:strokeLineCap="round" />
+
+    <!-- Blasting Electric Sound Wave (Right) -->
+    <path
+        android:pathData="M64,58 L68,52 L72,64 L76,46 L80,70 L84,40 L88,76 L92,34 L96,82 L100,50 L104,58"
+        android:strokeWidth="3.5"
+        android:strokeColor="#FFAB00"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M64,58 L68,52 L72,64 L76,46 L80,70 L84,40 L88,76 L92,34 L96,82 L100,50 L104,58"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Lightning Bolt Energy Arc -->
+    <path
+        android:pathData="M62,40 L76,14 L68,30 L80,18"
+        android:fillColor="#FFD54F"
+        android:strokeWidth="2"
+        android:strokeColor="#FF6D00"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+</vector>
