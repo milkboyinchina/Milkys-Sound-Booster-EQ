@@ -41,6 +41,23 @@ val envGithubRepoUrl = getEnvVar("GITHUB_REPO_URL", "https://github.com/milkys/s
 val envDevWebsiteUrl = getEnvVar("DEVELOPER_WEBSITE_URL", "https://milkys.app")
 val envPrivacyPolicyUrl = getEnvVar("PRIVACY_POLICY_URL", "https://milkys.app/privacy")
 
+val envAppLogoDir = getEnvVar("APP_LOGO_DIR", "assets/logo")
+val envAppLogoPath = getEnvVar("APP_LOGO_PATH", "assets/logo/app_logo.png")
+val envAppLogoMdpi = getEnvVar("APP_LOGO_MDPI_PATH", "assets/logo/mdpi/app_logo.png")
+val envAppLogoHdpi = getEnvVar("APP_LOGO_HDPI_PATH", "assets/logo/hdpi/app_logo.png")
+val envAppLogoXhdpi = getEnvVar("APP_LOGO_XHDPI_PATH", "assets/logo/xhdpi/app_logo.png")
+val envAppLogoXxhdpi = getEnvVar("APP_LOGO_XXHDPI_PATH", "assets/logo/xxhdpi/app_logo.png")
+val envAppLogoXxxhdpi = getEnvVar("APP_LOGO_XXXHDPI_PATH", "assets/logo/xxxhdpi/app_logo.png")
+
+val envAppIconDir = getEnvVar("APP_ICON_DIR", "assets/icon")
+val envAppIconForegroundPath = getEnvVar("APP_ICON_FOREGROUND_PATH", "app/src/main/res/drawable/ic_launcher_foreground.xml")
+val envAppIconBackgroundPath = getEnvVar("APP_ICON_BACKGROUND_PATH", "app/src/main/res/drawable/ic_launcher_background.xml")
+val envAppIconMdpi = getEnvVar("APP_ICON_MDPI_PATH", "app/src/main/res/mipmap-mdpi/ic_launcher.png")
+val envAppIconHdpi = getEnvVar("APP_ICON_HDPI_PATH", "app/src/main/res/mipmap-hdpi/ic_launcher.png")
+val envAppIconXhdpi = getEnvVar("APP_ICON_XHDPI_PATH", "app/src/main/res/mipmap-xhdpi/ic_launcher.png")
+val envAppIconXxhdpi = getEnvVar("APP_ICON_XXHDPI_PATH", "app/src/main/res/mipmap-xxhdpi/ic_launcher.png")
+val envAppIconXxxhdpi = getEnvVar("APP_ICON_XXXHDPI_PATH", "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png")
+
 android {
   namespace = "com.example"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
@@ -58,6 +75,23 @@ android {
     buildConfigField("String", "DEVELOPER_WEBSITE_URL", "\"$envDevWebsiteUrl\"")
     buildConfigField("String", "PRIVACY_POLICY_URL", "\"$envPrivacyPolicyUrl\"")
     buildConfigField("String", "SCREENSHOT_OUTPUT_DIR", "\"$envScreenshotOutputDir\"")
+
+    buildConfigField("String", "APP_LOGO_DIR", "\"$envAppLogoDir\"")
+    buildConfigField("String", "APP_LOGO_PATH", "\"$envAppLogoPath\"")
+    buildConfigField("String", "APP_LOGO_MDPI_PATH", "\"$envAppLogoMdpi\"")
+    buildConfigField("String", "APP_LOGO_HDPI_PATH", "\"$envAppLogoHdpi\"")
+    buildConfigField("String", "APP_LOGO_XHDPI_PATH", "\"$envAppLogoXhdpi\"")
+    buildConfigField("String", "APP_LOGO_XXHDPI_PATH", "\"$envAppLogoXxhdpi\"")
+    buildConfigField("String", "APP_LOGO_XXXHDPI_PATH", "\"$envAppLogoXxxhdpi\"")
+
+    buildConfigField("String", "APP_ICON_DIR", "\"$envAppIconDir\"")
+    buildConfigField("String", "APP_ICON_FOREGROUND_PATH", "\"$envAppIconForegroundPath\"")
+    buildConfigField("String", "APP_ICON_BACKGROUND_PATH", "\"$envAppIconBackgroundPath\"")
+    buildConfigField("String", "APP_ICON_MDPI_PATH", "\"$envAppIconMdpi\"")
+    buildConfigField("String", "APP_ICON_HDPI_PATH", "\"$envAppIconHdpi\"")
+    buildConfigField("String", "APP_ICON_XHDPI_PATH", "\"$envAppIconXhdpi\"")
+    buildConfigField("String", "APP_ICON_XXHDPI_PATH", "\"$envAppIconXxhdpi\"")
+    buildConfigField("String", "APP_ICON_XXXHDPI_PATH", "\"$envAppIconXxxhdpi\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

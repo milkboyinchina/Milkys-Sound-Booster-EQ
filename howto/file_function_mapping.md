@@ -88,3 +88,5 @@ This guide details the exact mapping between files/directories in this repositor
 | `.build-outputs/` | Target folder where compiled `.apk` files (e.g., `app-debug.apk`) are automatically exported after successful builds. |
 | `logs/` | Target folder containing timestamped build execution logs (e.g., `build_YYYYMMDD_HHMMSS.log`) and `latest_build.log`. |
 | `screenshots/` | Target folder (configurable via `SCREENSHOT_OUTPUT_DIR` in `.env`) where Play Console app screenshots are saved. |
+| `assets/logo/` | Directory storing density-specific app branding logos (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`). |
+| `assets/icon/` | Directory storing app launcher icon assets and store listing graphics. |

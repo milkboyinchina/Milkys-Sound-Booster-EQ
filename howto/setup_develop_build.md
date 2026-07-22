@@ -68,6 +68,24 @@ The project uses `.env` files to configure build versioning, output directories,
    BUILD_LOGS_DIR=logs
    SCREENSHOT_OUTPUT_DIR=screenshots
 
+   # Multi-Resolution Branding Logo & Launcher Icon Selection Locations
+   APP_LOGO_DIR=assets/logo
+   APP_LOGO_PATH=assets/logo/app_logo.png
+   APP_LOGO_MDPI_PATH=assets/logo/mdpi/app_logo.png
+   APP_LOGO_HDPI_PATH=assets/logo/hdpi/app_logo.png
+   APP_LOGO_XHDPI_PATH=assets/logo/xhdpi/app_logo.png
+   APP_LOGO_XXHDPI_PATH=assets/logo/xxhdpi/app_logo.png
+   APP_LOGO_XXXHDPI_PATH=assets/logo/xxxhdpi/app_logo.png
+
+   APP_ICON_DIR=assets/icon
+   APP_ICON_FOREGROUND_PATH=app/src/main/res/drawable/ic_launcher_foreground.xml
+   APP_ICON_BACKGROUND_PATH=app/src/main/res/drawable/ic_launcher_background.xml
+   APP_ICON_MDPI_PATH=app/src/main/res/mipmap-mdpi/ic_launcher.png
+   APP_ICON_HDPI_PATH=app/src/main/res/mipmap-hdpi/ic_launcher.png
+   APP_ICON_XHDPI_PATH=app/src/main/res/mipmap-xhdpi/ic_launcher.png
+   APP_ICON_XXHDPI_PATH=app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+   APP_ICON_XXXHDPI_PATH=app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
    # Developer, Privacy Policy, and Repository URLs
    DEVELOPER_WEBSITE_URL=https://milkys.app
    PRIVACY_POLICY_URL=https://milkys.app/privacy
