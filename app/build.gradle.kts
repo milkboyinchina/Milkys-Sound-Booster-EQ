@@ -29,6 +29,7 @@ val envVersionCode = getEnvVar("VERSION_CODE", "3").toIntOrNull() ?: 3
 val envVersionName = getEnvVar("VERSION_NAME", "3.0")
 val envBuildOutputDir = getEnvVar("BUILD_OUTPUT_DIR", ".build-outputs")
 val envBuildLogsDir = getEnvVar("BUILD_LOGS_DIR", "logs")
+val envScreenshotOutputDir = getEnvVar("SCREENSHOT_OUTPUT_DIR", "screenshots")
 val envBuildTarget = getEnvVar("BUILD_TARGET", "playstore").lowercase()
 val rawIncludeAds = getEnvVar("INCLUDE_GOOGLE_ADS", "")
 val envIncludeGoogleAds = if (rawIncludeAds.isNotEmpty()) {
@@ -56,6 +57,7 @@ android {
     buildConfigField("String", "GITHUB_REPO_URL", "\"$envGithubRepoUrl\"")
     buildConfigField("String", "DEVELOPER_WEBSITE_URL", "\"$envDevWebsiteUrl\"")
     buildConfigField("String", "PRIVACY_POLICY_URL", "\"$envPrivacyPolicyUrl\"")
+    buildConfigField("String", "SCREENSHOT_OUTPUT_DIR", "\"$envScreenshotOutputDir\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
