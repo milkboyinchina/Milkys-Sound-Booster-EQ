@@ -16,3 +16,13 @@
 local.properties
 .env
 debug.keystore
+debug.keystore.base64
+
+# Build outputs, logs & generated screenshots
+/.build-outputs/
+/logs/
+/screenshots/
+
+# Dynamic asset directories for multi-resolution icons & logos
+/assets/logo/
+/assets/icon/
