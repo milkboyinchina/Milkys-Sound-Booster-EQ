@@ -1,0 +1,113 @@
+name: Android CI/CD Build & Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Generate Release Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle Packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Copy .env Configuration
+        run: |
+          if [ -f .env.example ]; then
+            cp .env.example .env
+          fi
+
+      - name: Make Build Scripts Executable
+        run: |
+          chmod +x scripts/*.sh
+
+      - name: Verify Build Environment Requirements
+        run: |
+          bash scripts/check_requirements.sh
+
+      - name: Build Android Debug & Release APKs
+        run: |
+          bash scripts/build.sh
+
+      - name: Build Play Console Release Bundle
+        run: |
+          bash scripts/build_play_console_release.sh
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-artifacts
+          path: |
+            .build-outputs/
+            logs/
+
+  release:
+    name: Create GitHub Release (Main Branch)
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-build-artifacts
+          path: .build-outputs/
+
+      - name: Generate Release Tag Name
+        id: tag
+        run: |
+          TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          TAG_NAME="v0.1-build.${TIMESTAMP}-${SHORT_SHA}"
+          echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release & Upload Binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag_name }}
+          name: "Milkys Sound Booster Release ${{ steps.tag.outputs.tag_name }}"
+          body: |
+            Automated CI/CD Build for commit `${{ github.sha }}` on branch `main`.
+
+            ### Included Artifacts
+            - Universal APKs (`.build-outputs/*.apk`)
+            - Android App Bundle (`.build-outputs/*.aab`)
+          draft: false
+          prerelease: false
+          files: |
+            .build-outputs/*.apk
+            .build-outputs/*.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

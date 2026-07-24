@@ -25,8 +25,8 @@ if (Test-Path ".env") {
 
 $BuildLogsDir = if ($envVars["BUILD_LOGS_DIR"]) { $envVars["BUILD_LOGS_DIR"] } else { "logs" }
 $BuildOutputDir = if ($envVars["BUILD_OUTPUT_DIR"]) { $envVars["BUILD_OUTPUT_DIR"] } else { ".build-outputs" }
-$VersionCode = if ($envVars["VERSION_CODE"]) { $envVars["VERSION_CODE"] } else { "3" }
-$VersionName = if ($envVars["VERSION_NAME"]) { $envVars["VERSION_NAME"] } else { "3.0" }
+$VersionCode = if ($envVars["VERSION_CODE"]) { $envVars["VERSION_CODE"] } else { "26072401" }
+$VersionName = if ($envVars["VERSION_NAME"]) { $envVars["VERSION_NAME"] } else { "0.1" }
 
 if (-not (Test-Path $BuildLogsDir)) { New-Item -ItemType Directory -Path $BuildLogsDir | Out-Null }
 if (-not (Test-Path $BuildOutputDir)) { New-Item -ItemType Directory -Path $BuildOutputDir | Out-Null }
