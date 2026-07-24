@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">设置</string>
+    <string name="language_preference_section">语言偏好设置</string>
+    <string name="app_language_title">应用语言</string>
+    <string name="app_language_desc">选择应用语言或跟随系统语言设置</string>
+    <string name="system_default_language">跟随系统默认</string>
+    <string name="language_english">English (英语)</string>
+    <string name="language_indonesian">Bahasa Indonesia (印尼语)</string>
+    <string name="language_malay">Bahasa Melayu (马来语)</string>
+    <string name="language_hindi">हिन्दी (印地语)</string>
+    <string name="language_portuguese">Português (葡萄牙语)</string>
+    <string name="language_french">Français (法语)</string>
+    <string name="language_italian">Italiano (意大利语)</string>
+    <string name="language_german">Deutsch (德语)</string>
+    <string name="language_simplified_chinese">简体中文</string>
+    <string name="language_traditional_chinese">繁體中文 (繁体中文)</string>
+    <string name="language_japanese">日本語 (日语)</string>
+    <string name="language_korean">한국어 (韩语)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">分贝音量放大与增益</string>
+    <string name="sound_test_3sec">3秒试音</string>
+    <string name="hearing_warning_title">听力保护与安全警告</string>
+    <string name="hearing_warning_desc">长时间在大音量（&gt;100%）下聆听可能会对听力造成永久性损伤或导致扬声器失真。请合理调节音量。</string>
+    <string name="quick_presets_title">快速增强预设</string>
+    <string name="visual_equalizer_title">5频段可视化均衡器</string>
+    <string name="system_battery_diagnostic_title">系统性能与电池诊断</string>
+    <string name="amplifier_notification_controls">放大器与通知栏控制</string>
+    <string name="stepped_slider_title">10%阶梯式音量滑块</string>
+    <string name="stepped_slider_desc_on">滑块将按 10% 的增量吸附调整（0%、10%、20%...）。</string>
+    <string name="stepped_slider_desc_off">平滑自由滑动。</string>
+    <string name="notification_controls_title">通知栏快捷控制</string>
+    <string name="notification_controls_desc">开启增强时，在通知栏中显示音量微调（-10%、+10%）和关闭按钮。</string>
+    <string name="disable_hearing_warning_title">隐藏安全警告横幅</string>
+    <string name="disable_hearing_warning_desc">在主界面完全隐藏听力与设备损坏安全警告横幅。</string>
+    <string name="developer_legal_title">开发者与法律条款</string>
+    <string name="developer_website">开发者网站</string>
+    <string name="github_repository">GitHub 代码库</string>
+    <string name="privacy_terms">隐私政策与服务条款</string>
+    <string name="open_source_licenses">开源许可证</string>
+</resources>

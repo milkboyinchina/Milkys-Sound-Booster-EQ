@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">설정</string>
+    <string name="language_preference_section">언어 환경설정</string>
+    <string name="app_language_title">앱 언어</string>
+    <string name="app_language_desc">언어를 선택하거나 기기 시스템 언어 환경설정을 사용합니다</string>
+    <string name="system_default_language">시스템 기본값</string>
+    <string name="language_english">English (영어)</string>
+    <string name="language_indonesian">Bahasa Indonesia (인도네시아어)</string>
+    <string name="language_malay">Bahasa Melayu (말레이어)</string>
+    <string name="language_hindi">हिन्दी (힌디어)</string>
+    <string name="language_portuguese">Português (포르투갈어)</string>
+    <string name="language_french">Français (프랑스어)</string>
+    <string name="language_italian">Italiano (이탈리아어)</string>
+    <string name="language_german">Deutsch (독일어)</string>
+    <string name="language_simplified_chinese">简体中文 (중국어 간체)</string>
+    <string name="language_traditional_chinese">繁體中文 (중국어 번체)</string>
+    <string name="language_japanese">日本語 (일본어)</string>
+    <string name="language_korean">한국어</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">데시벨 부스터 및 게인</string>
+    <string name="sound_test_3sec">3초 사운드 테스트</string>
+    <string name="hearing_warning_title">청력 보호 및 안전 경고</string>
+    <string name="hearing_warning_desc">높은 볼륨(&gt;100%)으로 장시간 청취하면 영구적인 청력 손상이나 스피커 왜곡이 발생할 수 있습니다. 볼륨을 책임감 있게 조절하세요.</string>
+    <string name="quick_presets_title">빠른 부스트 프리셋</string>
+    <string name="visual_equalizer_title">5밴드 비주얼 이퀄라이저</string>
+    <string name="system_battery_diagnostic_title">시스템 성능 및 배터리 진단</string>
+    <string name="amplifier_notification_controls">앰프 및 알림 제어</string>
+    <string name="stepped_slider_title">10% 단계별 음량 슬라이더</string>
+    <string name="stepped_slider_desc_on">슬라이더가 10% 단위로 스냅됩니다(0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_off">부드럽고 자유로운 슬라이더 이동.</string>
+    <string name="notification_controls_title">알림 표시줄 제어</string>
+    <string name="notification_controls_desc">부스터가 활성화되었을 때 알림 표시줄에 음량 조절(-10%, +10%) 및 끄기 버튼을 표시합니다.</string>
+    <string name="disable_hearing_warning_title">안전 경고 배너 비활성화</string>
+    <string name="disable_hearing_warning_desc">메인 대시보드에서 청력 및 스피커 손상 경고 배너를 완전히 숨깁니다.</string>
+    <string name="developer_legal_title">개발자 및 법적 고지</string>
+    <string name="developer_website">개발자 웹사이트</string>
+    <string name="github_repository">GitHub 리포지토리</string>
+    <string name="privacy_terms">개인정보 처리방침 및 서비스 약관</string>
+    <string name="open_source_licenses">오픈 소스 라이선스</string>
+</resources>

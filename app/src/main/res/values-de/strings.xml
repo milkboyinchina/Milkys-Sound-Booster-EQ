@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">EINSTELLUNGEN</string>
+    <string name="language_preference_section">SPRACHEINSTELLUNGEN</string>
+    <string name="app_language_title">App-Sprache</string>
+    <string name="app_language_desc">Sprache auswählen oder Systemsprache verwenden</string>
+    <string name="system_default_language">Systemstandard</string>
+    <string name="language_english">English (Englisch)</string>
+    <string name="language_indonesian">Bahasa Indonesia (Indonesisch)</string>
+    <string name="language_malay">Bahasa Melayu (Malaiisch)</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_portuguese">Português (Portugiesisch)</string>
+    <string name="language_french">Français (Französisch)</string>
+    <string name="language_italian">Italiano (Italienisch)</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_simplified_chinese">简体中文 (Vereinfachtes Chinesisch)</string>
+    <string name="language_traditional_chinese">繁體中文 (Traditionelles Chinesisch)</string>
+    <string name="language_japanese">日本語 (Japanisch)</string>
+    <string name="language_korean">한국어 (Koreanisch)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">DEZIBEL-VERSTÄRKER &amp; GAIN</string>
+    <string name="sound_test_3sec">3 Sek. Soundcheck</string>
+    <string name="hearing_warning_title">Gehörschutz &amp; Sicherheitswarnung</string>
+    <string name="hearing_warning_desc">Das Hören bei hoher Lautstärke (&gt;100%) über längere Zeiträume kann zu dauerhaften Gehörschäden oder Lautsprecherverzerrungen führen. Bitte passen Sie die Lautstärke verantwortungsbewusst an.</string>
+    <string name="quick_presets_title">SCHNELL-VERSTÄRKUNG-PRESETS</string>
+    <string name="visual_equalizer_title">VISUELLER 5-BAND-EQUALIZER</string>
+    <string name="system_battery_diagnostic_title">SYSTEMLEISTUNG &amp; AKKU-DIAGNOSE</string>
+    <string name="amplifier_notification_controls">VERSTÄRKER- &amp; BENACHRICHTIGUNGSSTEUERUNG</string>
+    <string name="stepped_slider_title">10%-Stufen-Lautstärkeregler</string>
+    <string name="stepped_slider_desc_on">Regler rastet in 10%-Schritten ein (0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_off">Stufenlose freie Reglerbewegung.</string>
+    <string name="notification_controls_title">Steuerung in der Benachrichtigungsleiste</string>
+    <string name="notification_controls_desc">Lautstärkeanpassung (-10%, +10%) und AUS-Taste in der Benachrichtigungsleiste anzeigen, wenn der Verstärker aktiv ist.</string>
+    <string name="disable_hearing_warning_title">Sicherheitswarnbanner deaktivieren</string>
+    <string name="disable_hearing_warning_desc">Gehörschutz- und Warnbanner auf dem Haupt-Dashboard vollständig ausblenden.</string>
+    <string name="developer_legal_title">ENTWICKLER &amp; RECHTLICHES</string>
+    <string name="developer_website">Entwickler-Website</string>
+    <string name="github_repository">GitHub-Repository</string>
+    <string name="privacy_terms">Datenschutzrichtlinie &amp; Nutzungsbedingungen</string>
+    <string name="open_source_licenses">Open-Source-Lizenzen</string>
+</resources>

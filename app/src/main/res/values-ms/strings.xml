@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">TETAPAN</string>
+    <string name="language_preference_section">PREFERENSI BAHASA</string>
+    <string name="app_language_title">Bahasa Aplikasi</string>
+    <string name="app_language_desc">Pilih bahasa atau guna keutamaan bahasa sistem peranti</string>
+    <string name="system_default_language">Lalai Sistem</string>
+    <string name="language_english">English (Inggeris)</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+    <string name="language_malay">Bahasa Melayu</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_portuguese">Português (Portugis)</string>
+    <string name="language_french">Français (Perancis)</string>
+    <string name="language_italian">Italiano (Italia)</string>
+    <string name="language_german">Deutsch (Jerman)</string>
+    <string name="language_simplified_chinese">简体中文 (Cina Ringkas)</string>
+    <string name="language_traditional_chinese">繁體中文 (Cina Tradisional)</string>
+    <string name="language_japanese">日本語 (Jepun)</string>
+    <string name="language_korean">한국어 (Korea)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">PENINGKAT DESIBEL &amp; GAIN</string>
+    <string name="sound_test_3sec">Ujian Bunyi 3 Saat</string>
+    <string name="hearing_warning_title">Perlindungan Pendengaran &amp; Amaran Keselamatan</string>
+    <string name="hearing_warning_desc">Mendengar pada paras kelantangan tinggi (&gt;100%) untuk tempoh lama boleh menyebabkan kerosakan pendengaran kekal atau gangguan pembesar suara. Sila laraskan kelantangan dengan bertanggungjawab.</string>
+    <string name="quick_presets_title">PRASET PENINGKAT PANTAS</string>
+    <string name="visual_equalizer_title">EKUALISER VISUAL 5-JALUR</string>
+    <string name="system_battery_diagnostic_title">DIAGNOSTIK PRESTASI SISTEM &amp; BATERI</string>
+    <string name="amplifier_notification_controls">KAWALAN PENGERAS &amp; NOTIFIKASI</string>
+    <string name="stepped_slider_title">Lungsur Kelantangan Bertingkat 10%</string>
+    <string name="stepped_slider_desc_on">Lungsur bergerak mengikut peningkatan 10% (0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_off">Pergerakan lungsur yang lancar.</string>
+    <string name="notification_controls_title">Kawalan Bar Notifikasi</string>
+    <string name="notification_controls_desc">Papar pelarasan kelantangan (-10%, +10%) dan butang MATI pada bar notifikasi apabila peningkat aktif.</string>
+    <string name="disable_hearing_warning_title">Lumpuhkan Sepanduk Amaran Keselamatan</string>
+    <string name="disable_hearing_warning_desc">Sembunyikan sepenuhnya sepanduk amaran kerosakan pendengaran pada papan pemuka utama.</string>
+    <string name="developer_legal_title">PEMBANGUN &amp; UNDANG-UNDANG</string>
+    <string name="developer_website">Laman Web Pembangun</string>
+    <string name="github_repository">Repositori GitHub</string>
+    <string name="privacy_terms">Dasar Privasi &amp; Syarat Perkhidmatan</string>
+    <string name="open_source_licenses">Lesen Sumber Terbuka</string>
+</resources>

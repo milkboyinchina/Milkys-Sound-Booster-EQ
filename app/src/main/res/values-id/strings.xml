@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">PENGATURAN</string>
+    <string name="language_preference_section">PREFERENSI BAHASA</string>
+    <string name="app_language_title">Bahasa Aplikasi</string>
+    <string name="app_language_desc">Pilih bahasa atau gunakan preferensi bahasa sistem perangkat</string>
+    <string name="system_default_language">Default Sistem</string>
+    <string name="language_english">English (Inggris)</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+    <string name="language_malay">Bahasa Melayu</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_portuguese">Português (Portugis)</string>
+    <string name="language_french">Français (Prancis)</string>
+    <string name="language_italian">Italiano (Italia)</string>
+    <string name="language_german">Deutsch (Jerman)</string>
+    <string name="language_simplified_chinese">简体中文 (Cina Sederhana)</string>
+    <string name="language_traditional_chinese">繁體中文 (Cina Tradisional)</string>
+    <string name="language_japanese">日本語 (Jepang)</string>
+    <string name="language_korean">한국어 (Korea)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">PENINGKAT DESIBEL &amp; GAIN</string>
+    <string name="sound_test_3sec">Tes Suara 3 Detik</string>
+    <string name="hearing_warning_title">Perlindungan Pendengaran &amp; Peringatan Keselamatan</string>
+    <string name="hearing_warning_desc">Mendengarkan pada volume tinggi (&gt;100%) dalam waktu lama dapat menyebabkan kerusakan pendengaran permanen atau distorsi speaker. Harap sesuaikan volume dengan bijak.</string>
+    <string name="quick_presets_title">PRESET PENINGKAT CEPAT</string>
+    <string name="visual_equalizer_title">EKUALISER VISUAL 5-BAND</string>
+    <string name="system_battery_diagnostic_title">DIAGNOSTIK KINERJA SISTEM &amp; BATERAI</string>
+    <string name="amplifier_notification_controls">KONTROL PENGERAS &amp; NOTIFIKASI</string>
+    <string name="stepped_slider_title">Slider Kelantangan Bertahap 10%</string>
+    <string name="stepped_slider_desc_on">Slider melompat per kelipatan 10% (0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_off">Pergerakan slider halus bebas.</string>
+    <string name="notification_controls_title">Kontrol Bilah Notifikasi</string>
+    <string name="notification_controls_desc">Tampilkan pengaturan kelantangan (-10%, +10%) dan tombol MATI di bilah notifikasi saat peningkat aktif.</string>
+    <string name="disable_hearing_warning_title">Sembunyikan Banner Peringatan Keselamatan</string>
+    <string name="disable_hearing_warning_desc">Sembunyikan sepenuhnya banner peringatan kerusakan pendengaran di dasbor utama.</string>
+    <string name="developer_legal_title">PENGEMBANG &amp; HUKUM</string>
+    <string name="developer_website">Situs Web Pengembang</string>
+    <string name="github_repository">Repositori GitHub</string>
+    <string name="privacy_terms">Kebijakan Privasi &amp; Ketentuan Layanan</string>
+    <string name="open_source_licenses">Lisensi Sumber Terbuka</string>
+</resources>

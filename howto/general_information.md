@@ -43,18 +43,35 @@ Welcome to the general technical and functional overview for **Milkys Sound Boos
 - Prominent high-contrast safety warning banner highlighting hearing impairment and hardware damage risks when over-boosting audio.
 - Dismissable with a 7-day auto-remind timer.
 
-### 6. Floating Overlay Quick-Controls
+### 6. Multilingual Dropdown Language Selection
+- Integrated per-app Android language preference selector formatted as a clean, intuitive dropdown menu in Settings.
+- Supports 13 locales:
+  - **System Default**
+  - **English** (`en`)
+  - **Bahasa Indonesia** (`id` / `in`)
+  - **Bahasa Melayu** (`ms`)
+  - **Hindi** (`hi`)
+  - **Portuguese** (`pt`)
+  - **French** (`fr`)
+  - **Italian** (`it`)
+  - **German** (`de`)
+  - **Simplified Chinese** (`zh-CN` / `zh-rCN`)
+  - **Traditional Chinese** (`zh-TW` / `zh-rTW`)
+  - **Japanese** (`ja`)
+  - **Korean** (`ko`)
+
+### 7. Floating Overlay Quick-Controls
 - System-wide floating bubble overlay (`TYPE_APPLICATION_OVERLAY`) enabling users to tweak booster volume and equalizer levels from any active game, video, or music app.
 
-### 7. Quick Settings Notification Tile Service
+### 8. Quick Settings Notification Tile Service
 - Integrated Android Quick Settings Tile (`VolumeBoosterTileService`) allowing one-tap activation directly from the Android quick notifications drawer.
 
-### 8. Environment-Driven AdMob & Target Build Strategy
+### 9. Environment-Driven AdMob & Target Build Strategy
 - **Dual Distribution Targets**: Supports `playstore` (AdMob enabled), `fdroid` (AdMob disabled), and `both` (sequential build for both stores).
 - Full runtime and compile-time AdMob support toggle controlled via `BUILD_TARGET` and `INCLUDE_GOOGLE_ADS` in `.env`.
 - F-Droid builds automatically exclude Google AdMob SDK dependencies and remove the AdMob toggle from the app settings.
 
-### 9. Open Source Licensing & Transparency
+### 10. Open Source Licensing & Transparency
 - Licensed under **GNU General Public License v3.0 (GPLv3)**.
 - Integrated Open Source License viewer with full scrollable GPLv3 terms and direct GitHub repository link button (`https://github.com/milkys/sound-booster-eq`).
 

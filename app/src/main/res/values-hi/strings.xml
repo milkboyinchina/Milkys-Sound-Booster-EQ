@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="language_preference_section">भाषा प्राथमिकताएं</string>
+    <string name="app_language_title">ऐप की भाषा</string>
+    <string name="app_language_desc">भाषा चुनें या डिवाइस सिस्टम भाषा प्राथमिकता का उपयोग करें</string>
+    <string name="system_default_language">सिस्टम डिफ़ॉल्ट</string>
+    <string name="language_english">English (अंग्रेज़ी)</string>
+    <string name="language_indonesian">Bahasa Indonesia (इंडोनेशियाई)</string>
+    <string name="language_malay">Bahasa Melayu (मलय)</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_portuguese">Português (पुर्तगाली)</string>
+    <string name="language_french">Français (फ़्रांसीसी)</string>
+    <string name="language_italian">Italiano (इतालवी)</string>
+    <string name="language_german">Deutsch (जर्मन)</string>
+    <string name="language_simplified_chinese">简体中文 (सरलीकृत चीनी)</string>
+    <string name="language_traditional_chinese">繁體中文 (पारंपरिक चीनी)</string>
+    <string name="language_japanese">日本語 (जापानी)</string>
+    <string name="language_korean">한국어 (कोरियाई)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">डेसिबल बूस्टर और गेन</string>
+    <string name="sound_test_3sec">3 सेकंड ध्वनि परीक्षण</string>
+    <string name="hearing_warning_title">सुनने की सुरक्षा और चेतावनी</string>
+    <string name="hearing_warning_desc">लंबी अवधि के लिए उच्च वॉल्यूम स्तरों (&gt;100%) पर सुनने से सुनने की क्षमता को स्थायी नुकसान या स्पीकर विकृति हो सकती है। कृपया जिम्मेदारी से वॉल्यूम समायोजित करें।</string>
+    <string name="quick_presets_title">त्वरित बूस्ट प्रीसेट</string>
+    <string name="visual_equalizer_title">5-बैंड विज़ुअल इक्वलाइज़र</string>
+    <string name="system_battery_diagnostic_title">सिस्टम प्रदर्शन और बैटरी निदान</string>
+    <string name="amplifier_notification_controls">एम्प्लीफायर और अधिसूचना नियंत्रण</string>
+    <string name="stepped_slider_title">10% स्टेप्ड लाउडनेस स्लाइडर</string>
+    <string name="stepped_slider_desc_on">स्लाइडर 10% के अंतराल पर स्नैप होता है (0%, 10%, 20%...)।</string>
+    <string name="stepped_slider_desc_off">स्मूथ फ्री स्लाइडर मूवमेंट।</string>
+    <string name="notification_controls_title">अधिसूचना पट्टी नियंत्रण</string>
+    <string name="notification_controls_desc">बूस्टर सक्षम होने पर अधिसूचना पट्टी में वॉल्यूम समायोजन (-10%, +10%) और बंद बटन प्रदर्शित करें।</string>
+    <string name="disable_hearing_warning_title">सुरक्षा चेतावनी बैनर अक्षम करें</string>
+    <string name="disable_hearing_warning_desc">मुख्य डैशबोर्ड पर सुनने की क्षति की चेतावनी बैनर को पूरी तरह से छिपाएं।</string>
+    <string name="developer_legal_title">डेवलपर और कानूनी</string>
+    <string name="developer_website">डेवलपर वेबसाइट</string>
+    <string name="github_repository">गिटहब रिपॉजिटरी</string>
+    <string name="privacy_terms">गोपनीयता नीति और सेवा की शर्तें</string>
+    <string name="open_source_licenses">ओपन सोर्स लाइसेंस</string>
+</resources>
