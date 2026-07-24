@@ -1,4 +1,4 @@
-package com.example
+package com.milkys.soundbooster
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -63,12 +63,12 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "volume_booster_channel"
         
-        const val ACTION_START = "com.example.action.START"
-        const val ACTION_STOP = "com.example.action.STOP"
-        const val ACTION_TOGGLE_BOOST = "com.example.action.TOGGLE_BOOST"
-        const val ACTION_BOOST_UP = "com.example.action.BOOST_UP"
-        const val ACTION_BOOST_DOWN = "com.example.action.BOOST_DOWN"
-        const val ACTION_BOOST_OFF = "com.example.action.BOOST_OFF"
+        const val ACTION_START = "com.milkys.soundbooster.action.START"
+        const val ACTION_STOP = "com.milkys.soundbooster.action.STOP"
+        const val ACTION_TOGGLE_BOOST = "com.milkys.soundbooster.action.TOGGLE_BOOST"
+        const val ACTION_BOOST_UP = "com.milkys.soundbooster.action.BOOST_UP"
+        const val ACTION_BOOST_DOWN = "com.milkys.soundbooster.action.BOOST_DOWN"
+        const val ACTION_BOOST_OFF = "com.milkys.soundbooster.action.BOOST_OFF"
     }
 
     // Lifecycle variables to host Jetpack Compose in a Service

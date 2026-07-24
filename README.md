@@ -59,8 +59,10 @@ The project uses `.env` variables for build versioning, file output directories,
 
    | Environment Variable | Description | Default Value |
    | :--- | :--- | :--- |
-   | `VERSION_CODE` | Numeric version code for Android build configuration | `3` |
-   | `VERSION_NAME` | Human-readable version string | `3.0` |
+   | `APP_NAME` | Application display label and title | `Milkys Sound Booster & EQ` |
+   | `APPLICATION_ID` | Google Play Console Application Package Identifier | `com.milkys.soundbooster` |
+   | `VERSION_CODE` | Numeric version code for Android build configuration | `26072301` |
+   | `VERSION_NAME` | Human-readable version string | `0.1` |
    | `BUILD_OUTPUT_DIR` | Target folder where compiled APKs are stored | `.build-outputs` |
    | `BUILD_LOGS_DIR` | Target folder where build log files are created | `logs` |
    | `GOOGLE_ADS_API_KEY` | Google AdMob App ID (Test ID pre-configured) | `ca-app-pub-3940256099942544~3347511713` |

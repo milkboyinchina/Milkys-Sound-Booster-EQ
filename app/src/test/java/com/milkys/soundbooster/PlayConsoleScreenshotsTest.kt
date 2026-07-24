@@ -1,4 +1,4 @@
-package com.example
+package com.milkys.soundbooster
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
