@@ -27,7 +27,7 @@ fun getEnvVar(key: String, defaultValue: String): String {
 
 val envAppName = getEnvVar("APP_NAME", "Milkys Sound Booster & EQ")
 val envApplicationId = getEnvVar("APPLICATION_ID", "com.milkys.soundbooster")
-val envVersionCode = getEnvVar("VERSION_CODE", "26072301").toIntOrNull() ?: 26072301
+val envVersionCode = getEnvVar("VERSION_CODE", "26072401").toIntOrNull() ?: 26072401
 val envVersionName = getEnvVar("VERSION_NAME", "0.1")
 val envBuildOutputDir = getEnvVar("BUILD_OUTPUT_DIR", ".build-outputs")
 val envBuildLogsDir = getEnvVar("BUILD_LOGS_DIR", "logs")
