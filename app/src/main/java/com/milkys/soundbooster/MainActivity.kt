@@ -1,6 +1,9 @@
 package com.milkys.soundbooster
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -10,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.core.app.NotificationCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -219,7 +223,6 @@ fun DashboardScreen(
     var showSettings by remember { mutableStateOf(false) }
     var showOnboardingManually by remember { mutableStateOf(false) }
     var isSoundTesting by remember { mutableStateOf(false) }
-    var showAdsDisableNoticeDialog by remember { mutableStateOf(false) }
     var showPrivacyTermsDialog by remember { mutableStateOf(false) }
     var showLicenseDialog by remember { mutableStateOf(false) }
 
@@ -359,14 +362,16 @@ fun DashboardScreen(
                             )
                         }
 
-                        // Acoustic Feedback Visualizer
-                        item {
-                            AcousticVisualizerCard(
-                                isEnabled = isEnabled,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textSecondary = textSecondary
-                            )
+                        // Hearing Loss Safety Warning Card (Moved to the Top)
+                        if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
+                            item {
+                                HearingWarningCard(
+                                    onClose = {
+                                        AudioEffectManager.hideHearingWarningFor7Days()
+                                        showHearingWarningDismissedNotification(context)
+                                    }
+                                )
+                            }
                         }
 
                         // Circular Dial & Boost Controls
@@ -392,6 +397,17 @@ fun DashboardScreen(
                             )
                         }
 
+                        // Native Ad directly below Decibel Booster
+                        item {
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+                        }
+
                         // Quick Boost Presets Pill Row
                         item {
                             QuickBoostPresetsCard(
@@ -402,39 +418,6 @@ fun DashboardScreen(
                                 textSecondary = textSecondary,
                                 primaryAccent = primaryAccent,
                                 onSelectPreset = { AudioEffectManager.setBoostProgress(it) }
-                            )
-                        }
-
-                        // Hearing Loss Safety Warning Card
-                        if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
-                            item {
-                                HearingWarningCard(
-                                    onClose = { AudioEffectManager.hideHearingWarningFor7Days() }
-                                )
-                            }
-                        }
-
-                        // Floating Overlays Card
-                        item {
-                            FloatingOverlayControlsCard(
-                                isFloatingEnabled = isFloatingEnabled,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent,
-                                onToggleFloating = { checked ->
-                                    if (checked) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-                                            showPermissionExplanation = true
-                                        } else {
-                                            AudioEffectManager.setFloatingEnabled(true)
-                                            onStartService()
-                                        }
-                                    } else {
-                                        AudioEffectManager.setFloatingEnabled(false)
-                                    }
-                                }
                             )
                         }
 
@@ -535,6 +518,16 @@ fun DashboardScreen(
                         isSoundTesting = isSoundTesting
                     )
 
+                    if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        HearingWarningCard(
+                            onClose = {
+                                AudioEffectManager.hideHearingWarningFor7Days()
+                                showHearingWarningDismissedNotification(context)
+                            }
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Row(
@@ -550,13 +543,6 @@ fun DashboardScreen(
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            AcousticVisualizerCard(
-                                isEnabled = isEnabled,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textSecondary = textSecondary
-                            )
-
                             DecibelBoosterCard(
                                 isEnabled = isEnabled,
                                 boostProgress = boostProgress,
@@ -575,6 +561,14 @@ fun DashboardScreen(
                                     if (nextState) onStartService() else onStopService()
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
+                            )
+
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
                             )
 
                             QuickBoostPresetsCard(
@@ -601,27 +595,6 @@ fun DashboardScreen(
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            FloatingOverlayControlsCard(
-                                isFloatingEnabled = isFloatingEnabled,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent,
-                                onToggleFloating = { checked ->
-                                    if (checked) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-                                            showPermissionExplanation = true
-                                        } else {
-                                            AudioEffectManager.setFloatingEnabled(true)
-                                            onStartService()
-                                        }
-                                    } else {
-                                        AudioEffectManager.setFloatingEnabled(false)
-                                    }
-                                }
-                            )
-
                             VisualEqualizerCard(
                                 isEnabled = isEnabled,
                                 eqBands = eqBands,
@@ -642,12 +615,6 @@ fun DashboardScreen(
                                 onExportAllPresets = { AudioEffectManager.exportAllPresets() },
                                 onImportPreset = { json -> AudioEffectManager.importPreset(json) }
                             )
-
-                            if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
-                                HearingWarningCard(
-                                    onClose = { AudioEffectManager.hideHearingWarningFor7Days() }
-                                )
-                            }
                         }
                     }
                 }
@@ -674,6 +641,16 @@ fun DashboardScreen(
                         isSoundTesting = isSoundTesting
                     )
 
+                    if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        HearingWarningCard(
+                            onClose = {
+                                AudioEffectManager.hideHearingWarningFor7Days()
+                                showHearingWarningDismissedNotification(context)
+                            }
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
@@ -682,20 +659,13 @@ fun DashboardScreen(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Pane 1: Visualizer & Master Dial
+                        // Pane 1: Master Dial & Native Ad
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            AcousticVisualizerCard(
-                                isEnabled = isEnabled,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textSecondary = textSecondary
-                            )
-
                             DecibelBoosterCard(
                                 isEnabled = isEnabled,
                                 boostProgress = boostProgress,
@@ -714,6 +684,14 @@ fun DashboardScreen(
                                     if (nextState) onStartService() else onStopService()
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
+                            )
+
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
                             )
                         }
 
@@ -756,40 +734,13 @@ fun DashboardScreen(
                             )
                         }
 
-                        // Pane 3: Overlays, Safety & System Status
+                        // Pane 3: System Status
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            FloatingOverlayControlsCard(
-                                isFloatingEnabled = isFloatingEnabled,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent,
-                                onToggleFloating = { checked ->
-                                    if (checked) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-                                            showPermissionExplanation = true
-                                        } else {
-                                            AudioEffectManager.setFloatingEnabled(true)
-                                            onStartService()
-                                        }
-                                    } else {
-                                        AudioEffectManager.setFloatingEnabled(false)
-                                    }
-                                }
-                            )
-
-                            if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
-                                HearingWarningCard(
-                                    onClose = { AudioEffectManager.hideHearingWarningFor7Days() }
-                                )
-                            }
-
                             SystemBatteryDiagnosticCard(
                                 isBatterySaverOn = isBatterySaverOn,
                                 isBatteryOptimized = isBatteryOptimized,
@@ -799,11 +750,6 @@ fun DashboardScreen(
                     }
                 }
             }
-        }
-
-        // Place Banner Ad at the very bottom of the screen
-        if (isAdsIncluded && isAdsEnabled) {
-            BannerAdView(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp))
         }
     }
 
@@ -975,70 +921,7 @@ fun DashboardScreen(
                         }
                     }
 
-                    // Ads Setting Section (Rendered only when AdMob is included in build, removed for F-Droid target)
-                    if (isAdsIncluded) {
-                        Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(
-                            text = "GOOGLE ADMOB PREFERENCE",
-                            color = Color(0xFFD0BCFF),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
-                            shape = RoundedCornerShape(24.dp),
-                            border = BorderStroke(1.dp, Color(0xFF49454F))
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            text = "Enable Google AdMob",
-                                            color = Color(0xFFE6E1E5),
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Medium
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = "Support developer by showing AdMob banner ads at the bottom.",
-                                            color = Color(0xFFCAC4D0),
-                                            fontSize = 12.sp
-                                        )
-                                    }
-                                    Switch(
-                                        checked = isAdsEnabled && isAdsIncluded,
-                                        onCheckedChange = { checked ->
-                                            if (!checked) {
-                                                showAdsDisableNoticeDialog = true
-                                            } else {
-                                                AudioEffectManager.setAdsEnabled(true)
-                                            }
-                                        },
-                                        enabled = isAdsIncluded,
-                                        colors = SwitchDefaults.colors(
-                                            checkedThumbColor = Color(0xFFD0BCFF),
-                                            checkedTrackColor = Color(0xFF49454F),
-                                            uncheckedThumbColor = Color(0xFFCAC4D0),
-                                            uncheckedTrackColor = Color(0xFF49454F)
-                                        ),
-                                        modifier = Modifier.testTag("ads_enable_toggle")
-                                    )
-                                }
-                            }
-                        }
-                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -1331,65 +1214,7 @@ fun DashboardScreen(
         )
     }
 
-    // Voluntary Development & Developer Support Notice Dialog (When turning off ads)
-    if (showAdsDisableNoticeDialog) {
-        AlertDialog(
-            onDismissRequest = { showAdsDisableNoticeDialog = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = null,
-                    tint = Color(0xFFEC4899),
-                    modifier = Modifier.size(32.dp)
-                )
-            },
-            title = {
-                Text(
-                    text = "Developer Support Notice",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            },
-            text = {
-                Text(
-                    text = "This application is developed voluntarily as a free utility for the Android audio community.\n\n" +
-                            "Ads are completely optional, but keeping them enabled directly supports ongoing voluntary development, updates, and maintenance.\n\n" +
-                            "Would you like to keep ads enabled to show support to the developer, or proceed to turn them off?",
-                    color = Color(0xFFE6E1E5),
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp,
-                    textAlign = TextAlign.Start
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        AudioEffectManager.setAdsEnabled(true)
-                        showAdsDisableNoticeDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
-                    modifier = Modifier.testTag("keep_ads_on_button")
-                ) {
-                    Text("Keep Ads On (Support)", color = Color(0xFF381E72), fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = {
-                        AudioEffectManager.setAdsEnabled(false)
-                        showAdsDisableNoticeDialog = false
-                    },
-                    border = BorderStroke(1.dp, Color(0xFFCAC4D0)),
-                    modifier = Modifier.testTag("confirm_disable_ads_button")
-                ) {
-                    Text("Turn Off Ads", color = Color(0xFFCAC4D0))
-                }
-            },
-            containerColor = Color(0xFF2B2930),
-            shape = RoundedCornerShape(24.dp)
-        )
-    }
+
 
     // Privacy Policy & Terms Page Dialog
     if (showPrivacyTermsDialog) {
@@ -1755,45 +1580,220 @@ fun AudioVisualizer(isPlaying: Boolean, modifier: Modifier = Modifier) {
     }
 }
 
+fun showHearingWarningDismissedNotification(context: Context) {
+    val channelId = "hearing_warning_channel"
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            channelId,
+            "Safety Warnings",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Notifications for safety warnings and app preferences"
+        }
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    val intent = Intent(context, MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }
+    val pendingIntent = PendingIntent.getActivity(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
+    val detailMessage = "Hearing warning is hidden for 7 days. To permanently disable or re-enable it, go to App Settings."
+
+    val notification = NotificationCompat.Builder(context, channelId)
+        .setSmallIcon(android.R.drawable.ic_dialog_alert)
+        .setContentTitle("Hearing Warning Hidden")
+        .setContentText("Warning hidden for 7 days. Go to Settings to manage safety warnings.")
+        .setStyle(NotificationCompat.BigTextStyle().bigText(detailMessage))
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setAutoCancel(true)
+        .setContentIntent(pendingIntent)
+        .build()
+
+    try {
+        notificationManager.notify(3001, notification)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    Toast.makeText(
+        context,
+        "Hearing warning hidden for 7 days. Go to Settings to permanently disable or re-enable it.",
+        Toast.LENGTH_LONG
+    ).show()
+}
+
 @Composable
-fun BannerAdView(modifier: Modifier = Modifier) {
+fun NativeAdCard(
+    cardColor: Color,
+    borderDivider: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    primaryAccent: Color,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
     val isAdsIncluded = remember {
         try {
             BuildConfig.INCLUDE_GOOGLE_ADS.toString().toBoolean()
         } catch (e: Exception) {
-            false
+            true
         }
     }
+
     if (!isAdsIncluded) return
 
-    AndroidView(
+    Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp)
-            .testTag("banner_ad_view"),
-        factory = { ctx ->
-            try {
-                val adViewClass = Class.forName("com.google.android.gms.ads.AdView")
-                val adSizeClass = Class.forName("com.google.android.gms.ads.AdSize")
-                val adRequestClass = Class.forName("com.google.android.gms.ads.AdRequest")
-                val builderClass = Class.forName("com.google.android.gms.ads.AdRequest\$Builder")
+            .testTag("native_ad_card"),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, borderDivider)
+    ) {
+        AndroidView(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            factory = { ctx ->
+                val frameLayout = android.widget.FrameLayout(ctx)
+                try {
+                    val adLoaderClass = Class.forName("com.google.android.gms.ads.AdLoader")
+                    val adLoaderBuilderClass = Class.forName("com.google.android.gms.ads.AdLoader\$Builder")
+                    val adRequestClass = Class.forName("com.google.android.gms.ads.AdRequest")
+                    val adRequestBuilderClass = Class.forName("com.google.android.gms.ads.AdRequest\$Builder")
+                    val nativeAdClass = Class.forName("com.google.android.gms.ads.nativead.NativeAd")
+                    val nativeAdViewClass = Class.forName("com.google.android.gms.ads.nativead.NativeAdView")
 
-                val adView = adViewClass.getConstructor(Context::class.java).newInstance(ctx) as android.view.View
-                val bannerSize = adSizeClass.getField("BANNER").get(null)
+                    val nativeAdView = nativeAdViewClass.getConstructor(Context::class.java).newInstance(ctx) as android.view.ViewGroup
 
-                adViewClass.getMethod("setAdSize", adSizeClass).invoke(adView, bannerSize)
-                adViewClass.getMethod("setAdUnitId", String::class.java).invoke(adView, "ca-app-pub-3940256099942544/6300978111")
+                    val rootLayout = android.widget.LinearLayout(ctx).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        layoutParams = android.view.ViewGroup.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    }
 
-                val builder = builderClass.getConstructor().newInstance()
-                val adRequest = builderClass.getMethod("build").invoke(builder)
-                adViewClass.getMethod("loadAd", adRequestClass).invoke(adView, adRequest)
+                    val headerRow = android.widget.LinearLayout(ctx).apply {
+                        orientation = android.widget.LinearLayout.HORIZONTAL
+                        gravity = android.view.Gravity.CENTER_VERTICAL
+                    }
 
-                adView
-            } catch (e: Throwable) {
-                android.view.View(ctx)
+                    val adBadge = android.widget.TextView(ctx).apply {
+                        text = " Ad "
+                        textSize = 10f
+                        setTextColor(android.graphics.Color.WHITE)
+                        setBackgroundColor(android.graphics.Color.parseColor("#6750A4"))
+                        setPadding(10, 4, 10, 4)
+                    }
+
+                    val adTitle = android.widget.TextView(ctx).apply {
+                        text = "Sponsored Audio Tool"
+                        textSize = 14f
+                        setTypeface(null, android.graphics.Typeface.BOLD)
+                        setTextColor(android.graphics.Color.parseColor("#E6E1E5"))
+                        setPadding(16, 0, 0, 0)
+                    }
+
+                    headerRow.addView(adBadge)
+                    headerRow.addView(adTitle)
+
+                    val adBody = android.widget.TextView(ctx).apply {
+                        text = "High clarity sound booster & decibel amplifier tools."
+                        textSize = 12f
+                        setTextColor(android.graphics.Color.parseColor("#CAC4D0"))
+                        setPadding(0, 8, 0, 8)
+                    }
+
+                    val ctaButton = android.widget.Button(ctx).apply {
+                        text = "LEARN MORE"
+                        textSize = 12f
+                        setTextColor(android.graphics.Color.WHITE)
+                        setBackgroundColor(android.graphics.Color.parseColor("#6750A4"))
+                    }
+
+                    rootLayout.addView(headerRow)
+                    rootLayout.addView(adBody)
+                    rootLayout.addView(ctaButton)
+
+                    nativeAdView.addView(rootLayout)
+
+                    nativeAdViewClass.getMethod("setHeadlineView", android.view.View::class.java).invoke(nativeAdView, adTitle)
+                    nativeAdViewClass.getMethod("setBodyView", android.view.View::class.java).invoke(nativeAdView, adBody)
+                    nativeAdViewClass.getMethod("setCallToActionView", android.view.View::class.java).invoke(nativeAdView, ctaButton)
+
+                    val builderInstance = adLoaderBuilderClass.getConstructor(Context::class.java, String::class.java)
+                        .newInstance(ctx, "ca-app-pub-3940256099942544/2247696110")
+
+                    val listenerClass = Class.forName("com.google.android.gms.ads.nativead.NativeAd\$OnNativeAdLoadedListener")
+                    val proxyInvocationHandler = java.lang.reflect.InvocationHandler { _, method, args ->
+                        if (method.name == "onNativeAdLoaded") {
+                            val loadedAd = args[0]
+                            try {
+                                nativeAdViewClass.getMethod("setNativeAd", nativeAdClass).invoke(nativeAdView, loadedAd)
+                            } catch (e: Throwable) {
+                                e.printStackTrace()
+                            }
+                        }
+                        null
+                    }
+                    val proxyListener = java.lang.reflect.Proxy.newProxyInstance(
+                        listenerClass.classLoader,
+                        arrayOf(listenerClass),
+                        proxyInvocationHandler
+                    )
+
+                    adLoaderBuilderClass.getMethod("forNativeAd", listenerClass).invoke(builderInstance, proxyListener)
+                    val adLoader = adLoaderBuilderClass.getMethod("build").invoke(builderInstance)
+
+                    val adReqBuilder = adRequestBuilderClass.getConstructor().newInstance()
+                    val adReq = adRequestBuilderClass.getMethod("build").invoke(adReqBuilder)
+
+                    adLoaderClass.getMethod("loadAd", adRequestClass).invoke(adLoader, adReq)
+
+                    frameLayout.addView(nativeAdView)
+                } catch (e: Throwable) {
+                    val fallbackView = android.widget.LinearLayout(ctx).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        setPadding(12, 12, 12, 12)
+
+                        val badge = android.widget.TextView(ctx).apply {
+                            text = " SPONSORED AD "
+                            textSize = 10f
+                            setTextColor(android.graphics.Color.parseColor("#D0BCFF"))
+                            setTypeface(null, android.graphics.Typeface.BOLD)
+                        }
+                        val title = android.widget.TextView(ctx).apply {
+                            text = "Enhance Your Audio Quality"
+                            textSize = 14f
+                            setTextColor(android.graphics.Color.parseColor("#E6E1E5"))
+                            setTypeface(null, android.graphics.Typeface.BOLD)
+                            setPadding(0, 6, 0, 2)
+                        }
+                        val desc = android.widget.TextView(ctx).apply {
+                            text = "Discover high performance sound tools and audio equalizer settings."
+                            textSize = 12f
+                            setTextColor(android.graphics.Color.parseColor("#CAC4D0"))
+                        }
+                        addView(badge)
+                        addView(title)
+                        addView(desc)
+                    }
+                    frameLayout.addView(fallbackView)
+                }
+
+                frameLayout
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -2094,35 +2094,7 @@ fun AppHeaderRow(
     }
 }
 
-@Composable
-fun AcousticVisualizerCard(
-    isEnabled: Boolean,
-    cardColor: Color,
-    borderDivider: Color,
-    textSecondary: Color
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = cardColor),
-        shape = RoundedCornerShape(24.dp),
-        border = BorderStroke(1.dp, borderDivider)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "ACOUSTIC FEEDBACK",
-                color = textSecondary,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-            AudioVisualizer(isPlaying = isEnabled)
-        }
-    }
-}
+
 
 @Composable
 fun DecibelBoosterCard(
@@ -2434,61 +2406,7 @@ fun HearingWarningCard(
     }
 }
 
-@Composable
-fun FloatingOverlayControlsCard(
-    isFloatingEnabled: Boolean,
-    cardColor: Color,
-    borderDivider: Color,
-    textPrimary: Color,
-    textSecondary: Color,
-    primaryAccent: Color,
-    onToggleFloating: (Boolean) -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = cardColor),
-        shape = RoundedCornerShape(24.dp),
-        border = BorderStroke(1.dp, borderDivider)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = "FLOATING OVERLAY CONTROLS",
-                    color = textPrimary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
-                )
-                Text(
-                    text = "Add dynamic floating panel over other apps for rapid gain access.",
-                    color = textSecondary,
-                    fontSize = 11.sp
-                )
-            }
 
-            Switch(
-                checked = isFloatingEnabled,
-                onCheckedChange = onToggleFloating,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = primaryAccent,
-                    checkedTrackColor = borderDivider,
-                    uncheckedThumbColor = textSecondary,
-                    uncheckedTrackColor = borderDivider
-                ),
-                modifier = Modifier.testTag("floating_toggle")
-            )
-        }
-    }
-}
 
 @Composable
 fun VisualEqualizerCard(
