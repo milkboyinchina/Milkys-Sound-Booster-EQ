@@ -32,7 +32,7 @@
     <string name="system_battery_diagnostic_title">SYSTEM PERFORMANCE &amp; BATTERY DIAGNOSTICS</string>
     <string name="amplifier_notification_controls">AMPLIFIER &amp; NOTIFICATION CONTROLS</string>
     <string name="stepped_slider_title">10% Stepped Loudness Slider</string>
-    <string name="stepped_slider_desc_on">Slider snaps to 10% increments (0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_on" formatted="false">Slider snaps to 10% increments (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Smooth free slider movement.</string>
     <string name="notification_controls_title">Notification Bar Controls</string>
     <string name="notification_controls_desc">Display loudness adjustment (-10%, +10%) and OFF button in the notification bar when booster is enabled.</string>
