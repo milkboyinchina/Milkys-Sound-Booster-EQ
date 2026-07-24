@@ -97,17 +97,8 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
-        // Listen for changes in state to show/hide overlay or stop service
+        // Listen for changes in state to update notification
         serviceScope.launch {
-            launch {
-                AudioEffectManager.isFloatingEnabled.collectLatest { enabled ->
-                    if (enabled) {
-                        showFloatingOverlay()
-                    } else {
-                        hideFloatingOverlay()
-                    }
-                }
-            }
             launch {
                 AudioEffectManager.isBoostEnabled.collectLatest { enabled ->
                     updateNotification()
