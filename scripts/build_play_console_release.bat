@@ -16,7 +16,7 @@ if not exist .env (
 REM Default variable values
 set APPLICATION_ID=com.milkys.soundbooster
 set APP_NAME=Milkys Sound Booster & EQ
-set VERSION_CODE=26072301
+set VERSION_CODE=26072401
 set VERSION_NAME=0.1
 set BUILD_LOGS_DIR=logs
 set BUILD_OUTPUT_DIR=.build-outputs

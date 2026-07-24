@@ -2241,12 +2241,6 @@ fun AppHeaderRow(
     onSoundTest: () -> Unit,
     isSoundTesting: Boolean
 ) {
-    val sizeClassLabel = when (windowSizeGroup) {
-        WindowSizeGroup.COMPACT -> "COMPACT (Phone) • Portrait Locked"
-        WindowSizeGroup.MEDIUM -> "MEDIUM (Foldable/Small Tablet) • System Orientation"
-        WindowSizeGroup.EXPANDED -> "EXPANDED (Large Tablet) • System Orientation"
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -2279,20 +2273,6 @@ fun AppHeaderRow(
                     color = textSecondary,
                     fontSize = 12.sp
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Surface(
-                    color = primaryAccent.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, primaryAccent.copy(alpha = 0.3f))
-                ) {
-                    Text(
-                        text = sizeClassLabel,
-                        color = primaryAccent,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                    )
-                }
             }
         }
 
@@ -2412,7 +2392,7 @@ fun DecibelBoosterCard(
                 }
 
                 Box(
-                    modifier = Modifier.size(150.dp),
+                    modifier = Modifier.size(118.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     val infiniteTransition = rememberInfiniteTransition(label = "ring_glow")
@@ -2433,9 +2413,9 @@ fun DecibelBoosterCard(
                     Box(
                         modifier = Modifier
                             .scale(ringScale)
-                            .size(135.dp)
+                            .size(106.dp)
                             .border(
-                                width = 8.dp,
+                                width = 6.dp,
                                 color = if (isEnabled) primaryAccent else borderDivider,
                                 shape = CircleShape
                             )
@@ -2443,8 +2423,8 @@ fun DecibelBoosterCard(
 
                     Box(
                         modifier = Modifier
-                            .size(105.dp)
-                            .shadow(8.dp, CircleShape)
+                            .size(82.dp)
+                            .shadow(6.dp, CircleShape)
                             .background(dialBgColor, CircleShape)
                             .clip(CircleShape)
                             .clickable { onTogglePower() }
@@ -2459,13 +2439,13 @@ fun DecibelBoosterCard(
                                 imageVector = Icons.Default.PowerSettingsNew,
                                 contentDescription = "Toggle Booster Power",
                                 tint = if (isEnabled) primaryAccent else textSecondary,
-                                modifier = Modifier.size(36.dp)
+                                modifier = Modifier.size(28.dp)
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = if (isEnabled) "+${boostProgress}%" else "POWER",
                                 color = if (isEnabled) textPrimary else textSecondary,
-                                fontSize = 13.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -2494,12 +2474,19 @@ fun DecibelBoosterCard(
                             fontSize = 10.sp
                         )
                     }
-                    Text(
-                        text = "+$boostProgress%",
-                        color = if (isEnabled) primaryAccent else textSecondary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Surface(
+                        color = primaryAccent.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(6.dp),
+                        border = BorderStroke(1.dp, primaryAccent.copy(alpha = 0.3f))
+                    ) {
+                        Text(
+                            text = "+$boostProgress%",
+                            color = if (isEnabled) primaryAccent else textSecondary,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
                 }
 
                 Slider(

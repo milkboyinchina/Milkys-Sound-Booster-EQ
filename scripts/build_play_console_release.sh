@@ -32,7 +32,7 @@ get_env_var() {
 
 APPLICATION_ID=$(get_env_var "APPLICATION_ID" "com.milkys.soundbooster")
 APP_NAME=$(get_env_var "APP_NAME" "Milkys Sound Booster & EQ")
-VERSION_CODE=$(get_env_var "VERSION_CODE" "26072301")
+VERSION_CODE=$(get_env_var "VERSION_CODE" "26072401")
 VERSION_NAME=$(get_env_var "VERSION_NAME" "0.1")
 BUILD_LOGS_DIR=$(get_env_var "BUILD_LOGS_DIR" "logs")
 BUILD_OUTPUT_DIR=$(get_env_var "BUILD_OUTPUT_DIR" ".build-outputs")
