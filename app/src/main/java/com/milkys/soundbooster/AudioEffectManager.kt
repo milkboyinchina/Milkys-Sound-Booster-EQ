@@ -364,6 +364,22 @@ object AudioEffectManager {
             androidx.core.os.LocaleListCompat.forLanguageTags(languageTag)
         }
         androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(localeList)
+
+        try {
+            val locale = if (languageTag.isEmpty() || languageTag == "system") {
+                java.util.Locale.getDefault()
+            } else {
+                java.util.Locale.forLanguageTag(languageTag)
+            }
+            java.util.Locale.setDefault(locale)
+            val resources = ctx.resources
+            val config = resources.configuration
+            config.setLocale(locale)
+            @Suppress("DEPRECATION")
+            resources.updateConfiguration(config, resources.displayMetrics)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun hideHearingWarningFor7Days() {

@@ -14,7 +14,7 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -49,6 +49,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -83,7 +84,7 @@ enum class WindowSizeGroup {
     EXPANDED  // >= 840 dp (Large Tablets / Desktop)
 }
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -332,6 +333,7 @@ fun DashboardScreen(
         modifier = modifier
             .fillMaxSize()
             .background(bgColor)
+            .padding(10.dp)
     ) {
         when (windowSizeGroup) {
             WindowSizeGroup.COMPACT -> {
@@ -424,6 +426,17 @@ fun DashboardScreen(
                             )
                         }
 
+                        // Adaptive Banner Ad on top of Equalizer
+                        item {
+                            AdaptiveBannerAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+                        }
+
                         // Visual Equalizer Section
                         item {
                             VisualEqualizerCard(
@@ -456,46 +469,6 @@ fun DashboardScreen(
                                 context = context
                             )
                         }
-                    }
-
-                    // Vertical Scroll Bar Indicator Line
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(16.dp)
-                            .padding(vertical = 24.dp, horizontal = 4.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(4.dp)
-                                .fillMaxHeight()
-                                .background(borderDivider, RoundedCornerShape(2.dp))
-                        )
-
-                        val scrollPercentage = remember {
-                            derivedStateOf {
-                                val totalItems = listState.layoutInfo.totalItemsCount
-                                if (totalItems <= 1) 0f
-                                else {
-                                    val firstVisible = listState.firstVisibleItemIndex.toFloat()
-                                    (firstVisible / (totalItems - 1)).coerceIn(0f, 1f)
-                                }
-                            }
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .width(6.dp)
-                                .height(48.dp)
-                                .align(
-                                    BiasAlignment(
-                                        horizontalBias = 0f,
-                                        verticalBias = (scrollPercentage.value * 2f) - 1f
-                                    )
-                                )
-                                .background(primaryAccent, RoundedCornerShape(3.dp))
-                        )
                     }
                 }
             }
@@ -598,6 +571,14 @@ fun DashboardScreen(
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
+                            AdaptiveBannerAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+
                             VisualEqualizerCard(
                                 isEnabled = isEnabled,
                                 eqBands = eqBands,
@@ -705,6 +686,14 @@ fun DashboardScreen(
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
+                            AdaptiveBannerAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+
                             VisualEqualizerCard(
                                 isEnabled = isEnabled,
                                 eqBands = eqBands,
@@ -1051,6 +1040,7 @@ fun DashboardScreen(
                                             onClick = {
                                                 AudioEffectManager.setAppLanguage(code)
                                                 languageDropdownExpanded = false
+                                                (context as? android.app.Activity)?.recreate()
                                             },
                                             leadingIcon = if (isSelected) {
                                                 {
@@ -1782,6 +1772,108 @@ fun showHearingWarningDismissedNotification(context: Context) {
 }
 
 @Composable
+fun AdaptiveBannerAdCard(
+    cardColor: Color,
+    borderDivider: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    primaryAccent: Color,
+    modifier: Modifier = Modifier
+) {
+    val isAdsIncluded = remember {
+        try {
+            BuildConfig.INCLUDE_GOOGLE_ADS.toString().toBoolean()
+        } catch (e: Exception) {
+            true
+        }
+    }
+    val isAdsEnabled by AudioEffectManager.isAdsEnabled.collectAsState()
+
+    if (!isAdsIncluded || !isAdsEnabled) return
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("adaptive_banner_ad_card"),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, borderDivider)
+    ) {
+        AndroidView(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 12.dp),
+            factory = { ctx ->
+                val frameLayout = android.widget.FrameLayout(ctx).apply {
+                    layoutParams = android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                }
+                try {
+                    val adViewClass = Class.forName("com.google.android.gms.ads.AdView")
+                    val adSizeClass = Class.forName("com.google.android.gms.ads.AdSize")
+                    val adRequestClass = Class.forName("com.google.android.gms.ads.AdRequest")
+                    val adRequestBuilderClass = Class.forName("com.google.android.gms.ads.AdRequest\$Builder")
+
+                    val adView = adViewClass.getConstructor(Context::class.java).newInstance(ctx) as android.view.View
+
+                    adViewClass.getMethod("setAdUnitId", String::class.java).invoke(adView, "ca-app-pub-3940256099942544/6300978111")
+
+                    val displayMetrics = ctx.resources.displayMetrics
+                    val adWidthPixels = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                        val windowManager = ctx.getSystemService(Context.WINDOW_SERVICE) as? android.view.WindowManager
+                        windowManager?.currentWindowMetrics?.bounds?.width() ?: displayMetrics.widthPixels
+                    } else {
+                        displayMetrics.widthPixels
+                    }
+                    val density = displayMetrics.density
+                    val adWidth = (adWidthPixels / density).toInt()
+
+                    val adSizeMethod = adSizeClass.getMethod("getCurrentOrientationAnchoredAdaptiveBannerAdSize", Context::class.java, Int::class.javaPrimitiveType)
+                    val adaptiveAdSize = adSizeMethod.invoke(null, ctx, adWidth)
+
+                    adViewClass.getMethod("setAdSize", adSizeClass).invoke(adView, adaptiveAdSize)
+
+                    val adReqBuilder = adRequestBuilderClass.getConstructor().newInstance()
+                    val adReq = adRequestBuilderClass.getMethod("build").invoke(adReqBuilder)
+
+                    adViewClass.getMethod("loadAd", adRequestClass).invoke(adView, adReq)
+
+                    frameLayout.addView(adView)
+                } catch (e: Throwable) {
+                    val fallbackLayout = android.widget.LinearLayout(ctx).apply {
+                        orientation = android.widget.LinearLayout.HORIZONTAL
+                        gravity = android.view.Gravity.CENTER
+                        setPadding(12, 10, 12, 10)
+
+                        val badge = android.widget.TextView(ctx).apply {
+                            text = " SPONSORED AD "
+                            textSize = 10f
+                            setTextColor(android.graphics.Color.parseColor("#D0BCFF"))
+                            setTypeface(null, android.graphics.Typeface.BOLD)
+                            setBackgroundColor(android.graphics.Color.parseColor("#362F4A"))
+                            setPadding(8, 4, 8, 4)
+                        }
+                        val title = android.widget.TextView(ctx).apply {
+                            text = "Adaptive Equalizer Boost & Audio Tuning"
+                            textSize = 12f
+                            setTextColor(android.graphics.Color.parseColor("#E6E1E5"))
+                            setTypeface(null, android.graphics.Typeface.BOLD)
+                            setPadding(12, 0, 0, 0)
+                        }
+                        addView(badge)
+                        addView(title)
+                    }
+                    frameLayout.addView(fallbackLayout)
+                }
+                frameLayout
+            }
+        )
+    }
+}
+
+@Composable
 fun NativeAdCard(
     cardColor: Color,
     borderDivider: Color,
@@ -1798,8 +1890,9 @@ fun NativeAdCard(
             true
         }
     }
+    val isAdsEnabled by AudioEffectManager.isAdsEnabled.collectAsState()
 
-    if (!isAdsIncluded) return
+    if (!isAdsIncluded || !isAdsEnabled) return
 
     Card(
         modifier = modifier
