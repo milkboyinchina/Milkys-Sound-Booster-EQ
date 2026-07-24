@@ -31,10 +31,11 @@ get_env_var() {
     echo "$default_val"
 }
 
+APP_NAME=$(get_env_var "APP_NAME" "Milkys Sound Booster & EQ")
 BUILD_LOGS_DIR=$(get_env_var "BUILD_LOGS_DIR" "logs")
 BUILD_OUTPUT_DIR=$(get_env_var "BUILD_OUTPUT_DIR" ".build-outputs")
-VERSION_CODE=$(get_env_var "VERSION_CODE" "3")
-VERSION_NAME=$(get_env_var "VERSION_NAME" "3.0")
+VERSION_CODE=$(get_env_var "VERSION_CODE" "26072301")
+VERSION_NAME=$(get_env_var "VERSION_NAME" "0.1")
 BUILD_TARGET=$(get_env_var "BUILD_TARGET" "playstore" | tr '[:upper:]' '[:lower:]')
 
 mkdir -p "${BUILD_LOGS_DIR}"
@@ -45,8 +46,9 @@ LOG_FILE="${BUILD_LOGS_DIR}/build_${TIMESTAMP}.log"
 LATEST_LOG_FILE="${BUILD_LOGS_DIR}/latest_build.log"
 
 echo "=======================================================" | tee "${LOG_FILE}"
-echo "   Milkys Sound Booster & EQ - Build Execution" | tee -a "${LOG_FILE}"
+echo "   ${APP_NAME} - Build Execution" | tee -a "${LOG_FILE}"
 echo "=======================================================" | tee -a "${LOG_FILE}"
+echo "   App Name        : ${APP_NAME}" | tee -a "${LOG_FILE}"
 echo "   Build Timestamp : ${TIMESTAMP}" | tee -a "${LOG_FILE}"
 echo "   Build Target    : ${BUILD_TARGET}" | tee -a "${LOG_FILE}"
 echo "   Version Code    : ${VERSION_CODE}" | tee -a "${LOG_FILE}"

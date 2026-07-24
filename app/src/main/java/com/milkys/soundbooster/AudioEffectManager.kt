@@ -1,4 +1,4 @@
-package com.example
+package com.milkys.soundbooster
 
 import android.content.Context
 import android.media.AudioFormat
@@ -30,6 +30,17 @@ object AudioEffectManager {
     private const val KEY_HEARING_WARNING_DISABLED = "hearing_warning_disabled"
     private const val KEY_HEARING_WARNING_HIDDEN_UNTIL = "hearing_warning_hidden_until"
     private const val KEY_DARK_THEME = "dark_theme"
+    private const val KEY_CUSTOM_PRESETS = "custom_presets_json"
+    private const val KEY_DEFAULT_PRESET = "default_preset_name"
+
+    val BUILT_IN_PRESETS = mapOf(
+        "Flat" to intArrayOf(0, 0, 0, 0, 0),
+        "Bass Booster" to intArrayOf(8, 5, 2, 0, 0),
+        "Vocal Booster" to intArrayOf(-2, 1, 4, 3, -1),
+        "Rock" to intArrayOf(4, 2, -1, 2, 5),
+        "Pop" to intArrayOf(-1, 2, 5, 1, -2),
+        "Jazz" to intArrayOf(3, 2, 1, 2, -1)
+    )
 
     private var context: Context? = null
     
@@ -66,6 +77,12 @@ object AudioEffectManager {
 
     private val _eqPreset = MutableStateFlow("Flat")
     val eqPreset: StateFlow<String> = _eqPreset
+
+    private val _defaultPreset = MutableStateFlow("Flat")
+    val defaultPreset: StateFlow<String> = _defaultPreset
+
+    private val _customPresets = MutableStateFlow<Map<String, IntArray>>(emptyMap())
+    val customPresets: StateFlow<Map<String, IntArray>> = _customPresets
 
     // 5 standard equalizer bands: 60Hz, 230Hz, 910Hz, 4kHz, 14kHz
     private val _eqBands = MutableStateFlow(intArrayOf(0, 0, 0, 0, 0)) // levels in dB (-15 to +15)
@@ -104,10 +121,11 @@ object AudioEffectManager {
         val warningDisabled = prefs.getBoolean(KEY_HEARING_WARNING_DISABLED, false)
         val warningHiddenUntil = prefs.getLong(KEY_HEARING_WARNING_HIDDEN_UNTIL, 0L)
         val darkTheme = prefs.getBoolean(KEY_DARK_THEME, true)
+        val defaultPreset = prefs.getString(KEY_DEFAULT_PRESET, "Flat") ?: "Flat"
+        val customPresetsJson = prefs.getString(KEY_CUSTOM_PRESETS, "") ?: ""
 
         _isBoostEnabled.value = enabled
         _boostProgress.value = boost
-        _eqPreset.value = preset
         _isFloatingEnabled.value = floating
         _isAdsEnabled.value = adsEnabled
         _isSliderStepped.value = sliderStepped
@@ -116,9 +134,39 @@ object AudioEffectManager {
         _isHearingWarningDisabled.value = warningDisabled
         _hearingWarningHiddenUntil.value = warningHiddenUntil
         _isDarkTheme.value = darkTheme
-        
+        _defaultPreset.value = defaultPreset
+
+        // Parse custom presets from SharedPreferences
+        val parsedCustom = mutableMapOf<String, IntArray>()
+        if (customPresetsJson.isNotEmpty()) {
+            try {
+                val jsonObj = org.json.JSONObject(customPresetsJson)
+                val keys = jsonObj.keys()
+                while (keys.hasNext()) {
+                    val key = keys.next()
+                    val arr = jsonObj.getJSONArray(key)
+                    if (arr.length() == 5) {
+                        val bandsArr = IntArray(5)
+                        for (i in 0 until 5) bandsArr[i] = arr.getInt(i)
+                        parsedCustom[key] = bandsArr
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        _customPresets.value = parsedCustom
+
+        val activePreset = if (preset.isNotEmpty()) preset else defaultPreset
+        _eqPreset.value = activePreset
+
         val bands = bandsStr.split(",").map { it.toIntOrNull() ?: 0 }.toIntArray()
-        _eqBands.value = if (bands.size == 5) bands else intArrayOf(0, 0, 0, 0, 0)
+        if (bands.size == 5 && preset == "Custom") {
+            _eqBands.value = bands
+        } else {
+            val presetBands = getPresetBands(activePreset) ?: intArrayOf(0, 0, 0, 0, 0)
+            _eqBands.value = presetBands
+        }
 
         // Initialize actual audio effects if enabled
         if (enabled) {
@@ -145,10 +193,15 @@ object AudioEffectManager {
     }
 
     private fun initEffects() {
+        val sessionId = audioTrack?.audioSessionId ?: 0
         try {
-            // Apply globally (Audio Session ID 0)
             if (loudnessEnhancer == null) {
-                loudnessEnhancer = LoudnessEnhancer(0).apply {
+                loudnessEnhancer = try {
+                    LoudnessEnhancer(0)
+                } catch (t: Throwable) {
+                    if (sessionId > 0) LoudnessEnhancer(sessionId) else null
+                }
+                loudnessEnhancer?.apply {
                     enabled = _isBoostEnabled.value
                     setTargetGain(mapProgressToGain(_boostProgress.value))
                 }
@@ -160,7 +213,12 @@ object AudioEffectManager {
 
         try {
             if (equalizer == null) {
-                equalizer = Equalizer(100, 0).apply {
+                equalizer = try {
+                    Equalizer(0, 0)
+                } catch (t: Throwable) {
+                    if (sessionId > 0) Equalizer(0, sessionId) else null
+                }
+                equalizer?.apply {
                     enabled = _isBoostEnabled.value
                     applySavedBands()
                 }
@@ -311,17 +369,13 @@ object AudioEffectManager {
         }
     }
 
+    fun getPresetBands(presetName: String): IntArray? {
+        return BUILT_IN_PRESETS[presetName] ?: _customPresets.value[presetName]
+    }
+
     fun applyPreset(presetName: String) {
+        val levels = getPresetBands(presetName) ?: return
         _eqPreset.value = presetName
-        val levels = when (presetName) {
-            "Bass Booster" -> intArrayOf(8, 5, 2, 0, 0)
-            "Vocal Booster" -> intArrayOf(-2, 1, 4, 3, -1)
-            "Rock" -> intArrayOf(4, 2, -1, 2, 5)
-            "Pop" -> intArrayOf(-1, 2, 5, 1, -2)
-            "Jazz" -> intArrayOf(3, 2, 1, 2, -1)
-            "Flat" -> intArrayOf(0, 0, 0, 0, 0)
-            else -> return
-        }
         _eqBands.value = levels
         getPrefs()?.edit()?.apply {
             putString(KEY_BANDS, levels.joinToString(","))
@@ -338,6 +392,140 @@ object AudioEffectManager {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun saveCustomPreset(name: String, bands: IntArray): Boolean {
+        val cleanName = name.trim()
+        if (cleanName.isEmpty()) return false
+        val newMap = _customPresets.value.toMutableMap()
+        newMap[cleanName] = bands.clone()
+        _customPresets.value = newMap
+        _eqPreset.value = cleanName
+        _eqBands.value = bands.clone()
+        saveCustomPresetsToPrefs()
+        
+        getPrefs()?.edit()?.apply {
+            putString(KEY_BANDS, bands.joinToString(","))
+            putString(KEY_PRESET, cleanName)
+        }?.apply()
+
+        val eq = equalizer
+        if (eq != null) {
+            try {
+                for (i in bands.indices) {
+                    eq.setBandLevel(i.toShort(), (bands[i] * 100).toShort())
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+        return true
+    }
+
+    fun deleteCustomPreset(name: String) {
+        val newMap = _customPresets.value.toMutableMap()
+        if (newMap.containsKey(name)) {
+            newMap.remove(name)
+            _customPresets.value = newMap
+            saveCustomPresetsToPrefs()
+            if (_eqPreset.value == name) {
+                applyPreset(_defaultPreset.value)
+            }
+            if (_defaultPreset.value == name) {
+                setDefaultPreset("Flat")
+            }
+        }
+    }
+
+    fun setDefaultPreset(name: String) {
+        _defaultPreset.value = name
+        getPrefs()?.edit()?.putString(KEY_DEFAULT_PRESET, name)?.apply()
+    }
+
+    private fun saveCustomPresetsToPrefs() {
+        try {
+            val jsonObj = org.json.JSONObject()
+            for ((key, value) in _customPresets.value) {
+                val arr = org.json.JSONArray()
+                for (b in value) arr.put(b)
+                jsonObj.put(key, arr)
+            }
+            getPrefs()?.edit()?.putString(KEY_CUSTOM_PRESETS, jsonObj.toString())?.apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun exportPreset(name: String): String {
+        val bands = getPresetBands(name) ?: _eqBands.value
+        val json = org.json.JSONObject()
+        json.put("name", name)
+        json.put("type", "sound_booster_preset")
+        val arr = org.json.JSONArray()
+        for (b in bands) arr.put(b)
+        json.put("bands", arr)
+        return json.toString(2)
+    }
+
+    fun exportAllPresets(): String {
+        val root = org.json.JSONObject()
+        val presetsArr = org.json.JSONArray()
+        val all = BUILT_IN_PRESETS + _customPresets.value
+        for ((name, bands) in all) {
+            val item = org.json.JSONObject()
+            item.put("name", name)
+            val arr = org.json.JSONArray()
+            for (b in bands) arr.put(b)
+            item.put("bands", arr)
+            item.put("isCustom", _customPresets.value.containsKey(name))
+            presetsArr.put(item)
+        }
+        root.put("presets", presetsArr)
+        root.put("defaultPreset", _defaultPreset.value)
+        root.put("currentPreset", _eqPreset.value)
+        return root.toString(2)
+    }
+
+    fun importPreset(jsonStr: String): String? {
+        try {
+            val json = org.json.JSONObject(jsonStr.trim())
+            if (json.has("presets")) {
+                val presetsArr = json.getJSONArray("presets")
+                var lastImported = ""
+                var count = 0
+                for (i in 0 until presetsArr.length()) {
+                    val item = presetsArr.getJSONObject(i)
+                    val name = item.getString("name")
+                    val bandsArr = item.getJSONArray("bands")
+                    if (bandsArr.length() == 5) {
+                        val bands = IntArray(5)
+                        for (j in 0 until 5) bands[j] = bandsArr.getInt(j).coerceIn(-15, 15)
+                        saveCustomPreset(name, bands)
+                        lastImported = name
+                        count++
+                    }
+                }
+                if (json.has("defaultPreset")) {
+                    val def = json.getString("defaultPreset")
+                    if (BUILT_IN_PRESETS.containsKey(def) || _customPresets.value.containsKey(def)) {
+                        setDefaultPreset(def)
+                    }
+                }
+                return if (count > 0) lastImported else null
+            } else if (json.has("bands")) {
+                val name = json.optString("name", "Imported Preset")
+                val bandsArr = json.getJSONArray("bands")
+                if (bandsArr.length() == 5) {
+                    val bands = IntArray(5)
+                    for (j in 0 until 5) bands[j] = bandsArr.getInt(j).coerceIn(-15, 15)
+                    saveCustomPreset(name, bands)
+                    return name
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     private fun startSilencePlayback() {

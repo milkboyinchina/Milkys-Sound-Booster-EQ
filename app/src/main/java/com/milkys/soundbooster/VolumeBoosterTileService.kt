@@ -1,4 +1,4 @@
-package com.example
+package com.milkys.soundbooster
 
 import android.content.Intent
 import android.os.Build

@@ -7,8 +7,8 @@ Welcome to the general technical and functional overview for **Milkys Sound Boos
 ## 📌 App Overview & Metadata
 
 - **Application Name**: Milkys Sound Booster & EQ
-- **Package Name / Application ID**: `com.aistudio.volumebooster.vmbstr`
-- **Current Version**: `3.0` (Version Code: `3`)
+- **Package Name / Application ID**: `com.milkys.soundbooster`
+- **Current Version**: `0.1` (Version Code: `26072301`)
 - **Target OS**: Android 7.0 (API Level 24) to Android 15 (API Level 36)
 - **UI Framework**: Jetpack Compose with Material 3 Design System
 - **Language**: 100% Kotlin

@@ -16,8 +16,8 @@ if not exist .env (
 REM Default variable values
 set BUILD_LOGS_DIR=logs
 set BUILD_OUTPUT_DIR=.build-outputs
-set VERSION_CODE=3
-set VERSION_NAME=3.0
+set VERSION_CODE=26072301
+set VERSION_NAME=0.1
 
 REM Parse .env if available
 if exist .env (
