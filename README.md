@@ -4,6 +4,10 @@
   <img src="assets/logo.png" width="160" height="160" alt="Milkys App Logo" />
 </p>
 
+<p align="center">
+  ✨ <i>Vibe coded using Google AI</i> ✨
+</p>
+
 A high-fidelity global audio booster and 5-band graphic equalizer designed for Android. **Milkys Sound Booster & EQ** allows users to amplify speaker and headphone output up to 200%, fine-tune audio frequencies across five visual bands, run instant 3-second sound tests, toggle quick floating overlay controls, and manage AdMob integrations with customized build scripts and versioning parameters.
 
 ---
