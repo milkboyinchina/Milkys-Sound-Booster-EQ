@@ -2,4 +2,45 @@
     <string name="app_name">Milkys Sound Booster</string>
     <string name="tile_label">Milkys Sound Booster</string>
     <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="language_preference_section">LANGUAGE PREFERENCES</string>
+    <string name="app_language_title">App Language</string>
+    <string name="app_language_desc">Select language or use device system language preference</string>
+    <string name="system_default_language">System Default</string>
+    <string name="language_english">English</string>
+    <string name="language_indonesian">Bahasa Indonesia (Indonesian)</string>
+    <string name="language_malay">Bahasa Melayu (Malay)</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_portuguese">Português (Portuguese)</string>
+    <string name="language_french">Français (French)</string>
+    <string name="language_italian">Italiano (Italian)</string>
+    <string name="language_german">Deutsch (German)</string>
+    <string name="language_simplified_chinese">简体中文 (Simplified Chinese)</string>
+    <string name="language_traditional_chinese">繁體中文 (Traditional Chinese)</string>
+    <string name="language_japanese">日本語 (Japanese)</string>
+    <string name="language_korean">한국어 (Korean)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">DECIBEL BOOSTER &amp; GAIN</string>
+    <string name="sound_test_3sec">3 Sec Sound Test</string>
+    <string name="hearing_warning_title">Hearing Protection &amp; Safety Warning</string>
+    <string name="hearing_warning_desc">Listening at high volume levels (&gt;100%) for extended periods can cause permanent hearing damage or speaker distortion. Please adjust volume responsibly.</string>
+    <string name="quick_presets_title">QUICK BOOST PRESETS</string>
+    <string name="visual_equalizer_title">5-BAND VISUAL EQUALIZER</string>
+    <string name="system_battery_diagnostic_title">SYSTEM PERFORMANCE &amp; BATTERY DIAGNOSTICS</string>
+    <string name="amplifier_notification_controls">AMPLIFIER &amp; NOTIFICATION CONTROLS</string>
+    <string name="stepped_slider_title">10% Stepped Loudness Slider</string>
+    <string name="stepped_slider_desc_on">Slider snaps to 10% increments (0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_off">Smooth free slider movement.</string>
+    <string name="notification_controls_title">Notification Bar Controls</string>
+    <string name="notification_controls_desc">Display loudness adjustment (-10%, +10%) and OFF button in the notification bar when booster is enabled.</string>
+    <string name="disable_hearing_warning_title">Disable Safety Warning Banner</string>
+    <string name="disable_hearing_warning_desc">Completely hide the hearing and speaker damage warning banner on main dashboard.</string>
+    <string name="developer_legal_title">DEVELOPER &amp; LEGAL</string>
+    <string name="developer_website">Developer Website</string>
+    <string name="github_repository">GitHub Repository</string>
+    <string name="privacy_terms">Privacy Policy &amp; Terms of Service</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
 </resources>

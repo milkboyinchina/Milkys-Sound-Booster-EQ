@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">IMPOSTAZIONI</string>
+    <string name="language_preference_section">PREFERENZE LINGUA</string>
+    <string name="app_language_title">Lingua dell\'app</string>
+    <string name="app_language_desc">Seleziona la lingua o usa le preferenze del sistema</string>
+    <string name="system_default_language">Predefinita di sistema</string>
+    <string name="language_english">English (Inglese)</string>
+    <string name="language_indonesian">Bahasa Indonesia (Indonesiano)</string>
+    <string name="language_malay">Bahasa Melayu (Malese)</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_portuguese">Português (Portoghese)</string>
+    <string name="language_french">Français (Francese)</string>
+    <string name="language_italian">Italiano</string>
+    <string name="language_german">Deutsch (Tedesco)</string>
+    <string name="language_simplified_chinese">简体中文 (Cinese semplificato)</string>
+    <string name="language_traditional_chinese">繁體中文 (Cinese tradizionale)</string>
+    <string name="language_japanese">日本語 (Giapponese)</string>
+    <string name="language_korean">한국어 (Coreano)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">AMPLIFICATORE DI DECIBEL E GUADAGNO</string>
+    <string name="sound_test_3sec">Test audio 3s</string>
+    <string name="hearing_warning_title">Protezione dell\'udito e avviso di sicurezza</string>
+    <string name="hearing_warning_desc">L\'ascolto ad alto volume (&gt;100%) per periodi prolungati può causare danni permanenti all\'udito o distorsioni degli altoparlanti. Regolare il volume con responsabilità.</string>
+    <string name="quick_presets_title">PRESET DI AMPLIFICAZIONE RAPIDA</string>
+    <string name="visual_equalizer_title">EQUALIZZATORE VISIVO A 5 BANDE</string>
+    <string name="system_battery_diagnostic_title">DIAGNOSTICA PRESTAZIONI E BATTERIA</string>
+    <string name="amplifier_notification_controls">CONTROLLI AMPLIFICATORE E NOTIFICHE</string>
+    <string name="stepped_slider_title">Cursore del volume a scatti del 10%</string>
+    <string name="stepped_slider_desc_on">Il cursore si adatta con incrementi del 10% (0%, 10%, 20%...).</string>
+    <string name="stepped_slider_desc_off">Movimento del cursore continuo e libero.</string>
+    <string name="notification_controls_title">Controlli della barra di notifica</string>
+    <string name="notification_controls_desc">Mostra la regolazione del volume (-10%, +10%) e il pulsante OFF nella barra delle notifiche quando l\'amplificatore è attivo.</string>
+    <string name="disable_hearing_warning_title">Disattiva banner di avviso di sicurezza</string>
+    <string name="disable_hearing_warning_desc">Nascondi completamente il banner di avviso di sicurezza sulla schermata principale.</string>
+    <string name="developer_legal_title">SVILUPPATORE E NOTE LEGALI</string>
+    <string name="developer_website">Sito web dello sviluppatore</string>
+    <string name="github_repository">Repository GitHub</string>
+    <string name="privacy_terms">Informativa sulla privacy e Termini di servizio</string>
+    <string name="open_source_licenses">Licenze open source</string>
+</resources>

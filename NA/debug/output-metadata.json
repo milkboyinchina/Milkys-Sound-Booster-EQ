@@ -4,14 +4,14 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.aistudio.volumebooster.vmbstr",
+  "applicationId": "com.milkys.soundbooster",
   "variantName": "debug",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 20260723,
+      "versionCode": 26072401,
       "versionName": "0.1",
       "outputFile": "app-debug.apk"
     }

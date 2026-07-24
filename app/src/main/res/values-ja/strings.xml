@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Milkys Sound Booster</string>
+    <string name="tile_label">Milkys Sound Booster</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- Language Selection & Settings -->
+    <string name="settings_title">設定</string>
+    <string name="language_preference_section">言語設定</string>
+    <string name="app_language_title">アプリの言語</string>
+    <string name="app_language_desc">言語を選択するか端末のシステム言語設定を使用します</string>
+    <string name="system_default_language">システムデフォルト</string>
+    <string name="language_english">English (英語)</string>
+    <string name="language_indonesian">Bahasa Indonesia (インドネシア語)</string>
+    <string name="language_malay">Bahasa Melayu (マレー語)</string>
+    <string name="language_hindi">हिन्दी (ヒンディー語)</string>
+    <string name="language_portuguese">Português (ポルトガル語)</string>
+    <string name="language_french">Français (フランス語)</string>
+    <string name="language_italian">Italiano (イタリア語)</string>
+    <string name="language_german">Deutsch (ドイツ語)</string>
+    <string name="language_simplified_chinese">简体中文 (簡体字中国語)</string>
+    <string name="language_traditional_chinese">繁體中文 (繁体字中国語)</string>
+    <string name="language_japanese">日本語</string>
+    <string name="language_korean">한국어 (韓国語)</string>
+
+    <!-- Controls & Headers -->
+    <string name="decibel_booster_title">デシベルブースター＆ゲイン</string>
+    <string name="sound_test_3sec">3秒サウンドテスト</string>
+    <string name="hearing_warning_title">聴覚保護＆安全上の警告</string>
+    <string name="hearing_warning_desc">大音量（&gt;100%）で長時間聴くと、永久的な聴覚障害やスピーカーの歪みの原因となる場合があります。責任を持って音量を調整してください。</string>
+    <string name="quick_presets_title">クイックブーストプリセット</string>
+    <string name="visual_equalizer_title">5バンドビジュアルイコライザー</string>
+    <string name="system_battery_diagnostic_title">システムパフォーマンス＆バッテリー診断</string>
+    <string name="amplifier_notification_controls">アンプ＆通知コントロール</string>
+    <string name="stepped_slider_title">10%ステップ音量スライダー</string>
+    <string name="stepped_slider_desc_on">スライダーが10%刻みでスナップします（0%、10%、20%...）。</string>
+    <string name="stepped_slider_desc_off">スムーズな自由スライダー移動。</string>
+    <string name="notification_controls_title">通知バーコントロール</string>
+    <string name="notification_controls_desc">ブースター有効時に通知バーに音量微調整（-10%、+10%）とOFFボタンを表示します。</string>
+    <string name="disable_hearing_warning_title">警告バナーを無効化</string>
+    <string name="disable_hearing_warning_desc">メインダッシュボードの聴覚およびスピーカー損傷の警告バナーを完全に非表示にします。</string>
+    <string name="developer_legal_title">開発者＆法的情報</string>
+    <string name="developer_website">開発者ウェブサイト</string>
+    <string name="github_repository">GitHubリポジトリ</string>
+    <string name="privacy_terms">プライバシーポリシー＆利用規約</string>
+    <string name="open_source_licenses">オープンソースライセンス</string>
+</resources>

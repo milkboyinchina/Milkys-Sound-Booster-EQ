@@ -68,6 +68,7 @@ import com.milkys.soundbooster.ui.theme.MyApplicationTheme
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         AudioEffectManager.init(this)
+        AudioEffectManager.applyLanguageToApp(this, AudioEffectManager.appLanguage.value)
         
         // Start background service on launch if enabled
         if (AudioEffectManager.isBoostEnabled.value) {
@@ -219,6 +221,7 @@ fun DashboardScreen(
     val hasSeenOnboarding by AudioEffectManager.hasSeenOnboarding.collectAsState()
     val isHearingWarningDisabled by AudioEffectManager.isHearingWarningDisabled.collectAsState()
     val hearingWarningHiddenUntil by AudioEffectManager.hearingWarningHiddenUntil.collectAsState()
+    val appLanguage by AudioEffectManager.appLanguage.collectAsState()
 
     var showSettings by remember { mutableStateOf(false) }
     var showOnboardingManually by remember { mutableStateOf(false) }
@@ -374,6 +377,17 @@ fun DashboardScreen(
                             }
                         }
 
+                        // Native Ad card on top of Decibel Booster
+                        item {
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+                        }
+
                         // Circular Dial & Boost Controls
                         item {
                             DecibelBoosterCard(
@@ -394,17 +408,6 @@ fun DashboardScreen(
                                     if (nextState) onStartService() else onStopService()
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
-                            )
-                        }
-
-                        // Native Ad directly below Decibel Booster
-                        item {
-                            NativeAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
                             )
                         }
 
@@ -543,6 +546,14 @@ fun DashboardScreen(
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+
                             DecibelBoosterCard(
                                 isEnabled = isEnabled,
                                 boostProgress = boostProgress,
@@ -561,14 +572,6 @@ fun DashboardScreen(
                                     if (nextState) onStartService() else onStopService()
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
-                            )
-
-                            NativeAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
                             )
 
                             QuickBoostPresetsCard(
@@ -659,13 +662,21 @@ fun DashboardScreen(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Pane 1: Master Dial & Native Ad
+                        // Pane 1: Native Ad & Master Dial
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+
                             DecibelBoosterCard(
                                 isEnabled = isEnabled,
                                 boostProgress = boostProgress,
@@ -684,14 +695,6 @@ fun DashboardScreen(
                                     if (nextState) onStartService() else onStopService()
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
-                            )
-
-                            NativeAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
                             )
                         }
 
@@ -797,7 +800,7 @@ fun DashboardScreen(
 
                     // Loudness & Notification Controls Section
                     Text(
-                        text = "AMPLIFIER & NOTIFICATION CONTROLS",
+                        text = stringResource(R.string.amplifier_notification_controls),
                         color = Color(0xFFD0BCFF),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -824,14 +827,14 @@ fun DashboardScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "10% Stepped Loudness Slider",
+                                        text = stringResource(R.string.stepped_slider_title),
                                         color = Color(0xFFE6E1E5),
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = if (isSliderStepped) "Slider snaps to 10% increments (0%, 10%, 20%...)." else "Smooth free slider movement.",
+                                        text = if (isSliderStepped) stringResource(R.string.stepped_slider_desc_on) else stringResource(R.string.stepped_slider_desc_off),
                                         color = Color(0xFFCAC4D0),
                                         fontSize = 12.sp
                                     )
@@ -859,14 +862,14 @@ fun DashboardScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Notification Bar Controls",
+                                        text = stringResource(R.string.notification_controls_title),
                                         color = Color(0xFFE6E1E5),
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = "Display loudness adjustment (-10%, +10%) and OFF button in the notification bar when booster is enabled.",
+                                        text = stringResource(R.string.notification_controls_desc),
                                         color = Color(0xFFCAC4D0),
                                         fontSize = 12.sp
                                     )
@@ -894,14 +897,14 @@ fun DashboardScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Disable Safety Warning Banner",
+                                        text = stringResource(R.string.disable_hearing_warning_title),
                                         color = Color(0xFFE6E1E5),
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = "Completely hide the hearing and speaker damage warning banner on main dashboard.",
+                                        text = stringResource(R.string.disable_hearing_warning_desc),
                                         color = Color(0xFFCAC4D0),
                                         fontSize = 12.sp
                                     )
@@ -917,6 +920,154 @@ fun DashboardScreen(
                                     ),
                                     modifier = Modifier.testTag("disable_hearing_warning_toggle")
                                 )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Language Selection Section (Android Per-App Language Preferences)
+                    Text(
+                        text = stringResource(R.string.language_preference_section),
+                        color = Color(0xFFD0BCFF),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                        shape = RoundedCornerShape(24.dp),
+                        border = BorderStroke(1.dp, Color(0xFF49454F))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Language,
+                                    contentDescription = null,
+                                    tint = Color(0xFFD0BCFF),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.app_language_title),
+                                        color = Color(0xFFE6E1E5),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = stringResource(R.string.app_language_desc),
+                                        color = Color(0xFFCAC4D0),
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+
+                            Divider(color = Color(0xFF49454F), thickness = 1.dp)
+
+                            var languageDropdownExpanded by remember { mutableStateOf(false) }
+
+                            val languageOptions = listOf(
+                                "system" to stringResource(R.string.system_default_language),
+                                "en" to stringResource(R.string.language_english),
+                                "id" to stringResource(R.string.language_indonesian),
+                                "ms" to stringResource(R.string.language_malay),
+                                "hi" to stringResource(R.string.language_hindi),
+                                "pt" to stringResource(R.string.language_portuguese),
+                                "fr" to stringResource(R.string.language_french),
+                                "it" to stringResource(R.string.language_italian),
+                                "de" to stringResource(R.string.language_german),
+                                "zh-CN" to stringResource(R.string.language_simplified_chinese),
+                                "zh-TW" to stringResource(R.string.language_traditional_chinese),
+                                "ja" to stringResource(R.string.language_japanese),
+                                "ko" to stringResource(R.string.language_korean)
+                            )
+
+                            val currentSelectedLabel = languageOptions.firstOrNull {
+                                it.first == appLanguage || (it.first == "system" && (appLanguage.isEmpty() || appLanguage == "system"))
+                            }?.second ?: stringResource(R.string.system_default_language)
+
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                Surface(
+                                    onClick = { languageDropdownExpanded = !languageDropdownExpanded },
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = Color(0xFF1D1B20),
+                                    border = BorderStroke(1.dp, Color(0xFF49454F)),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("language_dropdown_selector")
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = currentSelectedLabel,
+                                            color = Color(0xFFE6E1E5),
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Icon(
+                                            imageVector = if (languageDropdownExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                            contentDescription = null,
+                                            tint = Color(0xFFD0BCFF)
+                                        )
+                                    }
+                                }
+
+                                DropdownMenu(
+                                    expanded = languageDropdownExpanded,
+                                    onDismissRequest = { languageDropdownExpanded = false },
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.85f)
+                                        .background(Color(0xFF2B2930))
+                                        .border(1.dp, Color(0xFF49454F), RoundedCornerShape(12.dp))
+                                ) {
+                                    languageOptions.forEach { (code, label) ->
+                                        val isSelected = (appLanguage == code) || (code == "system" && (appLanguage.isEmpty() || appLanguage == "system"))
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = label,
+                                                    color = if (isSelected) Color(0xFFD0BCFF) else Color(0xFFE6E1E5),
+                                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                                    fontSize = 14.sp
+                                                )
+                                            },
+                                            onClick = {
+                                                AudioEffectManager.setAppLanguage(code)
+                                                languageDropdownExpanded = false
+                                            },
+                                            leadingIcon = if (isSelected) {
+                                                {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Check,
+                                                        contentDescription = null,
+                                                        tint = Color(0xFFD0BCFF),
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                }
+                                            } else null,
+                                            modifier = Modifier.background(
+                                                if (isSelected) Color(0xFF49454F).copy(alpha = 0.5f) else Color.Transparent
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -2124,7 +2275,7 @@ fun DecibelBoosterCard(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = "DECIBEL BOOSTER",
+                text = stringResource(R.string.decibel_booster_title),
                 color = textSecondary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -2160,7 +2311,7 @@ fun DecibelBoosterCard(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = if (isSoundTesting) "3s Playing..." else "Sound Test",
+                        text = if (isSoundTesting) "3s..." else stringResource(R.string.sound_test_3sec),
                         color = if (isSoundTesting) primaryAccent else textSecondary,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold
@@ -2306,7 +2457,7 @@ fun QuickBoostPresetsCard(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = "QUICK BOOST PRESETS",
+                text = stringResource(R.string.quick_presets_title),
                 color = textSecondary,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
@@ -2374,7 +2525,7 @@ fun HearingWarningCard(
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "WARNING: HEARING & SPEAKER DAMAGE RISK",
+                    text = stringResource(R.string.hearing_warning_title),
                     color = Color(0xFFFFD54F),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -2382,7 +2533,7 @@ fun HearingWarningCard(
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = "Over-boosting audio can cause permanent hearing impairment and damage or blow out device speakers and headphones. Please boost responsibly.",
+                    text = stringResource(R.string.hearing_warning_desc),
                     color = Color(0xFFFFF59D),
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -2503,7 +2654,7 @@ fun EqualizerComponent(
         ) {
             Column {
                 Text(
-                    text = "EQUALIZER & PRESETS",
+                    text = stringResource(R.string.visual_equalizer_title),
                     color = textSecondary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -3054,7 +3205,7 @@ fun SystemBatteryDiagnosticCard(
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
-                        text = "System Battery Warning",
+                        text = stringResource(R.string.system_battery_diagnostic_title),
                         color = Color(0xFFFFB4AB),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold

@@ -15,6 +15,7 @@ A high-fidelity global audio booster and 5-band graphic equalizer designed for A
 - **Preconfigured Audio Presets**: Select from predefined sound profiles (*Flat, Classical, Jazz, Pop, Rock, Custom*).
 - **Instant Sound Test Button**: Play a 3-second synthesize test tune directly next to the master power button.
 - **Hearing & Speaker Damage Protection Warnings**: Prominent high-contrast safety warning banner highlighting hearing impairment and speaker burnout risks.
+- **Multilingual Support & Dropdown Language Selection**: Per-app language selector dropdown in Settings supporting 13 locales (*English, Bahasa Indonesia, Bahasa Melayu, Hindi, Portuguese, French, Italian, German, Simplified Chinese, Traditional Chinese, Japanese, Korean, System Default*).
 - **Quick-Control Floating Widget**: System overlay bubble for fast boost and equalizer access over any active app.
 - **Quick Settings Tile Service**: Toggle the audio processing service directly from the Android notifications drawer.
 - **Google AdMob Integration**: Environment-driven ad placement with full runtime toggles.

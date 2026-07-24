@@ -65,11 +65,14 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = envApplicationId
+   // applicationId = envApplicationId
+    applicationId = "com.milkys.soundbooster"
+    versionCode = 26072401
+    versionName = "0.1"
     minSdk = 24
     targetSdk = 36
-    versionCode = envVersionCode
-    versionName = envVersionName
+   // versionCode = envVersionCode
+   // versionName = envVersionName
 
     resValue("string", "app_name", envAppName)
     buildConfigField("String", "APP_NAME", "\"$envAppName\"")
@@ -159,6 +162,7 @@ googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.W
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.appcompat)
   implementation(libs.androidx.compose.material.icons.core)
   implementation(libs.androidx.compose.material.icons.extended)
   implementation(libs.androidx.compose.material3)

@@ -30,6 +30,7 @@ object AudioEffectManager {
     private const val KEY_HEARING_WARNING_DISABLED = "hearing_warning_disabled"
     private const val KEY_HEARING_WARNING_HIDDEN_UNTIL = "hearing_warning_hidden_until"
     private const val KEY_DARK_THEME = "dark_theme"
+    private const val KEY_APP_LANGUAGE = "app_language"
     private const val KEY_CUSTOM_PRESETS = "custom_presets_json"
     private const val KEY_DEFAULT_PRESET = "default_preset_name"
 
@@ -74,6 +75,9 @@ object AudioEffectManager {
 
     private val _isDarkTheme = MutableStateFlow(true)
     val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
+
+    private val _appLanguage = MutableStateFlow("system")
+    val appLanguage: StateFlow<String> = _appLanguage
 
     private val _eqPreset = MutableStateFlow("Flat")
     val eqPreset: StateFlow<String> = _eqPreset
@@ -121,6 +125,7 @@ object AudioEffectManager {
         val warningDisabled = prefs.getBoolean(KEY_HEARING_WARNING_DISABLED, false)
         val warningHiddenUntil = prefs.getLong(KEY_HEARING_WARNING_HIDDEN_UNTIL, 0L)
         val darkTheme = prefs.getBoolean(KEY_DARK_THEME, true)
+        val appLanguage = prefs.getString(KEY_APP_LANGUAGE, "system") ?: "system"
         val defaultPreset = prefs.getString(KEY_DEFAULT_PRESET, "Flat") ?: "Flat"
         val customPresetsJson = prefs.getString(KEY_CUSTOM_PRESETS, "") ?: ""
 
@@ -134,6 +139,7 @@ object AudioEffectManager {
         _isHearingWarningDisabled.value = warningDisabled
         _hearingWarningHiddenUntil.value = warningHiddenUntil
         _isDarkTheme.value = darkTheme
+        _appLanguage.value = appLanguage
         _defaultPreset.value = defaultPreset
 
         // Parse custom presets from SharedPreferences
@@ -341,6 +347,23 @@ object AudioEffectManager {
     fun setDarkTheme(isDark: Boolean) {
         _isDarkTheme.value = isDark
         getPrefs()?.edit()?.putBoolean(KEY_DARK_THEME, isDark)?.apply()
+    }
+
+    fun setAppLanguage(language: String) {
+        _appLanguage.value = language
+        getPrefs()?.edit()?.putString(KEY_APP_LANGUAGE, language)?.apply()
+        context?.let { ctx ->
+            applyLanguageToApp(ctx, language)
+        }
+    }
+
+    fun applyLanguageToApp(ctx: Context, languageTag: String) {
+        val localeList = if (languageTag.isEmpty() || languageTag == "system") {
+            androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+        } else {
+            androidx.core.os.LocaleListCompat.forLanguageTags(languageTag)
+        }
+        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(localeList)
     }
 
     fun hideHearingWarningFor7Days() {
