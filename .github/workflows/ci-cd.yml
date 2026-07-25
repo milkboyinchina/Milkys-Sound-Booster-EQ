@@ -9,6 +9,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build & Generate Release Artifacts
@@ -107,7 +110,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            .build-outputs/*.apk
-            .build-outputs/*.aab
+            .build-outputs/**/*.apk
+            .build-outputs/**/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
