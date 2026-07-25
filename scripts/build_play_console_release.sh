@@ -86,15 +86,19 @@ if ${GRADLE_CMD} bundleRelease assembleRelease 2>&1 | tee -a "${LOG_FILE}"; then
     if [ -f "app/build/outputs/bundle/release/app-release.aab" ]; then
         cp app/build/outputs/bundle/release/app-release.aab "${BUILD_OUTPUT_DIR}/playstore/app-release.aab"
         cp app/build/outputs/bundle/release/app-release.aab "${BUILD_OUTPUT_DIR}/playstore/${APPLICATION_ID}-v${VERSION_NAME}-release.aab"
+        cp app/build/outputs/bundle/release/app-release.aab "${BUILD_OUTPUT_DIR}/${APPLICATION_ID}-v${VERSION_NAME}-release.aab"
         echo "    [+] App Bundle ready: ${BUILD_OUTPUT_DIR}/playstore/${APPLICATION_ID}-v${VERSION_NAME}-release.aab" | tee -a "${LOG_FILE}"
     fi
 
     # Copy Release APK
-    if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
-        cp app/build/outputs/apk/release/app-release.apk "${BUILD_OUTPUT_DIR}/playstore/app-release.apk"
-        cp app/build/outputs/apk/release/app-release.apk "${BUILD_OUTPUT_DIR}/playstore/${APPLICATION_ID}-v${VERSION_NAME}-release.apk"
-        echo "    [+] Release APK ready: ${BUILD_OUTPUT_DIR}/playstore/${APPLICATION_ID}-v${VERSION_NAME}-release.apk" | tee -a "${LOG_FILE}"
-    fi
+    for apk in app/build/outputs/apk/release/*.apk; do
+        if [ -f "$apk" ]; then
+            cp "$apk" "${BUILD_OUTPUT_DIR}/playstore/app-release.apk"
+            cp "$apk" "${BUILD_OUTPUT_DIR}/playstore/${APPLICATION_ID}-v${VERSION_NAME}-release.apk"
+            cp "$apk" "${BUILD_OUTPUT_DIR}/${APPLICATION_ID}-v${VERSION_NAME}-release.apk"
+            echo "    [+] Release APK ready: ${BUILD_OUTPUT_DIR}/playstore/${APPLICATION_ID}-v${VERSION_NAME}-release.apk" | tee -a "${LOG_FILE}"
+        fi
+    done
 else
     echo -e "\n[!] Release build FAILED. Check log file at: ${LOG_FILE}" | tee -a "${LOG_FILE}"
     cp "${LOG_FILE}" "${LATEST_LOG_FILE}"

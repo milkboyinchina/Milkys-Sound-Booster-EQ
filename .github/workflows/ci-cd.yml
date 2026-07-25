@@ -23,6 +23,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -64,13 +69,17 @@ jobs:
         run: |
           bash scripts/build_play_console_release.sh
 
-      - name: Upload Build Artifacts
+      - name: Upload Build Outputs
         uses: actions/upload-artifact@v4
         with:
-          name: android-build-artifacts
-          path: |
-            .build-outputs/
-            logs/
+          name: android-build-outputs
+          path: .build-outputs/
+
+      - name: Upload Build Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: logs/
 
   release:
     name: Create GitHub Release (Main Branch)
@@ -82,11 +91,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Build Artifacts
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Download Build Outputs
         uses: actions/download-artifact@v4
         with:
-          name: android-build-artifacts
+          name: android-build-outputs
           path: .build-outputs/
+
+      - name: Verify Output Artifacts
+        run: |
+          echo "=== Downloaded Artifacts in .build-outputs ==="
+          find .build-outputs -type f
 
       - name: Generate Release Tag Name
         id: tag
@@ -105,11 +124,13 @@ jobs:
             Automated CI/CD Build for commit `${{ github.sha }}` on branch `main`.
 
             ### Included Artifacts
-            - Universal APKs (`.build-outputs/*.apk`)
-            - Android App Bundle (`.build-outputs/*.aab`)
+            - Universal & Release APKs
+            - Android App Bundle (`.aab`)
           draft: false
           prerelease: false
           files: |
+            .build-outputs/*.apk
+            .build-outputs/*.aab
             .build-outputs/**/*.apk
             .build-outputs/**/*.aab
         env:

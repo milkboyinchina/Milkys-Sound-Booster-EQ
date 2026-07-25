@@ -88,14 +88,14 @@ run_gradle_build() {
 
     if ${GRADLE_CMD} ${BUILD_TASK} 2>&1 | tee -a "${LOG_FILE}"; then
         echo "    [+] Gradle build for [${target_name}] succeeded!" | tee -a "${LOG_FILE}"
+        mkdir -p "${BUILD_OUTPUT_DIR}/${target_name}"
         if [ -d "app/build/outputs/apk/debug" ]; then
-            mkdir -p "${BUILD_OUTPUT_DIR}/${target_name}"
             cp app/build/outputs/apk/debug/*.apk "${BUILD_OUTPUT_DIR}/${target_name}/" 2>/dev/null || true
+            cp app/build/outputs/apk/debug/*.apk "${BUILD_OUTPUT_DIR}/" 2>/dev/null || true
             cp app/build/outputs/apk/debug/app-debug.apk "${BUILD_OUTPUT_DIR}/app-${target_name}-debug.apk" 2>/dev/null || true
         elif [ -d "app/build/outputs/apk" ]; then
-            mkdir -p "${BUILD_OUTPUT_DIR}/${target_name}"
             cp -r app/build/outputs/apk/* "${BUILD_OUTPUT_DIR}/${target_name}/" 2>/dev/null || true
-            find app/build/outputs/apk -name "*.apk" -exec cp {} "${BUILD_OUTPUT_DIR}/app-${target_name}-debug.apk" \; 2>/dev/null || true
+            find app/build/outputs/apk -name "*.apk" -exec cp {} "${BUILD_OUTPUT_DIR}/" \; 2>/dev/null || true
         fi
     else
         echo "[!] Build for [${target_name}] FAILED. Check log file at: ${LOG_FILE}" | tee -a "${LOG_FILE}"
