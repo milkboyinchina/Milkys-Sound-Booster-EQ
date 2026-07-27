@@ -487,8 +487,8 @@ fun DashboardScreen(
                 // Medium (Small Tablets / Foldables): 2-Column Split Pane
                 Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     AppHeaderRow(
@@ -517,16 +517,12 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Left Pane
                         Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState()),
+                            modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             NativeAdCard(
@@ -576,9 +572,7 @@ fun DashboardScreen(
 
                         // Right Pane
                         Column(
-                            modifier = Modifier
-                                .weight(1.1f)
-                                .verticalScroll(rememberScrollState()),
+                            modifier = Modifier.weight(1.1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             AdaptiveBannerAdCard(
@@ -618,8 +612,8 @@ fun DashboardScreen(
                 // Expanded (Large Tablets / Desktop): 3-Pane Dashboard Layout
                 Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ) {
                     AppHeaderRow(
@@ -648,16 +642,12 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Pane 1: Native Ad & Master Dial
                         Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState()),
+                            modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             NativeAdCard(
@@ -691,9 +681,7 @@ fun DashboardScreen(
 
                         // Pane 2: Visual Equalizer & Quick Presets
                         Column(
-                            modifier = Modifier
-                                .weight(1.3f)
-                                .verticalScroll(rememberScrollState()),
+                            modifier = Modifier.weight(1.3f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             AdaptiveBannerAdCard(
@@ -738,9 +726,7 @@ fun DashboardScreen(
 
                         // Pane 3: System Status
                         Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState()),
+                            modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             SystemBatteryDiagnosticCard(
