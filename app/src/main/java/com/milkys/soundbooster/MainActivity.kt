@@ -92,6 +92,16 @@ class MainActivity : AppCompatActivity() {
         AudioEffectManager.init(this)
         AudioEffectManager.applyLanguageToApp(this, AudioEffectManager.appLanguage.value)
         
+        // Ensure WebView cache directories exist to handle Chromium/AdMob engine cache enumeration
+        try {
+            val webViewCacheDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
+            if (!webViewCacheDir.exists()) {
+                webViewCacheDir.mkdirs()
+            }
+        } catch (e: Exception) {
+            // Non-critical cache directory creation fallback
+        }
+
         // Start background service on launch if enabled
         if (AudioEffectManager.isBoostEnabled.value) {
             startBoosterService()
