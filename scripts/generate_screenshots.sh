@@ -76,12 +76,6 @@ if [ -d "app/build/outputs/roborazzi" ]; then
     cp app/build/outputs/roborazzi/*.png "${SCREENSHOT_OUTPUT_DIR}/" 2>/dev/null || true
 fi
 
-# Generate Play Store Presentation Mockup Screenshots
-if command -v python3 >/dev/null 2>&1 && [ -f "scripts/generate_playstore_presentation_screenshots.py" ]; then
-    echo -e "\n[*] Generating Play Store Presentation Graphics..." | tee -a "${LOG_FILE}"
-    python3 scripts/generate_playstore_presentation_screenshots.py 2>&1 | tee -a "${LOG_FILE}"
-fi
-
 echo -e "\n=======================================================" | tee -a "${LOG_FILE}"
 echo "   SCREENSHOT GENERATION SUCCESSFUL" | tee -a "${LOG_FILE}"
 echo "   Output Folder: ${SCREENSHOT_OUTPUT_DIR}" | tee -a "${LOG_FILE}"
