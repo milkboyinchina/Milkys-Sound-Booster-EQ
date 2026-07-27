@@ -35,7 +35,7 @@
     <string name="stepped_slider_desc_on" formatted="false">Slider snaps to 10% increments (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Smooth free slider movement.</string>
     <string name="notification_controls_title">Notification Bar Controls</string>
-    <string name="notification_controls_desc">Display loudness adjustment (-10%, +10%) and OFF button in the notification bar when booster is enabled.</string>
+    <string formatted="false" name="notification_controls_desc">Display loudness adjustment (-10%, +10%) and OFF button in the notification bar when booster is enabled.</string>
     <string name="disable_hearing_warning_title">Disable Safety Warning Banner</string>
     <string name="disable_hearing_warning_desc">Completely hide the hearing and speaker damage warning banner on main dashboard.</string>
     <string name="developer_legal_title">DEVELOPER &amp; LEGAL</string>

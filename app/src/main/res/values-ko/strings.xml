@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">시스템 성능 및 배터리 진단</string>
     <string name="amplifier_notification_controls">앰프 및 알림 제어</string>
     <string name="stepped_slider_title">10% 단계별 음량 슬라이더</string>
-    <string name="stepped_slider_desc_on">슬라이더가 10% 단위로 스냅됩니다(0%, 10%, 20%...).</string>
+    <string formatted="false" name="stepped_slider_desc_on">슬라이더가 10% 단위로 스냅됩니다(0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">부드럽고 자유로운 슬라이더 이동.</string>
     <string name="notification_controls_title">알림 표시줄 제어</string>
-    <string name="notification_controls_desc">부스터가 활성화되었을 때 알림 표시줄에 음량 조절(-10%, +10%) 및 끄기 버튼을 표시합니다.</string>
+    <string formatted="false" name="notification_controls_desc">부스터가 활성화되었을 때 알림 표시줄에 음량 조절(-10%, +10%) 및 끄기 버튼을 표시합니다.</string>
     <string name="disable_hearing_warning_title">안전 경고 배너 비활성화</string>
     <string name="disable_hearing_warning_desc">메인 대시보드에서 청력 및 스피커 손상 경고 배너를 완전히 숨깁니다.</string>
     <string name="developer_legal_title">개발자 및 법적 고지</string>

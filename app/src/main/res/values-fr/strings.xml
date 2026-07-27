@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">DIAGNOSTIC DE PERFORMANCE ET BATTERIE DU SYSTÈME</string>
     <string name="amplifier_notification_controls">COMMANDES D\'AMPLIFICATEUR ET NOTIFICATION</string>
     <string name="stepped_slider_title">Curseur de volume par paliers de 10%</string>
-    <string name="stepped_slider_desc_on">Le curseur s\'ajuste par paliers de 10% (0%, 10%, 20%...).</string>
+    <string formatted="false" name="stepped_slider_desc_on">Le curseur s\'ajuste par paliers de 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Mouvement fluide et libre du curseur.</string>
     <string name="notification_controls_title">Commandes de la barre de notification</string>
-    <string name="notification_controls_desc">Afficher l\'ajustement du volume (-10%, +10%) et le bouton OFF dans la barre de notification lorsque l\'amplificateur est actif.</string>
+    <string formatted="false" name="notification_controls_desc">Afficher l\'ajustement du volume (-10%, +10%) et le bouton OFF dans la barre de notification lorsque l\'amplificateur est actif.</string>
     <string name="disable_hearing_warning_title">Désactiver la bannière d\'avertissement de sécurité</string>
     <string name="disable_hearing_warning_desc">Masquer complètement la bannière d\'avertissement sur le tableau de bord principal.</string>
     <string name="developer_legal_title">DÉVELOPPEUR ETMENTIONS LÉGALES</string>

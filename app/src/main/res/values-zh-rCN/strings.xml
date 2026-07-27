@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">系统性能与电池诊断</string>
     <string name="amplifier_notification_controls">放大器与通知栏控制</string>
     <string name="stepped_slider_title">10%阶梯式音量滑块</string>
-    <string name="stepped_slider_desc_on">滑块将按 10% 的增量吸附调整（0%、10%、20%...）。</string>
+    <string formatted="false" name="stepped_slider_desc_on">滑块将按 10% 的增量吸附调整（0%、10%、20%...）。</string>
     <string name="stepped_slider_desc_off">平滑自由滑动。</string>
     <string name="notification_controls_title">通知栏快捷控制</string>
-    <string name="notification_controls_desc">开启增强时，在通知栏中显示音量微调（-10%、+10%）和关闭按钮。</string>
+    <string formatted="false" name="notification_controls_desc">开启增强时，在通知栏中显示音量微调（-10%、+10%）和关闭按钮。</string>
     <string name="disable_hearing_warning_title">隐藏安全警告横幅</string>
     <string name="disable_hearing_warning_desc">在主界面完全隐藏听力与设备损坏安全警告横幅。</string>
     <string name="developer_legal_title">开发者与法律条款</string>

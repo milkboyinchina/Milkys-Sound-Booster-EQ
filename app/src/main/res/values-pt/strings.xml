@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">DIAGNÓSTICO DE DESEMPENHO E BATERIA DO SISTEMA</string>
     <string name="amplifier_notification_controls">CONTROLES DE AMPLIFICADOR E NOTIFICAÇÃO</string>
     <string name="stepped_slider_title">Controle Deslizante em Etapas de 10%</string>
-    <string name="stepped_slider_desc_on">O controle ajusta em incrementos de 10% (0%, 10%, 20%...).</string>
+    <string formatted="false" name="stepped_slider_desc_on">O controle ajusta em incrementos de 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Movimento contínuo e suave.</string>
     <string name="notification_controls_title">Controles da Barra de Notificações</string>
-    <string name="notification_controls_desc">Exibe ajuste de volume (-10%, +10%) e botão DESLIGAR na barra de notificações quando ativado.</string>
+    <string formatted="false" name="notification_controls_desc">Exibe ajuste de volume (-10%, +10%) e botão DESLIGAR na barra de notificações quando ativado.</string>
     <string name="disable_hearing_warning_title">Desativar Banners de Aviso de Segurança</string>
     <string name="disable_hearing_warning_desc">Ocultar completamente o banner de aviso sobre danos auditivos no painel principal.</string>
     <string name="developer_legal_title">DESENVOLVEDOR E TERMOS LEGAIS</string>

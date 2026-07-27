@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">システムパフォーマンス＆バッテリー診断</string>
     <string name="amplifier_notification_controls">アンプ＆通知コントロール</string>
     <string name="stepped_slider_title">10%ステップ音量スライダー</string>
-    <string name="stepped_slider_desc_on">スライダーが10%刻みでスナップします（0%、10%、20%...）。</string>
+    <string formatted="false" name="stepped_slider_desc_on">スライダーが10%刻みでスナップします（0%、10%、20%...）。</string>
     <string name="stepped_slider_desc_off">スムーズな自由スライダー移動。</string>
     <string name="notification_controls_title">通知バーコントロール</string>
-    <string name="notification_controls_desc">ブースター有効時に通知バーに音量微調整（-10%、+10%）とOFFボタンを表示します。</string>
+    <string formatted="false" name="notification_controls_desc">ブースター有効時に通知バーに音量微調整（-10%、+10%）とOFFボタンを表示します。</string>
     <string name="disable_hearing_warning_title">警告バナーを無効化</string>
     <string name="disable_hearing_warning_desc">メインダッシュボードの聴覚およびスピーカー損傷の警告バナーを完全に非表示にします。</string>
     <string name="developer_legal_title">開発者＆法的情報</string>
