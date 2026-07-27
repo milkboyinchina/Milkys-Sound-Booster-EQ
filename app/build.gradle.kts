@@ -65,14 +65,14 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-   // applicationId = envApplicationId
-    applicationId = "com.milkys.soundbooster"
-    versionCode = 26072401
-    versionName = "0.1"
+    applicationId = envApplicationId
+    //applicationId = "com.milkys.soundbooster"
+    //versionCode = 26072401
+    //versionName = "0.1"
     minSdk = 24
     targetSdk = 36
-   // versionCode = envVersionCode
-   // versionName = envVersionName
+    versionCode = envVersionCode
+    versionName = envVersionName
 
     resValue("string", "app_name", envAppName)
     buildConfigField("String", "APP_NAME", "\"$envAppName\"")
