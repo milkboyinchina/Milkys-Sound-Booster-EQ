@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">DIAGNOSTICA PRESTAZIONI E BATTERIA</string>
     <string name="amplifier_notification_controls">CONTROLLI AMPLIFICATORE E NOTIFICHE</string>
     <string name="stepped_slider_title">Cursore del volume a scatti del 10%</string>
-    <string name="stepped_slider_desc_on">Il cursore si adatta con incrementi del 10% (0%, 10%, 20%...).</string>
+    <string formatted="false" name="stepped_slider_desc_on">Il cursore si adatta con incrementi del 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Movimento del cursore continuo e libero.</string>
     <string name="notification_controls_title">Controlli della barra di notifica</string>
-    <string name="notification_controls_desc">Mostra la regolazione del volume (-10%, +10%) e il pulsante OFF nella barra delle notifiche quando l\'amplificatore è attivo.</string>
+    <string formatted="false" name="notification_controls_desc">Mostra la regolazione del volume (-10%, +10%) e il pulsante OFF nella barra delle notifiche quando l\'amplificatore è attivo.</string>
     <string name="disable_hearing_warning_title">Disattiva banner di avviso di sicurezza</string>
     <string name="disable_hearing_warning_desc">Nascondi completamente il banner di avviso di sicurezza sulla schermata principale.</string>
     <string name="developer_legal_title">SVILUPPATORE E NOTE LEGALI</string>

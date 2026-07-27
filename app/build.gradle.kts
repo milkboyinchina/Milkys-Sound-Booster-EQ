@@ -27,8 +27,11 @@ fun getEnvVar(key: String, defaultValue: String): String {
 
 val envAppName = getEnvVar("APP_NAME", "Milkys Sound Booster & EQ")
 val envApplicationId = getEnvVar("APPLICATION_ID", "com.milkys.soundbooster")
-val envVersionCode = getEnvVar("VERSION_CODE", "26072401").toIntOrNull() ?: 26072401
-val envVersionName = getEnvVar("VERSION_NAME", "0.1")
+val envVersionCode = (getEnvVar("VERSION_CODE", "").toIntOrNull()
+  ?: error("VERSION_CODE is missing or invalid in .env — please set a valid integer version code."))
+val envVersionName = getEnvVar("VERSION_NAME", "").ifEmpty {
+  error("VERSION_NAME is missing in .env — please set a version name (e.g. 0.1.1).")
+}
 val envBuildOutputDir = getEnvVar("BUILD_OUTPUT_DIR", ".build-outputs")
 val envBuildLogsDir = getEnvVar("BUILD_LOGS_DIR", "logs")
 val envScreenshotOutputDir = getEnvVar("SCREENSHOT_OUTPUT_DIR", "screenshots")
@@ -66,9 +69,6 @@ android {
 
   defaultConfig {
     applicationId = envApplicationId
-    //applicationId = "com.milkys.soundbooster"
-    //versionCode = 26072401
-    //versionName = "0.1"
     minSdk = 24
     targetSdk = 36
     versionCode = envVersionCode

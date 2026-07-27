@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">सिस्टम प्रदर्शन और बैटरी निदान</string>
     <string name="amplifier_notification_controls">एम्प्लीफायर और अधिसूचना नियंत्रण</string>
     <string name="stepped_slider_title">10% स्टेप्ड लाउडनेस स्लाइडर</string>
-    <string name="stepped_slider_desc_on">स्लाइडर 10% के अंतराल पर स्नैप होता है (0%, 10%, 20%...)।</string>
+    <string formatted="false" name="stepped_slider_desc_on">स्लाइडर 10% के अंतराल पर स्नैप होता है (0%, 10%, 20%...)।</string>
     <string name="stepped_slider_desc_off">स्मूथ फ्री स्लाइडर मूवमेंट।</string>
     <string name="notification_controls_title">अधिसूचना पट्टी नियंत्रण</string>
-    <string name="notification_controls_desc">बूस्टर सक्षम होने पर अधिसूचना पट्टी में वॉल्यूम समायोजन (-10%, +10%) और बंद बटन प्रदर्शित करें।</string>
+    <string formatted="false" name="notification_controls_desc">बूस्टर सक्षम होने पर अधिसूचना पट्टी में वॉल्यूम समायोजन (-10%, +10%) और बंद बटन प्रदर्शित करें।</string>
     <string name="disable_hearing_warning_title">सुरक्षा चेतावनी बैनर अक्षम करें</string>
     <string name="disable_hearing_warning_desc">मुख्य डैशबोर्ड पर सुनने की क्षति की चेतावनी बैनर को पूरी तरह से छिपाएं।</string>
     <string name="developer_legal_title">डेवलपर और कानूनी</string>

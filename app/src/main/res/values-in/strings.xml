@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">DIAGNOSTIK KINERJA SISTEM &amp; BATERAI</string>
     <string name="amplifier_notification_controls">KONTROL PENGERAS &amp; NOTIFIKASI</string>
     <string name="stepped_slider_title">Slider Kelantangan Bertahap 10%</string>
-    <string name="stepped_slider_desc_on">Slider melompat per kelipatan 10% (0%, 10%, 20%...).</string>
+    <string formatted="false" name="stepped_slider_desc_on">Slider melompat per kelipatan 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Pergerakan slider halus bebas.</string>
     <string name="notification_controls_title">Kontrol Bilah Notifikasi</string>
-    <string name="notification_controls_desc">Tampilkan pengaturan kelantangan (-10%, +10%) dan tombol MATI di bilah notifikasi saat peningkat aktif.</string>
+    <string formatted="false" name="notification_controls_desc">Tampilkan pengaturan kelantangan (-10%, +10%) dan tombol MATI di bilah notifikasi saat peningkat aktif.</string>
     <string name="disable_hearing_warning_title">Sembunyikan Banner Peringatan Keselamatan</string>
     <string name="disable_hearing_warning_desc">Sembunyikan sepenuhnya banner peringatan kerusakan pendengaran di dasbor utama.</string>
     <string name="developer_legal_title">PENGEMBANG &amp; HUKUM</string>

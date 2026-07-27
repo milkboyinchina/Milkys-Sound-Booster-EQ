@@ -38,7 +38,7 @@
 # ------------------------------------------------------------------------------
 -keep class * extends androidx.room.RoomDatabase
 -dontwarn androidx.room.paging.**
--keep class * _Impl { *; }
+-keep class **_Impl { *; }
 -keepclassmembers class * {
     @androidx.room.* *;
 }

@@ -32,10 +32,10 @@
     <string name="system_battery_diagnostic_title">系統效能與電池診斷</string>
     <string name="amplifier_notification_controls">擴大機與通知欄控制</string>
     <string name="stepped_slider_title">10%階梯式音量滑桿</string>
-    <string name="stepped_slider_desc_on">滑桿將按 10% 的增量吸附調整（0%、10%、20%...）。</string>
+    <string formatted="false" name="stepped_slider_desc_on">滑桿將按 10% 的增量吸附調整（0%、10%、20%...）。</string>
     <string name="stepped_slider_desc_off">平滑自由滑動。</string>
     <string name="notification_controls_title">通知欄快捷控制</string>
-    <string name="notification_controls_desc">開啟增強時，在通知欄中顯示音量微調（-10%、+10%）和關閉按鈕。</string>
+    <string formatted="false" name="notification_controls_desc">開啟增強時，在通知欄中顯示音量微調（-10%、+10%）和關閉按鈕。</string>
     <string name="disable_hearing_warning_title">隱藏安全警告橫幅</string>
     <string name="disable_hearing_warning_desc">在主介面完全隱藏聽力與設備損壞安全警告橫幅。</string>
     <string name="developer_legal_title">開發者與法律條款</string>
