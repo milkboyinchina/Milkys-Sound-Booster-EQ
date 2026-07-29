@@ -16,6 +16,11 @@ if [ ! -f ".env" ] && [ -f ".env.example" ]; then
     cp .env.example .env
 fi
 
+# Automatically bump VERSION_CODE and VERSION_NAME in .env for every build
+if [ -f "${SCRIPT_DIR}/bump_version.py" ]; then
+    python3 "${SCRIPT_DIR}/bump_version.py"
+fi
+
 # Function to read variable from .env or fallback
 get_env_var() {
     local var_name="$1"

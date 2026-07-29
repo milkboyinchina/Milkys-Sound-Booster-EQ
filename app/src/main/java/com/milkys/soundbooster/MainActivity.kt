@@ -2044,135 +2044,107 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
     ) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.92f)
+                .widthIn(max = 330.dp)
+                .fillMaxWidth(0.85f)
                 .wrapContentHeight(),
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(20.dp),
             color = Color(0xFF2B2930),
             tonalElevation = 8.dp
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(16.dp)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Icon Header
+                // App Logo Header
                 Box(
                     modifier = Modifier
-                        .size(72.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(1.5.dp, Color(0xFFD0BCFF), RoundedCornerShape(16.dp)),
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, Color(0xFFD0BCFF), RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_app_logo),
-                        contentDescription = "Onboarding Welcome Logo",
+                        contentDescription = "App Logo",
                         modifier = Modifier.fillMaxSize()
                     )
                 }
 
                 Text(
-                    text = "Welcome to Milkys App!",
+                    text = "Welcome to Milkys App",
                     color = Color(0xFFE6E1E5),
-                    fontSize = 22.sp,
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
 
-                Text(
-                    text = "Quick Start Guide for High-Fidelity Audio",
-                    color = Color(0xFFD0BCFF),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
-                )
+                HorizontalDivider(color = Color(0xFF49454F), thickness = 1.dp)
 
-                Divider(color = Color(0xFF49454F), thickness = 1.dp)
-
-                // Hearing Loss Safety Warning Banner
+                // Hearing Loss Safety Warning Banner (Ultra-compact)
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF382300)),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.5.dp, Color(0xFFFFC107))
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, Color(0xFFFFC107))
                 ) {
                     Row(
-                        modifier = Modifier.padding(14.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.padding(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.Warning,
-                            contentDescription = "Hearing Loss Safety Warning",
+                            contentDescription = "Safety Warning",
                             tint = Color(0xFFFFC107),
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(18.dp)
                         )
-                        Column {
-                            Text(
-                                text = "WARNING: HEARING & SPEAKER DAMAGE RISK",
-                                color = Color(0xFFFFD54F),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(3.dp))
-                            Text(
-                                text = "Over-boosting audio can permanently damage your hearing and cause physical damage or blown speakers/earphones. Always boost responsibly.",
-                                color = Color(0xFFFFF59D),
-                                fontSize = 12.sp,
-                                lineHeight = 16.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
+                        Text(
+                            text = "CAUTION: High volume can damage hearing or speakers. Boost responsibly.",
+                            color = Color(0xFFFFD54F),
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
 
-                // Feature Highlights
+                // Feature Highlights (Concise 3 key features)
                 OnboardingFeatureItem(
                     icon = Icons.Default.VolumeUp,
-                    title = "Decibel Loudness Booster",
-                    description = "Tap the central power dial to activate amplification. Adjust gain up to +100% boost."
-                )
-
-                OnboardingFeatureItem(
-                    icon = Icons.Default.Tune,
-                    title = "10% Stepped or Free Slider",
-                    description = "In Settings, switch between 10% snapping steps (0%, 10%, 20%...) or continuous free slider mode."
-                )
-
-                OnboardingFeatureItem(
-                    icon = Icons.Default.NotificationsActive,
-                    title = "Notification Bar Quick Controls",
-                    description = "Control gain (-10%, +10%) and instant OFF directly from your Android notification drawer."
+                    title = "Loudness Booster",
+                    description = "Amplify audio volume up to +100%"
                 )
 
                 OnboardingFeatureItem(
                     icon = Icons.Default.Equalizer,
-                    title = "5-Band Visual Equalizer",
-                    description = "Fine-tune frequencies from 60Hz to 14kHz or select presets like Bass Booster, Rock, Pop, or Jazz."
+                    title = "5-Band Equalizer",
+                    description = "Fine-tune sound & audio presets"
                 )
 
                 OnboardingFeatureItem(
-                    icon = Icons.Default.Layers,
-                    title = "Floating Overlay Widget",
-                    description = "Enable the floating widget to easily adjust volume on top of video or music apps."
+                    icon = Icons.Default.NotificationsActive,
+                    title = "Quick Controls",
+                    description = "Adjust gain via notification or widget"
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(44.dp)
                         .testTag("onboarding_get_started_button"),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
                         text = "GET STARTED",
                         color = Color(0xFF381E72),
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -2189,20 +2161,20 @@ fun OnboardingFeatureItem(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-        verticalAlignment = Alignment.Top
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(38.dp)
-                .background(Color(0xFF49454F), RoundedCornerShape(12.dp)),
+                .size(32.dp)
+                .background(Color(0xFF49454F), RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = Color(0xFFD0BCFF),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(18.dp)
             )
         }
 
@@ -2210,15 +2182,14 @@ fun OnboardingFeatureItem(
             Text(
                 text = title,
                 color = Color(0xFFE6E1E5),
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = description,
                 color = Color(0xFFCAC4D0),
-                fontSize = 12.sp,
-                lineHeight = 16.sp
+                fontSize = 11.sp,
+                lineHeight = 14.sp
             )
         }
     }
