@@ -12,7 +12,7 @@ When the user starts a prompt with a slash shortcut, **bypass evaluation overhea
 |---|---|---|---|
 | `/quick <task>` | `@quick-task` | `flash_lite` (Low) | Git operations (`git status`, `git commit`, `git push`), file reads, quick greps, minor formatting, status checks. |
 | `/standard <task>` | `@standard-dev` | `flash` (Medium) | Standard feature implementation, UI updates, unit test creation, build log analysis. |
-| `/hard-fix <task>` or `/hard-fix-sonnet <task>` | `@complex-architect` | `pro` (High) | Multi-file architectural refactoring, deep debugging, complex algorithm design, security audits. |
+| `/hard-fix-sonnet <task>` or `/hard-fix <task>` | `@complex-architect` | **Claude Sonnet (`pro`)** | Multi-file architectural refactoring, deep debugging, complex algorithm design, security audits. |
 
 ---
 
