@@ -33,6 +33,8 @@ object AudioEffectManager {
     private const val KEY_APP_LANGUAGE = "app_language"
     private const val KEY_CUSTOM_PRESETS = "custom_presets_json"
     private const val KEY_DEFAULT_PRESET = "default_preset_name"
+    private const val KEY_AD_CONSENT_STATUS = "ad_consent_status"
+    private const val KEY_PERSONALIZED_ADS_CONSENT = "personalized_ads_consent"
 
     val BUILT_IN_PRESETS = mapOf(
         "Flat" to intArrayOf(0, 0, 0, 0, 0),
@@ -57,6 +59,12 @@ object AudioEffectManager {
 
     private val _isAdsEnabled = MutableStateFlow(true)
     val isAdsEnabled: StateFlow<Boolean> = _isAdsEnabled
+
+    private val _adConsentStatus = MutableStateFlow("UNKNOWN") // "UNKNOWN", "GRANTED", "DENIED"
+    val adConsentStatus: StateFlow<String> = _adConsentStatus
+
+    private val _isPersonalizedAdsConsent = MutableStateFlow(true)
+    val isPersonalizedAdsConsent: StateFlow<Boolean> = _isPersonalizedAdsConsent
 
     private val _isSliderStepped = MutableStateFlow(true)
     val isSliderStepped: StateFlow<Boolean> = _isSliderStepped
@@ -119,6 +127,8 @@ object AudioEffectManager {
         val bandsStr = prefs.getString(KEY_BANDS, "0,0,0,0,0") ?: "0,0,0,0,0"
         val floating = prefs.getBoolean(KEY_FLOATING, false)
         val adsEnabled = prefs.getBoolean(KEY_ADS_ENABLED, true)
+        val consentStatus = prefs.getString(KEY_AD_CONSENT_STATUS, "UNKNOWN") ?: "UNKNOWN"
+        val personalizedConsent = prefs.getBoolean(KEY_PERSONALIZED_ADS_CONSENT, true)
         val sliderStepped = prefs.getBoolean(KEY_SLIDER_STEPPED, true)
         val notifControlsEnabled = prefs.getBoolean(KEY_NOTIF_CONTROLS_ENABLED, true)
         val hasSeenOnboarding = prefs.getBoolean(KEY_HAS_SEEN_ONBOARDING, false)
@@ -133,6 +143,9 @@ object AudioEffectManager {
         _boostProgress.value = boost
         _isFloatingEnabled.value = floating
         _isAdsEnabled.value = adsEnabled
+        _adConsentStatus.value = consentStatus
+        _isPersonalizedAdsConsent.value = personalizedConsent
+
         _isSliderStepped.value = sliderStepped
         _isNotifControlsEnabled.value = notifControlsEnabled
         _hasSeenOnboarding.value = hasSeenOnboarding
@@ -322,6 +335,16 @@ object AudioEffectManager {
     fun setAdsEnabled(enabled: Boolean) {
         _isAdsEnabled.value = enabled
         getPrefs()?.edit()?.putBoolean(KEY_ADS_ENABLED, enabled)?.apply()
+    }
+
+    fun setAdConsentStatus(status: String) {
+        _adConsentStatus.value = status
+        getPrefs()?.edit()?.putString(KEY_AD_CONSENT_STATUS, status)?.apply()
+    }
+
+    fun setPersonalizedAdsConsent(enabled: Boolean) {
+        _isPersonalizedAdsConsent.value = enabled
+        getPrefs()?.edit()?.putBoolean(KEY_PERSONALIZED_ADS_CONSENT, enabled)?.apply()
     }
 
     fun setSliderStepped(enabled: Boolean) {

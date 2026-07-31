@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">聴覚保護＆安全上の警告</string>
     <string name="hearing_warning_desc">大音量（&gt;100%）で長時間聴くと、永久的な聴覚障害やスピーカーの歪みの原因となる場合があります。責任を持って音量を調整してください。</string>
     <string name="quick_presets_title">クイックブーストプリセット</string>
-    <string name="visual_equalizer_title">5バンドビジュアルイコライザー</string>
+    <string name="visual_equalizer_title">イコライザー</string>
     <string name="system_battery_diagnostic_title">システムパフォーマンス＆バッテリー診断</string>
     <string name="amplifier_notification_controls">アンプ＆通知コントロール</string>
     <string name="stepped_slider_title">10%ステップ音量スライダー</string>

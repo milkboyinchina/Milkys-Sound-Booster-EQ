@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">聽力保護與安全警告</string>
     <string name="hearing_warning_desc">長時間在大音量（&gt;100%）下聆聽可能會對聽力造成永久性損傷或導致揚聲器失真。請合理調整音量。</string>
     <string name="quick_presets_title">快速增強預設</string>
-    <string name="visual_equalizer_title">5頻段視覺化等化器</string>
+    <string name="visual_equalizer_title">等化器</string>
     <string name="system_battery_diagnostic_title">系統效能與電池診斷</string>
     <string name="amplifier_notification_controls">擴大機與通知欄控制</string>
     <string name="stepped_slider_title">10%階梯式音量滑桿</string>

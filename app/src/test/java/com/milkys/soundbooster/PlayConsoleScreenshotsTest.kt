@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -60,14 +61,14 @@ class PlayConsoleScreenshotsTest {
         composeTestRule.onRoot().captureRoboImage(filePath = getScreenshotPath("03_settings_dialog.png"))
 
         // 4. Click Open Source License button inside Settings
-        composeTestRule.onNodeWithTag("open_source_license_button").performClick()
+        composeTestRule.onNodeWithTag("open_source_license_button").performScrollTo().performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onRoot().captureRoboImage(filePath = getScreenshotPath("04_open_source_license_dialog.png"))
 
         // 5. Close Open Source License dialog and open Privacy Policy Terms
         composeTestRule.onNodeWithTag("close_license_button").performClick()
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithTag("privacy_terms_button").performClick()
+        composeTestRule.onNodeWithTag("privacy_terms_button").performScrollTo().performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onRoot().captureRoboImage(filePath = getScreenshotPath("05_privacy_terms_dialog.png"))
     }
