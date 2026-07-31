@@ -32,7 +32,7 @@ This workspace uses **Subagent Model Delegation** and **Workspace Rules** (`.gem
 
 - **`/quick <task>`**: Instantly delegates to **`@quick-task`** on **Low (`flash_lite`)** for Git operations (`git commit`, `git push`), file reads, quick greps, and minor edits.
 - **`/standard <task>`**: Instantly delegates to **`@standard-dev`** on **Medium (`flash`)** for feature updates, UI tweaks, and unit tests.
-- **`/hard-fix <task>`**: Instantly delegates to **`@complex-architect`** on **High (`pro`)** for architectural refactoring, multi-file debugging, and security/performance overhauls.
+- **`/hard-fix <task>`** or **`/hard-fix-sonnet <task>`**: Instantly delegates to **`@complex-architect`** on **High (`pro`)** for architectural refactoring, multi-file debugging, and security/performance overhauls.
 
 To enable model delegation rules in any current or future project workspace, run:
 ```bash
