@@ -38,14 +38,15 @@ def classify_prompt(prompt_text):
             "shortcut": "/standard",
             "task": task or text
         }
-    elif text.startswith("/hard-fix"):
-        task = re.sub(r"^/hard-fix\s*", "", text)
+    elif text.startswith("/hard-fix") or text.startswith("/hard-fix-sonnet"):
+        shortcut_name = "/hard-fix-sonnet" if text.startswith("/hard-fix-sonnet") else "/hard-fix"
+        task = re.sub(r"^/(hard-fix-sonnet|hard-fix)\s*", "", text)
         return {
             "tier": "High",
             "model": HIGH_MODEL,
             "profile": "@complex-architect",
             "role": "Complex Architect",
-            "shortcut": "/hard-fix",
+            "shortcut": shortcut_name,
             "task": task or text
         }
 
@@ -99,6 +100,7 @@ def run_tests():
     test_cases = [
         ("/quick git push", LOW_MODEL, "/quick"),
         ("/hard-fix refactor audio engine architecture", HIGH_MODEL, "/hard-fix"),
+        ("/hard-fix-sonnet refactor audio engine", HIGH_MODEL, "/hard-fix-sonnet"),
         ("/standard update button style", MEDIUM_MODEL, "/standard"),
         ("git status", LOW_MODEL, None),
         ("implement new equalizer preset screen", MEDIUM_MODEL, None),
