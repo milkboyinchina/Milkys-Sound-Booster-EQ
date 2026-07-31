@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">सुनने की सुरक्षा और चेतावनी</string>
     <string name="hearing_warning_desc">लंबी अवधि के लिए उच्च वॉल्यूम स्तरों (&gt;100%) पर सुनने से सुनने की क्षमता को स्थायी नुकसान या स्पीकर विकृति हो सकती है। कृपया जिम्मेदारी से वॉल्यूम समायोजित करें।</string>
     <string name="quick_presets_title">त्वरित बूस्ट प्रीसेट</string>
-    <string name="visual_equalizer_title">5-बैंड विज़ुअल इक्वलाइज़र</string>
+    <string name="visual_equalizer_title">इक्वलाइज़र</string>
     <string name="system_battery_diagnostic_title">सिस्टम प्रदर्शन और बैटरी निदान</string>
     <string name="amplifier_notification_controls">एम्प्लीफायर और अधिसूचना नियंत्रण</string>
     <string name="stepped_slider_title">10% स्टेप्ड लाउडनेस स्लाइडर</string>

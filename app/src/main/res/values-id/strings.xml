@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">Perlindungan Pendengaran &amp; Peringatan Keselamatan</string>
     <string name="hearing_warning_desc">Mendengarkan pada volume tinggi (&gt;100%) dalam waktu lama dapat menyebabkan kerusakan pendengaran permanen atau distorsi speaker. Harap sesuaikan volume dengan bijak.</string>
     <string name="quick_presets_title">PRESET PENINGKAT CEPAT</string>
-    <string name="visual_equalizer_title">EKUALISER VISUAL 5-BAND</string>
+    <string name="visual_equalizer_title">EKUALISER</string>
     <string name="system_battery_diagnostic_title">DIAGNOSTIK KINERJA SISTEM &amp; BATERAI</string>
     <string name="amplifier_notification_controls">KONTROL PENGERAS &amp; NOTIFIKASI</string>
     <string name="stepped_slider_title">Slider Kelantangan Bertahap 10%</string>

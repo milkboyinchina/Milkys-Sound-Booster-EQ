@@ -26,6 +26,21 @@ A high-fidelity global audio booster and 5-band graphic equalizer designed for A
 
 ---
 
+## ⚡ AI Model Delegation & Zero-Delay Shortcuts
+
+This workspace uses **Subagent Model Delegation** and **Workspace Rules** (`.gemini/rules/model_delegation.md`) to optimize token usage and execution speed:
+
+- **`/quick <task>`**: Instantly delegates to **`@quick-task`** on **Low (`flash_lite`)** for Git operations (`git commit`, `git push`), file reads, quick greps, and minor edits.
+- **`/standard <task>`**: Instantly delegates to **`@standard-dev`** on **Medium (`flash`)** for feature updates, UI tweaks, and unit tests.
+- **`/hard-fix <task>`**: Instantly delegates to **`@complex-architect`** on **High (`pro`)** for architectural refactoring, multi-file debugging, and security/performance overhauls.
+
+To enable model delegation rules in any current or future project workspace, run:
+```bash
+./scripts/setup_project_rules.sh /path/to/target-project
+```
+
+---
+
 ## 📚 Documentation & Guides (`howto/`)
 
 For detailed technical guides and architecture specifications, explore the `howto/` directory:

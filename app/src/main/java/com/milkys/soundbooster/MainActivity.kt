@@ -1183,6 +1183,85 @@ fun DashboardScreen(
                             }
                         }
 
+                        // GDPR & Ad Privacy Settings Card
+                        val isPersonalizedConsent by AudioEffectManager.isPersonalizedAdsConsent.collectAsState()
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("gdpr_privacy_settings_card"),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            shape = RoundedCornerShape(20.dp),
+                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Security,
+                                            contentDescription = null,
+                                            tint = Color(0xFFD0BCFF),
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                        Column {
+                                            Text(
+                                                text = "Personalized Ads (GDPR)",
+                                                color = Color(0xFFE6E1E5),
+                                                fontSize = 15.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                            Text(
+                                                text = if (isPersonalizedConsent) "Consent: Granted (Personalized)" else "Consent: Non-personalized Ads Only",
+                                                color = Color(0xFFCAC4D0),
+                                                fontSize = 12.sp
+                                            )
+                                        }
+                                    }
+                                    Switch(
+                                        checked = isPersonalizedConsent,
+                                        onCheckedChange = {
+                                            AudioEffectManager.setPersonalizedAdsConsent(it)
+                                            AudioEffectManager.setAdConsentStatus(if (it) "GRANTED" else "DENIED")
+                                        },
+                                        colors = SwitchDefaults.colors(
+                                            checkedThumbColor = Color(0xFFD0BCFF),
+                                            checkedTrackColor = Color(0xFF49454F)
+                                        ),
+                                        modifier = Modifier.testTag("settings_personalized_ads_toggle")
+                                    )
+                                }
+                                if (AdConsentManager.isUmpAvailable()) {
+                                    Divider(color = Color(0xFF49454F), thickness = 1.dp)
+                                    TextButton(
+                                        onClick = {
+                                            (context as? android.app.Activity)?.let { act ->
+                                                AdConsentManager.requestConsentInfoUpdate(act)
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .testTag("update_gdpr_consent_button")
+                                    ) {
+                                        Text(
+                                            text = "Update GDPR Consent Preferences",
+                                            color = Color(0xFFD0BCFF),
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         // Open Source License (GPLv3) Button
                         Card(
                             modifier = Modifier
@@ -1784,6 +1863,7 @@ fun AdaptiveBannerAdCard(
         }
     }
     val isAdsEnabled by AudioEffectManager.isAdsEnabled.collectAsState()
+    val isPersonalizedConsent by AudioEffectManager.isPersonalizedAdsConsent.collectAsState()
 
     if (!isAdsIncluded || !isAdsEnabled) return
 
@@ -1832,6 +1912,24 @@ fun AdaptiveBannerAdCard(
                     adViewClass.getMethod("setAdSize", adSizeClass).invoke(adView, adaptiveAdSize)
 
                     val adReqBuilder = adRequestBuilderClass.getConstructor().newInstance()
+                    if (!isPersonalizedConsent) {
+                        try {
+                            val extras = android.os.Bundle()
+                            extras.putString("npa", "1")
+                            val addNetworkExtrasMethod = adRequestBuilderClass.getMethod(
+                                "addNetworkExtrasBundle",
+                                Class.forName("com.google.ads.mediation.admob.AdMobAdapter"),
+                                android.os.Bundle::class.java
+                            )
+                            addNetworkExtrasMethod.invoke(
+                                adReqBuilder,
+                                Class.forName("com.google.ads.mediation.admob.AdMobAdapter"),
+                                extras
+                            )
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
+                        }
+                    }
                     val adReq = adRequestBuilderClass.getMethod("build").invoke(adReqBuilder)
 
                     adViewClass.getMethod("loadAd", adRequestClass).invoke(adView, adReq)
@@ -1887,6 +1985,7 @@ fun NativeAdCard(
         }
     }
     val isAdsEnabled by AudioEffectManager.isAdsEnabled.collectAsState()
+    val isPersonalizedConsent by AudioEffectManager.isPersonalizedAdsConsent.collectAsState()
 
     if (!isAdsIncluded || !isAdsEnabled) return
 
@@ -1995,6 +2094,24 @@ fun NativeAdCard(
                     val adLoader = adLoaderBuilderClass.getMethod("build").invoke(builderInstance)
 
                     val adReqBuilder = adRequestBuilderClass.getConstructor().newInstance()
+                    if (!isPersonalizedConsent) {
+                        try {
+                            val extras = android.os.Bundle()
+                            extras.putString("npa", "1")
+                            val addNetworkExtrasMethod = adRequestBuilderClass.getMethod(
+                                "addNetworkExtrasBundle",
+                                Class.forName("com.google.ads.mediation.admob.AdMobAdapter"),
+                                android.os.Bundle::class.java
+                            )
+                            addNetworkExtrasMethod.invoke(
+                                adReqBuilder,
+                                Class.forName("com.google.ads.mediation.admob.AdMobAdapter"),
+                                extras
+                            )
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
+                        }
+                    }
                     val adReq = adRequestBuilderClass.getMethod("build").invoke(adReqBuilder)
 
                     adLoaderClass.getMethod("loadAd", adRequestClass).invoke(adLoader, adReq)
@@ -2038,14 +2155,18 @@ fun NativeAdCard(
 
 @Composable
 fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val isPersonalizedAdsConsent by AudioEffectManager.isPersonalizedAdsConsent.collectAsState()
+    var tempPersonalizedConsent by remember { mutableStateOf(isPersonalizedAdsConsent) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
             modifier = Modifier
-                .widthIn(max = 330.dp)
-                .fillMaxWidth(0.85f)
+                .widthIn(max = 340.dp)
+                .fillMaxWidth(0.88f)
                 .wrapContentHeight(),
             shape = RoundedCornerShape(20.dp),
             color = Color(0xFF2B2930),
@@ -2130,10 +2251,101 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                     description = "Adjust gain via notification or widget"
                 )
 
+                // GDPR Privacy & Ad Consent Section
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("onboarding_gdpr_consent_card"),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1B1F)),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, Color(0xFF49454F))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Security,
+                                contentDescription = "Privacy & Consent",
+                                tint = Color(0xFFD0BCFF),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = "Privacy & Admob Consent",
+                                color = Color(0xFFE6E1E5),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Text(
+                            text = "We use Google AdMob to show ads supporting development. You can choose whether to allow personalized or non-personalized ads.",
+                            color = Color(0xFFCAC4D0),
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Personalized Ads",
+                                color = Color(0xFFE6E1E5),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Switch(
+                                checked = tempPersonalizedConsent,
+                                onCheckedChange = { tempPersonalizedConsent = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color(0xFFD0BCFF),
+                                    checkedTrackColor = Color(0xFF49454F)
+                                ),
+                                modifier = Modifier.testTag("onboarding_personalized_ads_toggle")
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    try {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URL))
+                                        context.startActivity(intent)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                },
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Read Privacy Policy",
+                                color = Color(0xFFD0BCFF),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Icon(
+                                imageVector = Icons.Default.OpenInNew,
+                                contentDescription = "Privacy Policy",
+                                tint = Color(0xFFD0BCFF),
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Button(
-                    onClick = onDismiss,
+                    onClick = {
+                        AudioEffectManager.setPersonalizedAdsConsent(tempPersonalizedConsent)
+                        AudioEffectManager.setAdConsentStatus(if (tempPersonalizedConsent) "GRANTED" else "DENIED")
+                        onDismiss()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp)
@@ -2271,15 +2483,22 @@ fun AppHeaderRow(
                 )
             }
 
-            IconButton(
+            Surface(
                 onClick = onOpenSettings,
-                modifier = Modifier.testTag("settings_button")
+                shape = CircleShape,
+                color = primaryAccent.copy(alpha = 0.15f),
+                modifier = Modifier
+                    .size(50.dp)
+                    .testTag("settings_button")
             ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Open Settings",
-                    tint = primaryAccent
-                )
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Open Settings",
+                        tint = primaryAccent,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
         }
     }
@@ -2717,71 +2936,104 @@ fun EqualizerComponent(
 
             // Quick Action Buttons (Save, Import, Export, Reset)
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(
+                // Reload / Reset Bands Button
+                Surface(
                     onClick = {
-                        for (i in 0 until 5) onBandChange(i, 0)
+                        if (isEnabled) {
+                            for (i in 0 until 5) onBandChange(i, 0)
+                        }
                     },
                     enabled = isEnabled,
-                    modifier = Modifier.size(32.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
+                    border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
+                    modifier = Modifier.size(40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Reset Bands",
-                        tint = if (isEnabled) textSecondary else textSecondary.copy(alpha = 0.4f),
-                        modifier = Modifier.size(18.dp)
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Reset Bands",
+                            tint = if (isEnabled) textSecondary else textSecondary.copy(alpha = 0.4f),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
 
-                IconButton(
+                // Add Custom Preset (+) Button
+                Surface(
                     onClick = {
-                        newPresetName = "Custom ${customPresets.size + 1}"
-                        showSaveDialog = true
+                        if (isEnabled) {
+                            val defaultName = "Custom ${customPresets.size + 1}"
+                            newPresetName = defaultName.take(10)
+                            showSaveDialog = true
+                        }
                     },
                     enabled = isEnabled,
-                    modifier = Modifier.size(32.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
+                    border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
+                    modifier = Modifier.size(40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Save Custom Preset",
-                        tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
-                        modifier = Modifier.size(20.dp)
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Save Custom Preset",
+                            tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
 
-                IconButton(
+                // Import Preset Button
+                Surface(
                     onClick = {
-                        importJsonInput = ""
-                        showImportDialog = true
+                        if (isEnabled) {
+                            importJsonInput = ""
+                            showImportDialog = true
+                        }
                     },
                     enabled = isEnabled,
-                    modifier = Modifier.size(32.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
+                    border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
+                    modifier = Modifier.size(40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Download,
-                        contentDescription = "Import Preset",
-                        tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
-                        modifier = Modifier.size(18.dp)
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Import Preset",
+                            tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
 
-                IconButton(
+                // Export All Presets Button
+                Surface(
                     onClick = {
-                        exportJsonText = onExportAllPresets()
-                        exportTitleText = "All Presets Backup"
-                        showExportDialog = true
+                        if (isEnabled) {
+                            exportJsonText = onExportAllPresets()
+                            exportTitleText = "All Presets Backup"
+                            showExportDialog = true
+                        }
                     },
                     enabled = isEnabled,
-                    modifier = Modifier.size(32.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
+                    border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
+                    modifier = Modifier.size(40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Upload,
-                        contentDescription = "Export All Presets",
-                        tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
-                        modifier = Modifier.size(18.dp)
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Upload,
+                            contentDescription = "Export All Presets",
+                            tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
         }
@@ -3081,8 +3333,15 @@ fun EqualizerComponent(
                     Text("Enter a unique profile name for your current 5-band gain settings:", fontSize = 13.sp)
                     OutlinedTextField(
                         value = newPresetName,
-                        onValueChange = { newPresetName = it },
-                        label = { Text("Preset Name") },
+                        onValueChange = { if (it.length <= 10) newPresetName = it },
+                        label = { Text("Preset Name (Max 10 chars)") },
+                        supportingText = {
+                            Text(
+                                text = "${newPresetName.length}/10",
+                                color = if (newPresetName.length >= 10) Color(0xFFFFB74D) else textSecondary,
+                                fontSize = 11.sp
+                            )
+                        },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )

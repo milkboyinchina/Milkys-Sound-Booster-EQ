@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">Protection auditive et avertissement de sécurité</string>
     <string name="hearing_warning_desc">Écouter à un volume élevé (&gt;100%) pendant des périodes prolongées peut causer des dommages auditifs permanents ou une distortion des haut-parleurs. Veuillez ajuster le volume de manière responsable.</string>
     <string name="quick_presets_title">PRÉRÉGLAGES RAPIDES</string>
-    <string name="visual_equalizer_title">ÉGALISEUR VISUEL 5 BANDES</string>
+    <string name="visual_equalizer_title">ÉGALISEUR</string>
     <string name="system_battery_diagnostic_title">DIAGNOSTIC DE PERFORMANCE ET BATTERIE DU SYSTÈME</string>
     <string name="amplifier_notification_controls">COMMANDES D\'AMPLIFICATEUR ET NOTIFICATION</string>
     <string name="stepped_slider_title">Curseur de volume par paliers de 10%</string>

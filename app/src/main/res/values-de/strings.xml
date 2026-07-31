@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">Gehörschutz &amp; Sicherheitswarnung</string>
     <string name="hearing_warning_desc">Das Hören bei hoher Lautstärke (&gt;100%) über längere Zeiträume kann zu dauerhaften Gehörschäden oder Lautsprecherverzerrungen führen. Bitte passen Sie die Lautstärke verantwortungsbewusst an.</string>
     <string name="quick_presets_title">SCHNELL-VERSTÄRKUNG-PRESETS</string>
-    <string name="visual_equalizer_title">VISUELLER 5-BAND-EQUALIZER</string>
+    <string name="visual_equalizer_title">EQUALIZER</string>
     <string name="system_battery_diagnostic_title">SYSTEMLEISTUNG &amp; AKKU-DIAGNOSE</string>
     <string name="amplifier_notification_controls">VERSTÄRKER- &amp; BENACHRICHTIGUNGSSTEUERUNG</string>
     <string name="stepped_slider_title">10%-Stufen-Lautstärkeregler</string>

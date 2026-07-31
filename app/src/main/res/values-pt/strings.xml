@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">Proteção Auditiva e Aviso de Segurança</string>
     <string name="hearing_warning_desc">Ouvir em níveis de volume elevados (&gt;100%) por períodos prolongados pode causar danos auditivos permanentes ou distorção dos alto-falantes. Ajuste o volume com responsabilidade.</string>
     <string name="quick_presets_title">PREDEFINIÇÕES DE AMPLIFICAÇÃO RÁPIDA</string>
-    <string name="visual_equalizer_title">EQUALIZADOR VISUAL DE 5 BANDAS</string>
+    <string name="visual_equalizer_title">EQUALIZADOR</string>
     <string name="system_battery_diagnostic_title">DIAGNÓSTICO DE DESEMPENHO E BATERIA DO SISTEMA</string>
     <string name="amplifier_notification_controls">CONTROLES DE AMPLIFICADOR E NOTIFICAÇÃO</string>
     <string name="stepped_slider_title">Controle Deslizante em Etapas de 10%</string>

@@ -28,7 +28,7 @@
     <string name="hearing_warning_title">Hearing Protection &amp; Safety Warning</string>
     <string name="hearing_warning_desc">Listening at high volume levels (&gt;100%) for extended periods can cause permanent hearing damage or speaker distortion. Please adjust volume responsibly.</string>
     <string name="quick_presets_title">QUICK BOOST PRESETS</string>
-    <string name="visual_equalizer_title">5-BAND VISUAL EQUALIZER</string>
+    <string name="visual_equalizer_title">EQUALIZER</string>
     <string name="system_battery_diagnostic_title">SYSTEM PERFORMANCE &amp; BATTERY DIAGNOSTICS</string>
     <string name="amplifier_notification_controls">AMPLIFIER &amp; NOTIFICATION CONTROLS</string>
     <string name="stepped_slider_title">10% Stepped Loudness Slider</string>
