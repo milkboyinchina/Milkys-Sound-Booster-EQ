@@ -29,6 +29,18 @@ else
     ACTION_MSG="Rule File Status: ${DEST_FILE} (Up to date)"
 fi
 
+# Copy delegation orchestrator utility to target scripts directory if available
+TARGET_SCRIPTS_DIR="$(cd "${TARGET_DIR}" && pwd)/scripts"
+SOURCE_ORCHESTRATOR="${SCRIPT_DIR}/delegation_orchestrator.py"
+if [ -f "${SOURCE_ORCHESTRATOR}" ]; then
+    mkdir -p "${TARGET_SCRIPTS_DIR}"
+    DEST_ORCHESTRATOR="${TARGET_SCRIPTS_DIR}/delegation_orchestrator.py"
+    if [ "$(readlink -f "${SOURCE_ORCHESTRATOR}")" != "$(readlink -f "${DEST_ORCHESTRATOR}" 2>/dev/null)" ]; then
+        cp "${SOURCE_ORCHESTRATOR}" "${DEST_ORCHESTRATOR}"
+        chmod +x "${DEST_ORCHESTRATOR}"
+    fi
+fi
+
 echo "======================================================="
 echo "   ANTIGRAVITY MODEL DELEGATION RULES DEPLOYED"
 echo "======================================================="
