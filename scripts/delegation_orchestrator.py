@@ -38,14 +38,14 @@ def classify_prompt(prompt_text):
             "shortcut": "/standard",
             "task": task or text
         }
-    elif text.startswith("/hard-fix") or text.startswith("/hard-fix-sonnet"):
+    elif text.startswith("/hard-fix-sonnet") or text.startswith("/hard-fix"):
         shortcut_name = "/hard-fix-sonnet" if text.startswith("/hard-fix-sonnet") else "/hard-fix"
         task = re.sub(r"^/(hard-fix-sonnet|hard-fix)\s*", "", text)
         return {
             "tier": "High",
             "model": HIGH_MODEL,
             "profile": "@complex-architect",
-            "role": "Complex Architect",
+            "role": "Complex Architect (Claude Sonnet)",
             "shortcut": shortcut_name,
             "task": task or text
         }
