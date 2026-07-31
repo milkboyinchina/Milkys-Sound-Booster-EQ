@@ -1,0 +1,29 @@
+# Google Jules Configuration File (.jules/config.yaml)
+# Repository configuration for Jules AI coding agent.
+
+version: "1.0"
+project_name: "Milkys Sound Booster & EQ"
+type: "android-kotlin"
+
+environment:
+  java_version: "21"
+  android_sdk_target: 36
+  android_sdk_min: 24
+  setup_script: "scripts/setup_jules_env.sh"
+
+verification:
+  test_command: "./gradlew test"
+  build_command: "./scripts/build.sh assembleDebug"
+  lint_command: "./gradlew lint"
+  requirements_check: "./scripts/check_requirements.sh"
+
+context_files:
+  - "AGENTS.md"
+  - "howto/setup_develop_build.md"
+  - "howto/general_information.md"
+
+protected_paths:
+  - "release.keystore"
+  - "*.jks"
+  - "*.p12"
+  - ".env"

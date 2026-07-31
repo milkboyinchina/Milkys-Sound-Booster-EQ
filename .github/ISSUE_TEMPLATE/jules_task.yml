@@ -1,0 +1,41 @@
+name: 🤖 Google Jules AI Coding Task
+description: Dispatch an autonomous feature request, refactor, or bug fix task to Google Jules.
+title: "[Jules Task]: "
+labels: ["jules"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this issue template to assign tasks directly to **Google Jules**. 
+        Jules will read `AGENTS.md` and `.jules/rules.md` to analyze requirements, generate code, test build outputs, and open a Pull Request.
+
+  - type: textarea
+    id: task_description
+    attributes:
+      label: Task Description & Requirements
+      description: Describe what feature to implement, bug to fix, or refactoring task for Jules.
+      placeholder: "e.g., Add a custom 10-band graphic equalizer profile persistence in Room Database."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Task Complexity / Tier
+      options:
+        - "Standard Feature / UI Update (Medium Model Tier)"
+        - "Quick Fix / Refactor (Low Model Tier)"
+        - "Architectural Change / Deep Debug (High Model Tier)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification_criteria
+    attributes:
+      label: Verification Criteria
+      description: How should Jules verify that the task is completed?
+      placeholder: "e.g., Run ./gradlew test and ensure new Room DAO unit tests pass."
+    validations:
+      required: false
