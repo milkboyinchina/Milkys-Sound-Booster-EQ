@@ -70,3 +70,13 @@ Use the following parameters when invoking subagents via `invoke_subagent`:
 This rule is fully portable across all projects (e.g. `Milkys-Sound-Booster-EQ`, `Grav AI Chatbot`, `grav-lamp-docker`). 
 To apply to any project directory:
 Copy `.gemini/rules/model_delegation.md` into the target workspace root directory.
+
+---
+
+## 🔍 5. Mandatory Workspace Audit & Auto-Implementation Directive
+
+Upon opening or initializing any project workspace:
+1. **Audit Check**: Verify if `.gemini/rules/model_delegation.md`, `scripts/delegation_orchestrator.py`, or `scripts/setup_project_rules.sh` are missing or incomplete.
+2. **Auto-Prompt**: If any part of the Automatic Model Delegation system, Zero-Delay Shortcuts (`/quick`, `/standard`, `/hard-fix-sonnet`), or Subagent Profiles (`@quick-task`, `@standard-dev`, `@complex-architect`) is missing:
+   - **Notify the user** and ask: *"Model Delegation and Zero-Delay Shortcuts are missing or incomplete in this workspace. Would you like me to implement `.gemini/rules/model_delegation.md` and setup scripts now?"*
+3. **Execution**: If confirmed, run `scripts/setup_project_rules.sh .` or deploy the model delegation files automatically.
