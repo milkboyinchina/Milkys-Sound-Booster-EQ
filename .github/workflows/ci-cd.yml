@@ -2,9 +2,9 @@ name: Android CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "staging" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "staging" ]
   workflow_dispatch:
     inputs:
       create_release:
@@ -60,33 +60,7 @@ jobs:
         uses: reviewdog/action-actionlint@v1
 
   # =================================================================
-  # JOB 2: Auto-Fix Failures via Google Jules (Pushes Only)
-  # =================================================================
-  jules-fix:
-    name: Trigger Google Jules Fixer Agent
-    needs: verify
-    if: failure() && github.event_name == 'push'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Invoke Google Jules
-        uses: google-labs-code/jules-action@v1
-        with:
-          jules_api_key: ${{ secrets.JULES_API_KEY }}
-          starting_branch: ${{ github.ref_name }}
-          include_last_commit: true
-          include_commit_log: true
-          prompt: |
-            The latest CI workflow failed during verification.
-            1. Review `AGENTS.md` for repository rules and testing commands.
-            2. Run `./gradlew testDebugUnitTest` and `./gradlew lintDebug` to reproduce.
-            3. Fix any errors, verify tests pass, and submit a Pull Request.
-
-  # =================================================================
-  # JOB 3: Build, Sign & Release Artifacts (Manual Trigger Only)
+  # JOB 2: Build, Sign & Release Artifacts (Manual Trigger Only)
   # =================================================================
   build-and-release:
     name: Build, Sign & Publish Release (Manual Trigger)
@@ -157,3 +131,34 @@ jobs:
             .build-outputs/**/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # =================================================================
+  # JOB 3: Auto-Fix Failures via Google Jules (Triggers on ANY Job Failure)
+  # =================================================================
+  jules-fix:
+    name: Trigger Google Jules Fixer Agent
+    needs: [verify, build-and-release]
+    # Runs if EITHER 'verify' OR 'build-and-release' encounters an error
+    if: always() && (needs.verify.result == 'failure' || needs.build-and-release.result == 'failure')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Invoke Google Jules
+        uses: google-labs-code/jules-action@v1
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ github.head_ref || github.ref_name }}
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            An error occurred while executing the GitHub Actions workflow.
+
+            Please perform the following steps:
+            1. Review `AGENTS.md` for repository rules, architecture constraints, and testing commands.
+            2. Check the workflow logs to determine whether the failure occurred during static verification (`./gradlew testDebugUnitTest`, `./gradlew lintDebug`) or during release compilation (`scripts/build.sh`).
+            3. Reproduce and fix the issue inside your environment.
+            4. Verify that all tests and build scripts complete successfully.
+            5. Submit a Pull Request with the fix, including a summary of changes.
