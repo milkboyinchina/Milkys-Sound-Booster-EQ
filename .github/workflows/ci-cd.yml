@@ -1,20 +1,98 @@
-name: Android CI/CD Build & Release
+name: Android CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main", "develop" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main", "develop" ]
   workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Publish a GitHub Release with build binaries'
+        required: true
+        type: boolean
+        default: true
 
 permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build & Generate Release Artifacts
+  # =================================================================
+  # JOB 1: Test & Verify Code Quality (Automated on Push / PR / Dispatch)
+  # =================================================================
+  verify:
+    name: Run Tests, Lint & Security Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant Execute Permissions
+        run: |
+          chmod +x gradlew
+          chmod +x scripts/*.sh
+
+      - name: Verify Prerequisites
+        run: ./scripts/check_requirements.sh
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Run Android Lint
+        run: ./gradlew lintDebug
+
+      - name: Scan for Hardcoded Secrets (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate Workflow Files (actionlint)
+        uses: reviewdog/action-actionlint@v1
+
+  # =================================================================
+  # JOB 2: Auto-Fix Failures via Google Jules (Pushes Only)
+  # =================================================================
+  jules-fix:
+    name: Trigger Google Jules Fixer Agent
+    needs: verify
+    if: failure() && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Invoke Google Jules
+        uses: google-labs-code/jules-action@v1
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ github.ref_name }}
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            The latest CI workflow failed during verification.
+            1. Review `AGENTS.md` for repository rules and testing commands.
+            2. Run `./gradlew testDebugUnitTest` and `./gradlew lintDebug` to reproduce.
+            3. Fix any errors, verify tests pass, and submit a Pull Request.
+
+  # =================================================================
+  # JOB 3: Build, Sign & Release Artifacts (Manual Trigger Only)
+  # =================================================================
+  build-and-release:
+    name: Build, Sign & Publish Release (Manual Trigger)
+    needs: verify
+    # ONLY run when manually triggered via workflow_dispatch AND verification passed
+    if: success() && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
@@ -23,29 +101,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js 24
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
-      - name: Cache Gradle Packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: Copy .env Configuration
         run: |
@@ -53,79 +119,35 @@ jobs:
             cp .env.example .env
           fi
 
-      - name: Make Build Scripts Executable
-        run: |
-          chmod +x scripts/*.sh
+      - name: Make Scripts Executable
+        run: chmod +x scripts/*.sh
 
-      - name: Verify Build Environment Requirements
-        run: |
-          bash scripts/check_requirements.sh
-
-      - name: Build Android Debug & Release APKs
+      - name: Build Debug & Release Binaries
         run: |
           bash scripts/build.sh
-
-      - name: Build Play Console Release Bundle
-        run: |
           bash scripts/build_play_console_release.sh
 
-      - name: Upload Build Outputs
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-build-outputs
+          name: android-release-outputs
           path: .build-outputs/
 
-      - name: Upload Build Logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: logs/
-
-  release:
-    name: Create GitHub Release (Main Branch)
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js 24
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Download Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: android-build-outputs
-          path: .build-outputs/
-
-      - name: Verify Output Artifacts
-        run: |
-          echo "=== Downloaded Artifacts in .build-outputs ==="
-          find .build-outputs -type f
-
-      - name: Generate Release Tag Name
+      - name: Generate Tag Name
         id: tag
         run: |
           TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          TAG_NAME="v0.1-build.${TIMESTAMP}-${SHORT_SHA}"
-          echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "tag_name=v0.1-build.${TIMESTAMP}-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release & Upload Binaries
+      - name: Create GitHub Release
+        if: ${{ inputs.create_release == true }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag_name }}
           name: "Milkys Sound Booster Release ${{ steps.tag.outputs.tag_name }}"
           body: |
-            Automated CI/CD Build for commit `${{ github.sha }}` on branch `main`.
-
-            ### Included Artifacts
-            - Universal & Release APKs
-            - Android App Bundle (`.aab`)
+            Manual Release Build for branch `${{ github.ref_name }}` (Commit: `${{ github.sha }}`).
           draft: false
           prerelease: false
           files: |
