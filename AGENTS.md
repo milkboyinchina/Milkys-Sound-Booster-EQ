@@ -57,21 +57,89 @@ bash scripts/check_requirements.sh
 
 ## 🧪 3. Testing & Code Quality Verification
 
-All AI agents **must run automated verification** after making code changes before declaring tasks complete:
+All AI agents **must run automated verification** after making code changes before declaring tasks complete.
 
-* **Run Unit Tests**:
+### 3.1 Standard Verification Commands
+* **Run Unit & JVM UI Tests:**
   ```bash
-  ./gradlew test
-  ```
-* **Run Android Lint & Static Analysis**:
-  ```bash
-  ./gradlew lint
-  ```
-* **Run Environment Pre-checks**:
-  ```bash
-  ./scripts/check_requirements.sh
-  ```
+  ./gradlew testDebugUnitTest
 
+
+
+* **Run Android Lint & Static Analysis:**
+```bash
+./gradlew lintDebug
+
+```
+
+
+* **Run Environment Pre-checks:**
+```bash
+./scripts/check_requirements.sh
+
+```
+
+---
+
+### 3.2 Detailed UI & Accessibility Testing Guidelines
+
+When creating or modifying Jetpack Compose screens, agents must ensure visual integrity, state handling, and accessibility compliance.
+
+#### 📸 A. Layout Overflow, Font Scaling & Clipping (Visual Screenshot Testing)
+
+* **Objective:** Prevent UI clipping, text truncation, broken wraps, and view overlaps across diverse display sizes and accessibility scale settings.
+* **Execution Task:**
+```bash
+./gradlew verifyRoborazziDebug
+
+```
+
+
+* **Mandatory Test Matrix Variations:** Every major UI screen or critical component screenshot test must evaluate rendering across a matrix of screen dimensions, orientations, font scales, and theme modes:
+1. **Multi-Screen Dimensions & Orientations:**
+* **Compact / Small Phone (`320dp` width):** Check for tight vertical constraints, extreme text wrapping, and button stacking issues.
+* **Standard Phone (`360dp` – `411dp` width):** Baseline standard display dimensions.
+* **Large / Expanded / Tablet (`600dp+` width):** Verify layout responsiveness, max-width container bounds, and proper alignment.
+* **Landscape Mode:** Ensure vertical scrollability works and fixed-height components do not clip off-screen.
+
+
+2. **Multiple Font Scaling Levels:**
+* **Small / Compact Font (`0.85x`):** Ensure text alignment and minimum touch targets remain intact.
+* **Standard Font (`1.0x`):** Baseline UI text layout metrics.
+* **Large Font (`1.3x`):** Standard user accessibility enlargement.
+* **Maximum / Accessibility Font (`1.5x` – `2.0x`):** Extreme font scale to test multi-line text wrapping, container height expansion, and lack of text truncation (`Ellipsis`) bugs.
+
+
+3. **Theme Configurations:**
+* Both **Light Mode** and **Dark Mode** render passes using standard `MaterialTheme` tokens.
+
+
+
+
+
+#### ♿ B. Accessibility & Improper UI Attributes (Linting & Rules)
+
+* **Objective:** Guarantee full accessibility support and compliance with Material Design guidelines.
+* **Execution Task:** Run `./gradlew lintDebug` and resolve all reported UI/accessibility warnings.
+* **Mandatory Rules:**
+* **Content Descriptions:** Interactive images/icons must include explicit `contentDescription = stringResource(...)`. Decorative images must explicitly set `contentDescription = null`.
+* **Touch Targets:** All clickable UI elements must adhere to the minimum **48x48dp** touch target recommendation (`Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)`).
+* **No Fixed Heights on Text Containers:** Avoid using hardcoded `Modifier.height(...)` on text containers; use dynamic wrapping or `Modifier.heightIn(...)` so scaled fonts do not get clipped.
+
+
+
+#### 🧪 C. Functional UI Interaction & State Tests
+
+* **Objective:** Validate component rendering and state transitions on JVM without needing an emulator.
+* **Execution Task:** Place JVM Compose tests in `app/src/test/` using `createComposeRule()` + **Robolectric**:
+* **State Coverage:** Test that screens correctly render **Loading**, **Success**, **Empty**, and **Error** states when emitted by ViewModel `StateFlow`.
+* **Event Handling:** Assert that user clicks (e.g., equalizer toggles, gain sliders) trigger expected ViewModel callbacks and update the UI accordingly.
+
+
+
+```
+
+```
 ---
 
 ## 📁 4. Key Repository Architecture & Mapping
