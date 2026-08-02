@@ -2950,12 +2950,12 @@ fun EqualizerComponent(
                     shape = RoundedCornerShape(12.dp),
                     color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
                     border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(8.dp)) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Reset Bands",
+                            contentDescription = stringResource(R.string.content_desc_reset_bands),
                             tint = if (isEnabled) textSecondary else textSecondary.copy(alpha = 0.4f),
                             modifier = Modifier.size(22.dp)
                         )
@@ -2975,12 +2975,12 @@ fun EqualizerComponent(
                     shape = RoundedCornerShape(12.dp),
                     color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
                     border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(8.dp)) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Save Custom Preset",
+                            contentDescription = stringResource(R.string.content_desc_save_preset),
                             tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
                             modifier = Modifier.size(22.dp)
                         )
@@ -2999,12 +2999,12 @@ fun EqualizerComponent(
                     shape = RoundedCornerShape(12.dp),
                     color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
                     border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(8.dp)) {
                         Icon(
                             imageVector = Icons.Default.Download,
-                            contentDescription = "Import Preset",
+                            contentDescription = stringResource(R.string.content_desc_import_preset),
                             tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
                             modifier = Modifier.size(22.dp)
                         )
@@ -3024,12 +3024,12 @@ fun EqualizerComponent(
                     shape = RoundedCornerShape(12.dp),
                     color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
                     border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(8.dp)) {
                         Icon(
                             imageVector = Icons.Default.Upload,
-                            contentDescription = "Export All Presets",
+                            contentDescription = stringResource(R.string.content_desc_export_presets),
                             tint = if (isEnabled) primaryAccent else primaryAccent.copy(alpha = 0.4f),
                             modifier = Modifier.size(22.dp)
                         )
@@ -3074,8 +3074,8 @@ fun EqualizerComponent(
                         modifier = Modifier
                             .weight(1f)
                             .padding(vertical = 4.dp)
-                            .width(44.dp)
-                            .background(Color(0xFF2B2930), RoundedCornerShape(22.dp)),
+                            .width(48.dp)
+                            .background(Color(0xFF2B2930), RoundedCornerShape(24.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
@@ -3090,7 +3090,7 @@ fun EqualizerComponent(
                                 },
                                 enabled = isEnabled,
                                 modifier = Modifier
-                                    .size(34.dp)
+                                    .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                     .padding(2.dp)
                                     .background(
                                         if (isEnabled) Color(0xFF4F378B) else Color(0xFF36343B),
@@ -3099,7 +3099,7 @@ fun EqualizerComponent(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
-                                    contentDescription = "Increase Band $i",
+                                    contentDescription = stringResource(R.string.content_desc_increase_band, i + 1),
                                     tint = if (isEnabled) Color.White else Color(0xFFCAC4D0).copy(alpha = 0.4f),
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -3161,7 +3161,7 @@ fun EqualizerComponent(
                                 },
                                 enabled = isEnabled,
                                 modifier = Modifier
-                                    .size(34.dp)
+                                    .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                     .padding(2.dp)
                                     .background(
                                         if (isEnabled) Color(0xFF4F378B) else Color(0xFF36343B),
@@ -3170,7 +3170,7 @@ fun EqualizerComponent(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Remove,
-                                    contentDescription = "Decrease Band $i",
+                                    contentDescription = stringResource(R.string.content_desc_decrease_band, i + 1),
                                     tint = if (isEnabled) Color.White else Color(0xFFCAC4D0).copy(alpha = 0.4f),
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -3216,11 +3216,11 @@ fun EqualizerComponent(
                             Toast.makeText(context, "Set '$currentPreset' as default preset", Toast.LENGTH_SHORT).show()
                         },
                         enabled = isEnabled,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                     ) {
                         Icon(
                             imageVector = if (isDefault) Icons.Default.Star else Icons.Default.StarBorder,
-                            contentDescription = "Set Default Preset",
+                            contentDescription = stringResource(R.string.content_desc_set_default_preset),
                             tint = if (isDefault) Color(0xFFFFD54F) else textSecondary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -3233,11 +3233,11 @@ fun EqualizerComponent(
                             showExportDialog = true
                         },
                         enabled = isEnabled,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Upload,
-                            contentDescription = "Export Selected Preset",
+                            contentDescription = stringResource(R.string.content_desc_export_preset),
                             tint = textSecondary,
                             modifier = Modifier.size(18.dp)
                         )
@@ -3250,11 +3250,11 @@ fun EqualizerComponent(
                                 Toast.makeText(context, "Deleted preset '$currentPreset'", Toast.LENGTH_SHORT).show()
                             },
                             enabled = isEnabled,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete Custom Preset",
+                                contentDescription = stringResource(R.string.content_desc_delete_preset),
                                 tint = Color(0xFFFF8A80),
                                 modifier = Modifier.size(18.dp)
                             )
@@ -3285,17 +3285,18 @@ fun EqualizerComponent(
                                 isCustom -> Color(0xFF332D41)
                                 else -> Color(0xFF49454F)
                             },
-                            shape = RoundedCornerShape(20.dp)
+                            shape = RoundedCornerShape(24.dp)
                         )
                         .border(
                             width = if (isDefault) 1.5.dp else 0.dp,
                             color = if (isDefault) Color(0xFFFFD54F) else Color.Transparent,
-                            shape = RoundedCornerShape(20.dp)
+                            shape = RoundedCornerShape(24.dp)
                         )
+                        .defaultMinSize(minHeight = 48.dp)
                         .clickable(enabled = isEnabled) {
                             onApplyPreset(preset)
                         }
-                        .padding(horizontal = 12.dp, vertical = 7.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                         .testTag("preset_$preset"),
                     contentAlignment = Alignment.Center
                 ) {
