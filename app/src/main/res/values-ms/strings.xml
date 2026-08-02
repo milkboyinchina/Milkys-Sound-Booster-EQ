@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">EKUALISER</string>
     <string name="system_battery_diagnostic_title">DIAGNOSTIK PRESTASI SISTEM &amp; BATERI</string>
     <string name="amplifier_notification_controls">KAWALAN PENGERAS &amp; NOTIFIKASI</string>
-    <string name="stepped_slider_title">Lungsur Kelantangan Bertingkat 10%</string>
+    <string name="stepped_slider_title" formatted="false">Lungsur Kelantangan Bertingkat 10%</string>
     <string formatted="false" name="stepped_slider_desc_on">Lungsur bergerak mengikut peningkatan 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Pergerakan lungsur yang lancar.</string>
     <string name="notification_controls_title">Kawalan Bar Notifikasi</string>
