@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">等化器</string>
     <string name="system_battery_diagnostic_title">系統效能與電池診斷</string>
     <string name="amplifier_notification_controls">擴大機與通知欄控制</string>
-    <string name="stepped_slider_title">10%階梯式音量滑桿</string>
+    <string name="stepped_slider_title" formatted="false">10%階梯式音量滑桿</string>
     <string formatted="false" name="stepped_slider_desc_on">滑桿將按 10% 的增量吸附調整（0%、10%、20%...）。</string>
     <string name="stepped_slider_desc_off">平滑自由滑動。</string>
     <string name="notification_controls_title">通知欄快捷控制</string>

@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">EQUALIZER</string>
     <string name="system_battery_diagnostic_title">SYSTEM PERFORMANCE &amp; BATTERY DIAGNOSTICS</string>
     <string name="amplifier_notification_controls">AMPLIFIER &amp; NOTIFICATION CONTROLS</string>
-    <string name="stepped_slider_title">10% Stepped Loudness Slider</string>
+    <string name="stepped_slider_title" formatted="false">10% Stepped Loudness Slider</string>
     <string name="stepped_slider_desc_on" formatted="false">Slider snaps to 10% increments (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Smooth free slider movement.</string>
     <string name="notification_controls_title">Notification Bar Controls</string>
@@ -43,4 +43,15 @@
     <string name="github_repository">GitHub Repository</string>
     <string name="privacy_terms">Privacy Policy &amp; Terms of Service</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+
+    <!-- Equalizer Content Descriptions -->
+    <string name="content_desc_reset_bands" translatable="false">Reset equalizer bands to zero</string>
+    <string name="content_desc_save_preset" translatable="false">Save custom equalizer preset</string>
+    <string name="content_desc_import_preset" translatable="false">Import equalizer preset from JSON</string>
+    <string name="content_desc_export_presets" translatable="false">Export all custom equalizer presets to JSON</string>
+    <string name="content_desc_increase_band" translatable="false">Increase gain for band %1$d</string>
+    <string name="content_desc_decrease_band" translatable="false">Decrease gain for band %1$d</string>
+    <string name="content_desc_set_default_preset" translatable="false">Set current preset as default</string>
+    <string name="content_desc_export_preset" translatable="false">Export selected preset to JSON</string>
+    <string name="content_desc_delete_preset" translatable="false">Delete custom preset</string>
 </resources>

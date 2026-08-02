@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">EQUALIZADOR</string>
     <string name="system_battery_diagnostic_title">DIAGNÓSTICO DE DESEMPENHO E BATERIA DO SISTEMA</string>
     <string name="amplifier_notification_controls">CONTROLES DE AMPLIFICADOR E NOTIFICAÇÃO</string>
-    <string name="stepped_slider_title">Controle Deslizante em Etapas de 10%</string>
+    <string name="stepped_slider_title" formatted="false">Controle Deslizante em Etapas de 10%</string>
     <string formatted="false" name="stepped_slider_desc_on">O controle ajusta em incrementos de 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Movimento contínuo e suave.</string>
     <string name="notification_controls_title">Controles da Barra de Notificações</string>

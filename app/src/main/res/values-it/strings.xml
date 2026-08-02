@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">EQUALIZZATORE</string>
     <string name="system_battery_diagnostic_title">DIAGNOSTICA PRESTAZIONI E BATTERIA</string>
     <string name="amplifier_notification_controls">CONTROLLI AMPLIFICATORE E NOTIFICHE</string>
-    <string name="stepped_slider_title">Cursore del volume a scatti del 10%</string>
+    <string name="stepped_slider_title" formatted="false">Cursore del volume a scatti del 10%</string>
     <string formatted="false" name="stepped_slider_desc_on">Il cursore si adatta con incrementi del 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Movimento del cursore continuo e libero.</string>
     <string name="notification_controls_title">Controlli della barra di notifica</string>

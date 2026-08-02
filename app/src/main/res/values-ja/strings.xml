@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">イコライザー</string>
     <string name="system_battery_diagnostic_title">システムパフォーマンス＆バッテリー診断</string>
     <string name="amplifier_notification_controls">アンプ＆通知コントロール</string>
-    <string name="stepped_slider_title">10%ステップ音量スライダー</string>
+    <string name="stepped_slider_title" formatted="false">10%ステップ音量スライダー</string>
     <string formatted="false" name="stepped_slider_desc_on">スライダーが10%刻みでスナップします（0%、10%、20%...）。</string>
     <string name="stepped_slider_desc_off">スムーズな自由スライダー移動。</string>
     <string name="notification_controls_title">通知バーコントロール</string>
