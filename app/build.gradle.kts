@@ -69,7 +69,7 @@ android {
 
   defaultConfig {
     applicationId = envApplicationId
-    minSdk = 24
+    minSdk = getEnvVar("MIN_SDK", "24").toIntOrNull() ?: 24
     targetSdk = 36
     versionCode = envVersionCode
     versionName = envVersionName
