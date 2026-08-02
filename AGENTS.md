@@ -135,11 +135,43 @@ When creating or modifying Jetpack Compose screens, agents must ensure visual in
 * **State Coverage:** Test that screens correctly render **Loading**, **Success**, **Empty**, and **Error** states when emitted by ViewModel `StateFlow`.
 * **Event Handling:** Assert that user clicks (e.g., equalizer toggles, gain sliders) trigger expected ViewModel callbacks and update the UI accordingly.
 
+### 3.3 Privacy & CI/CD Pipeline Verification
 
+#### 🔒 A. Personal Identifiable Information (PII) & Secret Sanity Check
+* **Objective:** Prevent committing sensitive credentials, private keys, developer paths, personal email addresses, or personal names into source code or test fixtures.
+* **Execution Task:**
+  ```bash
+  # Scan for hardcoded credentials and secrets
+  gitleaks dir --redact
+Mandatory Privacy Rules:
 
+Emails & Names: Never hardcode personal developer emails or real user names in Kotlin code, comments, or UI previews. Replace them with standard placeholders (e.g., user@example.com, "Jane Doe").
+
+Hardcoded Credentials & Tokens: API keys, AdMob app IDs, sign-in tokens, or passwords must never be committed in plain text. Always extract them into .env or Gradle local.properties mapped to BuildConfig.
+
+Local File Paths: Ensure local machine absolute paths (e.g., /Users/username/... or C:\Users\...) are not hardcoded in build scripts or unit tests. Use relative paths or ${projectDir} / System.getenv("HOME").
+
+⚙️ B. GitHub Actions Workflow Configuration Checks
+Objective: Ensure all CI/CD pipeline definitions under .github/workflows/ are syntactically correct, use supported runner environments, and follow security best practices.
+
+Execution Task:
+
+Bash
+```
+# Validate GitHub Actions YAML syntax and security
+actionlint .github/workflows/*.yml
 ```
 
-```
+Mandatory Workflow Rules:
+
+Expression Security: Do not inject untrusted contexts directly into run: scripts (e.g., run: echo "${{ github.event.pull_request.title }}"). Always pass GitHub expressions via step env: variables to prevent shell script injection.
+
+Runner Labels: Use valid, supported runner labels (e.g., ubuntu-latest, macos-latest).
+
+Action Version Pinning: Ensure third-party GitHub Actions are pinned to explicit release tags or full commit SHA hashes rather than mutable @main or @master branches.
+
+Secret References: Verify that referenced secrets (e.g., ${{ secrets.SIGNING_KEY }}) match documented repository secret names.
+
 ---
 
 ## 📁 4. Key Repository Architecture & Mapping
