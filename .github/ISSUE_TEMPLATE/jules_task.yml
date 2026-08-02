@@ -8,34 +8,88 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this issue template to assign tasks directly to **Google Jules**. 
-        Jules will read `AGENTS.md` and `.jules/rules.md` to analyze requirements, generate code, test build outputs, and open a Pull Request.
+        Use this issue form to assign tasks directly to **Google Jules**[cite: 7]. 
+        Jules will read `AGENTS.md` and `.jules/rules.md` to analyze requirements, generate code, run verification tasks, and open a Pull Request[cite: 7].
 
   - type: textarea
     id: task_description
     attributes:
-      label: Task Description & Requirements
-      description: Describe what feature to implement, bug to fix, or refactoring task for Jules.
-      placeholder: "e.g., Add a custom 10-band graphic equalizer profile persistence in Room Database."
+      label: 🎯 Task Description & Requirements
+      description: Describe what feature to implement, bug to fix, or refactoring task for Jules[cite: 7].
+      placeholder: "e.g., Fix text clipping on Equalizer screen when accessibility font scaling is set to 1.5x."
     validations:
       required: true
 
   - type: dropdown
     id: priority
     attributes:
-      label: Task Complexity / Tier
+      label: ⚡ Task Complexity / Model Tier
       options:
-        - "Standard Feature / UI Update (Medium Model Tier)"
-        - "Quick Fix / Refactor (Low Model Tier)"
-        - "Architectural Change / Deep Debug (High Model Tier)"
+        - "Standard Feature / UI Update (/standard - flash)"
+        - "Quick Fix / Minor Refactor (/quick - flash_lite)"
+        - "Architectural Change / Deep Debug (/hard-fix - pro)"
     validations:
       required: true
 
   - type: textarea
-    id: verification_criteria
+    id: target_scope
     attributes:
-      label: Verification Criteria
-      description: How should Jules verify that the task is completed?
-      placeholder: "e.g., Run ./gradlew test and ensure new Room DAO unit tests pass."
+      label: 📁 Target Scope & Affected Files
+      description: Specify key modules, viewmodels, screens, or file paths Jules should focus on.
+      placeholder: |
+        - app/src/main/java/com/milkys/soundbooster/ui/equalizer/EqualizerScreen.kt
+        - app/src/main/java/com/milkys/soundbooster/audio/AudioService.kt
     validations:
       required: false
+
+  - type: checkboxes
+    id: agents_guidelines
+    attributes:
+      label: 📜 Mandatory AGENTS.md Guidelines
+      description: Select all applicable guidelines Jules must strictly adhere to during this task.
+      options:
+        - label: "Section 3.1 — Unit Tests (`./gradlew testDebugUnitTest`) & Android Lint (`./gradlew lintDebug`)"
+        - label: "Section 3.2 A — Visual Screenshot Testing / Font Scale (1.5x–2.0x) & Multi-Screen Matrix (`./gradlew verifyRoborazziDebug`)"
+        - label: "Section 3.2 B — Accessibility & Touch Targets (48x48dp minimum, explicit `contentDescription`, dynamic heights)"
+        - label: "Section 3.3 A — PII & Secret Sanity Check (`gitleaks dir --redact` - no hardcoded personal info or local machine paths)"
+        - label: "Section 3.3 B — GitHub Action Workflow Check (`actionlint .github/workflows/*.yml`)"
+        - label: "Section 5.2 — DSP Boost Ceiling Cap (Strictly <= 200% / +20dB, proper AudioEffect handle cleanup)"
+
+  - type: textarea
+    id: bug_details
+    attributes:
+      label: 🐛 Current vs. Expected Behavior / Stack Traces
+      description: If fixing a bug, describe current vs. expected behavior and paste stack traces or lint logs here.
+      placeholder: |
+        Current: Equalizer slider label cuts off when system font scale is elevated.
+        Expected: Text container wraps dynamically without clipping text.
+
+        Logs:
+        ...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: verification_criteria
+    attributes:
+      label: ✅ Required Verification Suite
+      description: Select all automated checks Jules must run and pass before submitting a Pull Request[cite: 7].
+      options:
+        - label: "`./gradlew testDebugUnitTest`"
+        - label: "`./gradlew lintDebug`"
+        - label: "`./gradlew verifyRoborazziDebug`"
+        - label: "`gitleaks dir --redact`"
+        - label: "`actionlint .github/workflows/*.yml`"
+
+  - type: textarea
+    id: prompt_template
+    attributes:
+      label: 💬 Copy-Paste Prompt for jules.google.com
+      description: Prompt template for launching this task manually on the Jules web interface.
+      value: |
+        Please read AGENTS.md and execute the task described in this issue.
+
+        1. Review repository instructions in AGENTS.md and .jules/rules.md.
+        2. Modify the target scope files to complete the task requirements.
+        3. Run mandatory verification checks (`./gradlew testDebugUnitTest`, `./gradlew lintDebug`).
+        4. Submit a Pull Request formatted with the Task Summary table specified in AGENTS.md.
