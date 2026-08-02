@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">ÉGALISEUR</string>
     <string name="system_battery_diagnostic_title">DIAGNOSTIC DE PERFORMANCE ET BATTERIE DU SYSTÈME</string>
     <string name="amplifier_notification_controls">COMMANDES D\'AMPLIFICATEUR ET NOTIFICATION</string>
-    <string name="stepped_slider_title">Curseur de volume par paliers de 10%</string>
+    <string name="stepped_slider_title" formatted="false">Curseur de volume par paliers de 10%</string>
     <string formatted="false" name="stepped_slider_desc_on">Le curseur s\'ajuste par paliers de 10% (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Mouvement fluide et libre du curseur.</string>
     <string name="notification_controls_title">Commandes de la barre de notification</string>

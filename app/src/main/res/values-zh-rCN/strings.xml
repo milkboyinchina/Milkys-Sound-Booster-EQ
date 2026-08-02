@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">均衡器</string>
     <string name="system_battery_diagnostic_title">系统性能与电池诊断</string>
     <string name="amplifier_notification_controls">放大器与通知栏控制</string>
-    <string name="stepped_slider_title">10%阶梯式音量滑块</string>
+    <string name="stepped_slider_title" formatted="false">10%阶梯式音量滑块</string>
     <string formatted="false" name="stepped_slider_desc_on">滑块将按 10% 的增量吸附调整（0%、10%、20%...）。</string>
     <string name="stepped_slider_desc_off">平滑自由滑动。</string>
     <string name="notification_controls_title">通知栏快捷控制</string>

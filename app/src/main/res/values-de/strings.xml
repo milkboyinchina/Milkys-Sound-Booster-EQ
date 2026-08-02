@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">EQUALIZER</string>
     <string name="system_battery_diagnostic_title">SYSTEMLEISTUNG &amp; AKKU-DIAGNOSE</string>
     <string name="amplifier_notification_controls">VERSTÄRKER- &amp; BENACHRICHTIGUNGSSTEUERUNG</string>
-    <string name="stepped_slider_title">10%-Stufen-Lautstärkeregler</string>
+    <string name="stepped_slider_title" formatted="false">10%-Stufen-Lautstärkeregler</string>
     <string formatted="false" name="stepped_slider_desc_on">Regler rastet in 10%-Schritten ein (0%, 10%, 20%...).</string>
     <string name="stepped_slider_desc_off">Stufenlose freie Reglerbewegung.</string>
     <string name="notification_controls_title">Steuerung in der Benachrichtigungsleiste</string>

@@ -31,7 +31,7 @@
     <string name="visual_equalizer_title">इक्वलाइज़र</string>
     <string name="system_battery_diagnostic_title">सिस्टम प्रदर्शन और बैटरी निदान</string>
     <string name="amplifier_notification_controls">एम्प्लीफायर और अधिसूचना नियंत्रण</string>
-    <string name="stepped_slider_title">10% स्टेप्ड लाउडनेस स्लाइडर</string>
+    <string name="stepped_slider_title" formatted="false">10% स्टेप्ड लाउडनेस स्लाइडर</string>
     <string formatted="false" name="stepped_slider_desc_on">स्लाइडर 10% के अंतराल पर स्नैप होता है (0%, 10%, 20%...)।</string>
     <string name="stepped_slider_desc_off">स्मूथ फ्री स्लाइडर मूवमेंट।</string>
     <string name="notification_controls_title">अधिसूचना पट्टी नियंत्रण</string>

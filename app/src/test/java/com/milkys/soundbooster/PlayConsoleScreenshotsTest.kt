@@ -5,8 +5,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,6 +24,12 @@ import java.io.File
 class PlayConsoleScreenshotsTest {
 
     @get:Rule val composeTestRule = createComposeRule()
+
+    @Before
+    fun setUp() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        AudioEffectManager.init(context)
+    }
 
     private fun getScreenshotPath(filename: String): String {
         val screenshotDir = try {
