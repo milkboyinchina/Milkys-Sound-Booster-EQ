@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (Korea)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">PENINGKAT DESIBEL &amp; GAIN</string>
-    <string name="sound_test_3sec">Tes Suara 3 Detik</string>
+    <string name="decibel_booster_title">PENINGKAT DESIBEL</string>
+    <string name="sound_test_3sec">Tes Suara</string>
+    <string name="amplification_level_title">Tingkat Penguatan</string>
     <string name="hearing_warning_title">Perlindungan Pendengaran &amp; Peringatan Keselamatan</string>
     <string name="hearing_warning_desc">Mendengarkan pada volume tinggi (&gt;100%) dalam waktu lama dapat menyebabkan kerusakan pendengaran permanen atau distorsi speaker. Harap sesuaikan volume dengan bijak.</string>
     <string name="quick_presets_title">PRESET PENINGKAT CEPAT</string>

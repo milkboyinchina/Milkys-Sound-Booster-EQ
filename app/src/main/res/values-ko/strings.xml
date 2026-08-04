@@ -23,8 +23,9 @@
     <string name="language_korean">한국어</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">데시벨 부스터 및 게인</string>
-    <string name="sound_test_3sec">3초 사운드 테스트</string>
+    <string name="decibel_booster_title">데시벨 부스터</string>
+    <string name="sound_test_3sec">사운드 테스트</string>
+    <string name="amplification_level_title">증폭 레벨</string>
     <string name="hearing_warning_title">청력 보호 및 안전 경고</string>
     <string name="hearing_warning_desc">높은 볼륨(&gt;100%)으로 장시간 청취하면 영구적인 청력 손상이나 스피커 왜곡이 발생할 수 있습니다. 볼륨을 책임감 있게 조절하세요.</string>
     <string name="quick_presets_title">빠른 부스트 프리셋</string>

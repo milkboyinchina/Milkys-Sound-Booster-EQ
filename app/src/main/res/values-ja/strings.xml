@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (韓国語)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">デシベルブースター＆ゲイン</string>
-    <string name="sound_test_3sec">3秒サウンドテスト</string>
+    <string name="decibel_booster_title">デシベルブースター</string>
+    <string name="sound_test_3sec">サウンドテスト</string>
+    <string name="amplification_level_title">増幅レベル</string>
     <string name="hearing_warning_title">聴覚保護＆安全上の警告</string>
     <string name="hearing_warning_desc">大音量（&gt;100%）で長時間聴くと、永久的な聴覚障害やスピーカーの歪みの原因となる場合があります。責任を持って音量を調整してください。</string>
     <string name="quick_presets_title">クイックブーストプリセット</string>

@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (कोरियाई)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">डेसिबल बूस्टर और गेन</string>
-    <string name="sound_test_3sec">3 सेकंड ध्वनि परीक्षण</string>
+    <string name="decibel_booster_title">डेसिबल बूस्टर</string>
+    <string name="sound_test_3sec">ধ্বনি পরীক্ষণ</string>
+    <string name="amplification_level_title">एम्प्लिफिकेशन स्तर</string>
     <string name="hearing_warning_title">सुनने की सुरक्षा और चेतावनी</string>
     <string name="hearing_warning_desc">लंबी अवधि के लिए उच्च वॉल्यूम स्तरों (&gt;100%) पर सुनने से सुनने की क्षमता को स्थायी नुकसान या स्पीकर विकृति हो सकती है। कृपया जिम्मेदारी से वॉल्यूम समायोजित करें।</string>
     <string name="quick_presets_title">त्वरित बूस्ट प्रीसेट</string>

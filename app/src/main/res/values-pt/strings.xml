@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (Coreano)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">AMPLIFICADOR DE DECIBÉIS E GANHO</string>
-    <string name="sound_test_3sec">Teste de Som de 3 Seg</string>
+    <string name="decibel_booster_title">AMPLIFICADOR DE DECIBÉIS</string>
+    <string name="sound_test_3sec">Teste de Som</string>
+    <string name="amplification_level_title">Nível de Amplificação</string>
     <string name="hearing_warning_title">Proteção Auditiva e Aviso de Segurança</string>
     <string name="hearing_warning_desc">Ouvir em níveis de volume elevados (&gt;100%) por períodos prolongados pode causar danos auditivos permanentes ou distorção dos alto-falantes. Ajuste o volume com responsabilidade.</string>
     <string name="quick_presets_title">PREDEFINIÇÕES DE AMPLIFICAÇÃO RÁPIDA</string>
