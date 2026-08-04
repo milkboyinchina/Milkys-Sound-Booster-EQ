@@ -2429,7 +2429,8 @@ fun AppHeaderRow(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_app_logo),
@@ -2443,14 +2444,18 @@ fun AppHeaderRow(
                 Text(
                     text = "MILKYS APP",
                     color = textPrimary,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
+                    letterSpacing = 0.5.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "High-Fidelity Audio Boost & Equalizer",
+                    text = "Audio Booster & EQ",
                     color = textSecondary,
-                    fontSize = 12.sp
+                    fontSize = 11.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -2530,7 +2535,6 @@ fun DecibelBoosterCard(
     ) {
         Column(
             modifier = Modifier.padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
@@ -2538,7 +2542,10 @@ fun DecibelBoosterCard(
                 color = textSecondary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Row(
@@ -2564,7 +2571,7 @@ fun DecibelBoosterCard(
                     ) {
                         Icon(
                             imageVector = if (isSoundTesting) Icons.Default.VolumeUp else Icons.Default.GraphicEq,
-                            contentDescription = "Sound Test 3s",
+                            contentDescription = "Sound Test",
                             modifier = Modifier.size(26.dp)
                         )
                     }
@@ -2648,11 +2655,11 @@ fun DecibelBoosterCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                         Text(
-                            text = "Loudness Amplification",
+                            text = stringResource(R.string.amplification_level_title),
                             color = textSecondary,
-                            fontSize = 13.sp
+                            fontSize = 12.sp
                         )
                         Text(
                             text = if (isSliderStepped) "10% Step Mode" else "Free Slider Mode",
@@ -2702,6 +2709,7 @@ fun DecibelBoosterCard(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuickBoostPresetsCard(
     isEnabled: Boolean,
@@ -2730,10 +2738,10 @@ fun QuickBoostPresetsCard(
                 letterSpacing = 1.sp
             )
 
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val presets = listOf(
                     "MUTE" to 0,
@@ -2918,7 +2926,12 @@ fun EqualizerComponent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(end = 8.dp)
+            ) {
                 Text(
                     text = stringResource(R.string.visual_equalizer_title),
                     color = textSecondary,
@@ -2930,7 +2943,9 @@ fun EqualizerComponent(
                     text = if (currentPreset == defaultPreset) "Active: $currentPreset (Default ★)" else "Active: $currentPreset",
                     color = primaryAccent,
                     fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -3042,7 +3057,7 @@ fun EqualizerComponent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(220.dp),
+                .height(240.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val frequencies = listOf("60Hz", "230Hz", "910Hz", "4kHz", "14kHz")
@@ -3066,7 +3081,9 @@ fun EqualizerComponent(
                             else -> primaryAccent
                         },
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     // Vertical Slider / Track Component
@@ -3183,7 +3200,9 @@ fun EqualizerComponent(
                         text = frequencies[i],
                         color = Color(0xFFCAC4D0),
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -3199,9 +3218,12 @@ fun EqualizerComponent(
         ) {
             Text(
                 text = "Sound Profiles",
+                modifier = Modifier.weight(1f),
                 color = Color(0xFFCAC4D0),
                 fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             if (currentPreset != "Custom") {

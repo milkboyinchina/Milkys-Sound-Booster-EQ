@@ -2,6 +2,7 @@
 .gradle
 .kotlin
 /local.properties
+/.plan
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -22,6 +23,7 @@ debug.keystore.base64
 /.build-outputs/
 /logs/
 /screenshots/
+/screenshots-bug/
 
 # Dynamic asset directories for multi-resolution icons & logos
 /assets/logo/

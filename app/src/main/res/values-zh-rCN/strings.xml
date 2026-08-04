@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (韩语)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">分贝音量放大与增益</string>
-    <string name="sound_test_3sec">3秒试音</string>
+    <string name="decibel_booster_title">分贝音量放大</string>
+    <string name="sound_test_3sec">音频测试</string>
+    <string name="amplification_level_title">增幅等级</string>
     <string name="hearing_warning_title">听力保护与安全警告</string>
     <string name="hearing_warning_desc">长时间在大音量（&gt;100%）下聆听可能会对听力造成永久性损伤或导致扬声器失真。请合理调节音量。</string>
     <string name="quick_presets_title">快速增强预设</string>

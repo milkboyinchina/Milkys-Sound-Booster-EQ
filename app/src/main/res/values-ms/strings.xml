@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (Korea)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">PENINGKAT DESIBEL &amp; GAIN</string>
-    <string name="sound_test_3sec">Ujian Bunyi 3 Saat</string>
+    <string name="decibel_booster_title">PENINGKAT DESIBEL</string>
+    <string name="sound_test_3sec">Ujian Bunyi</string>
+    <string name="amplification_level_title">Tahap Penguatan</string>
     <string name="hearing_warning_title">Perlindungan Pendengaran &amp; Amaran Keselamatan</string>
     <string name="hearing_warning_desc">Mendengar pada paras kelantangan tinggi (&gt;100%) untuk tempoh lama boleh menyebabkan kerosakan pendengaran kekal atau gangguan pembesar suara. Sila laraskan kelantangan dengan bertanggungjawab.</string>
     <string name="quick_presets_title">PRASET PENINGKAT PANTAS</string>

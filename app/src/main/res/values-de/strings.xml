@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (Koreanisch)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">DEZIBEL-VERSTÄRKER &amp; GAIN</string>
-    <string name="sound_test_3sec">3 Sek. Soundcheck</string>
+    <string name="decibel_booster_title">DEZIBEL-VERSTÄRKER</string>
+    <string name="sound_test_3sec">Soundcheck</string>
+    <string name="amplification_level_title">Verstärkungsstufe</string>
     <string name="hearing_warning_title">Gehörschutz &amp; Sicherheitswarnung</string>
     <string name="hearing_warning_desc">Das Hören bei hoher Lautstärke (&gt;100%) über längere Zeiträume kann zu dauerhaften Gehörschäden oder Lautsprecherverzerrungen führen. Bitte passen Sie die Lautstärke verantwortungsbewusst an.</string>
     <string name="quick_presets_title">SCHNELL-VERSTÄRKUNG-PRESETS</string>

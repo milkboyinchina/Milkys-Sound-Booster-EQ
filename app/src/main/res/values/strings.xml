@@ -23,8 +23,9 @@
     <string name="language_korean">한국어 (Korean)</string>
 
     <!-- Controls & Headers -->
-    <string name="decibel_booster_title">DECIBEL BOOSTER &amp; GAIN</string>
-    <string name="sound_test_3sec">3 Sec Sound Test</string>
+    <string name="decibel_booster_title">DECIBEL BOOSTER</string>
+    <string name="sound_test_3sec">Sound Test</string>
+    <string name="amplification_level_title">Amplification Level</string>
     <string name="hearing_warning_title">Hearing Protection &amp; Safety Warning</string>
     <string name="hearing_warning_desc">Listening at high volume levels (&gt;100%) for extended periods can cause permanent hearing damage or speaker distortion. Please adjust volume responsibly.</string>
     <string name="quick_presets_title">QUICK BOOST PRESETS</string>
