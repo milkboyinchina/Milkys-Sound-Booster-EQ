@@ -67,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.milkys.soundbooster.ui.theme.MyApplicationTheme
+import com.milkys.soundbooster.ui.components.HearingWarningCard
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -2850,60 +2851,7 @@ fun QuickBoostPresetsCard(
     }
 }
 
-@Composable
-fun HearingWarningCard(
-    onClose: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF382300)),
-        shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(1.5.dp, Color(0xFFFFC107))
-    ) {
-        Row(
-            modifier = Modifier.padding(14.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Warning,
-                contentDescription = "Hearing Loss Safety Warning",
-                tint = Color(0xFFFFC107),
-                modifier = Modifier.size(28.dp)
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.hearing_warning_title),
-                    color = Color(0xFFFFD54F),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
-                )
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(
-                    text = stringResource(R.string.hearing_warning_desc),
-                    color = Color(0xFFFFF59D),
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-            IconButton(
-                onClick = onClose,
-                modifier = Modifier
-                    .size(32.dp)
-                    .testTag("close_hearing_warning_button")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Hide warning for 7 days",
-                    tint = Color(0xFFFFD54F),
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-    }
-}
+// HearingWarningCard moved to ui/components/HearingWarningCard.kt
 
 
 
