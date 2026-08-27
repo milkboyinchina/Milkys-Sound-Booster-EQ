@@ -51,6 +51,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -114,6 +115,15 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                     updateNotification()
                 }
             }
+            launch {
+                AudioEffectManager.isFloatingEnabled.collectLatest { enabled ->
+                    if (enabled) {
+                        showFloatingOverlay()
+                    } else {
+                        hideFloatingOverlay()
+                    }
+                }
+            }
         }
     }
 
@@ -123,6 +133,10 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
 
         // Call startForegroundService immediately so Android 8.0+ never throws ForegroundServiceDidNotStartInTimeException
         startForegroundService()
+
+        if (AudioEffectManager.isFloatingEnabled.value) {
+            showFloatingOverlay()
+        }
 
         when (intent?.action) {
             ACTION_STOP -> {
@@ -158,6 +172,8 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         store.clear()
         serviceScope.cancel()
         hideFloatingOverlay()
+        // AGENTS 5.2 - release AudioEffect handles to prevent audio server crashes
+        AudioEffectManager.release()
         super.onDestroy()
     }
 
@@ -304,9 +320,10 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
             
             setContent {
                 var isExpanded by remember { mutableStateOf(false) }
-                val isBoosted by AudioEffectManager.isBoostEnabled.collectAsState()
-                val boostProgress by AudioEffectManager.boostProgress.collectAsState()
-                val currentPreset by AudioEffectManager.eqPreset.collectAsState()
+                val isBoosted by AudioEffectManager.isBoostEnabled.collectAsStateWithLifecycle()
+                val boostProgress by AudioEffectManager.boostProgress.collectAsStateWithLifecycle()
+                val currentPreset by AudioEffectManager.eqPreset.collectAsStateWithLifecycle()
+                val favoritePresets by AudioEffectManager.favoritePresets.collectAsStateWithLifecycle()
 
                 Box(
                     modifier = Modifier.padding(8.dp)
@@ -316,11 +333,35 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                         FloatingBubble(
                             isBoosted = isBoosted,
                             boostProgress = boostProgress,
+                            currentPreset = currentPreset,
                             onClick = { isExpanded = true },
                             onDrag = { dx, dy ->
                                 overlayParams?.let { p ->
                                     p.x += dx.toInt()
                                     p.y += dy.toInt()
+                                    
+                                    val displayMetrics = resources.displayMetrics
+                                    val screenWidth = displayMetrics.widthPixels
+                                    val screenHeight = displayMetrics.heightPixels
+                                    
+                                    p.x = p.x.coerceIn(0, (screenWidth - 160).coerceAtLeast(0))
+                                    p.y = p.y.coerceIn(0, (screenHeight - 160).coerceAtLeast(0))
+
+                                    try {
+                                        windowManager?.updateViewLayout(this@apply, p)
+                                    } catch (e: Throwable) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            },
+                            onDragEnd = {
+                                overlayParams?.let { p ->
+                                    val displayMetrics = resources.displayMetrics
+                                    val screenWidth = displayMetrics.widthPixels
+                                    val midX = screenWidth / 2
+                                    val targetX = if (p.x < midX) 16 else (screenWidth - 180).coerceAtLeast(16)
+                                    
+                                    p.x = targetX
                                     try {
                                         windowManager?.updateViewLayout(this@apply, p)
                                     } catch (e: Throwable) {
@@ -335,8 +376,20 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                             isBoosted = isBoosted,
                             boostProgress = boostProgress,
                             currentPreset = currentPreset,
+                            favoritePresets = favoritePresets,
                             onToggleBoost = { AudioEffectManager.setBoostEnabled(it) },
                             onBoostChange = { AudioEffectManager.setBoostProgress(it) },
+                            onPresetSelect = { AudioEffectManager.applyPreset(it) },
+                            onOpenApp = {
+                                try {
+                                    val intent = Intent(this@VolumeBoosterService, MainActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                    }
+                                    startActivity(intent)
+                                } catch (e: Throwable) {
+                                    e.printStackTrace()
+                                }
+                            },
                             onClose = { isExpanded = false },
                             onDisableOverlay = { AudioEffectManager.setFloatingEnabled(false) }
                         )
@@ -367,12 +420,51 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     }
 }
 
+fun getPresetAbbreviation(presetName: String): String {
+    return when (presetName.lowercase()) {
+        "flat" -> "FL"
+        "bass booster" -> "BB"
+        "vocal booster" -> "VB"
+        "rock" -> "RK"
+        "pop" -> "PO"
+        "jazz" -> "JZ"
+        else -> {
+            val words = presetName.split(" ").filter { it.isNotBlank() }
+            if (words.size >= 2) {
+                "${words[0].first().uppercaseChar()}${words[1].first().uppercaseChar()}"
+            } else if (presetName.length >= 2) {
+                presetName.take(2).uppercase()
+            } else {
+                presetName.uppercase()
+            }
+        }
+    }
+}
+
+fun getTopFavoritePresets(favorites: Set<String>): List<String> {
+    val defaults = listOf("Flat", "Bass Booster", "Rock", "Pop")
+    val result = mutableListOf<String>()
+    for (fav in favorites) {
+        if (result.size < 4 && !result.contains(fav)) {
+            result.add(fav)
+        }
+    }
+    for (def in defaults) {
+        if (result.size < 4 && !result.contains(def)) {
+            result.add(def)
+        }
+    }
+    return result.take(4)
+}
+
 @Composable
 fun FloatingBubble(
     isBoosted: Boolean,
     boostProgress: Int,
+    currentPreset: String,
     onClick: () -> Unit,
-    onDrag: (Float, Float) -> Unit
+    onDrag: (Float, Float) -> Unit,
+    onDragEnd: () -> Unit = {}
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
@@ -386,49 +478,65 @@ fun FloatingBubble(
     )
 
     val modifierScale = if (isBoosted && boostProgress > 20) scale else 1.0f
+    val presetAbbr = getPresetAbbreviation(currentPreset)
 
     Box(
         modifier = Modifier
             .scale(modifierScale)
-            .size(56.dp)
+            .defaultMinSize(minWidth = 56.dp, minHeight = 56.dp)
+            .size(60.dp)
             .pointerInput(Unit) {
-                var isDragging = false
+                var totalDragDistance = 0f
                 detectDragGestures(
-                    onDragStart = { isDragging = false },
+                    onDragStart = { totalDragDistance = 0f },
                     onDragEnd = {
-                        if (!isDragging) {
+                        if (totalDragDistance < 15f) {
                             onClick()
+                        } else {
+                            onDragEnd()
                         }
                     },
-                    onDragCancel = {},
+                    onDragCancel = { onDragEnd() },
                     onDrag = { change, dragAmount ->
                         change.consume()
-                        isDragging = true
+                        totalDragDistance += kotlin.math.hypot(dragAmount.x, dragAmount.y)
                         onDrag(dragAmount.x, dragAmount.y)
                     }
                 )
             }
             .background(
-                color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFF49454F),
+                color = if (isBoosted) Color(0xFF381E72) else Color(0xFF2B2930),
                 shape = CircleShape
             )
             .clip(CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = if (isBoosted) Icons.Default.VolumeUp else Icons.Default.VolumeMute,
-                contentDescription = "Floating booster menu",
-                tint = if (isBoosted) Color(0xFF381E72) else Color(0xFFCAC4D0),
-                modifier = Modifier.size(24.dp)
+        // Outer Power Ring Indicator
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(3.dp),
+            shape = CircleShape,
+            color = Color.Transparent,
+            border = androidx.compose.foundation.BorderStroke(
+                width = 2.dp,
+                color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFF49454F)
             )
-            if (isBoosted) {
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = if (isBoosted) Icons.Default.VolumeUp else Icons.Default.VolumeMute,
+                    contentDescription = "Floating sound booster menu",
+                    tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(
-                    text = "${boostProgress}%",
-                    color = Color(0xFF381E72),
+                    text = if (isBoosted) "+$boostProgress%" else presetAbbr,
+                    color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -442,26 +550,31 @@ fun FloatingDashboard(
     isBoosted: Boolean,
     boostProgress: Int,
     currentPreset: String,
+    favoritePresets: Set<String> = emptySet(),
     onToggleBoost: (Boolean) -> Unit,
     onBoostChange: (Int) -> Unit,
+    onPresetSelect: (String) -> Unit = {},
+    onOpenApp: () -> Unit = {},
     onClose: () -> Unit,
     onDisableOverlay: () -> Unit
 ) {
+    val topFavorites = remember(favoritePresets) { getTopFavoritePresets(favoritePresets) }
+
     Card(
         modifier = Modifier
-            .width(260.dp)
+            .width(280.dp)
             .wrapContentHeight(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF2B2930)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Header
+            // Header with Power Switch & Action Shortcuts
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -469,40 +582,44 @@ fun FloatingDashboard(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.FlashOn,
                         contentDescription = "Active Booster",
                         tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = "Booster Quick Link",
+                        text = "Booster Overlay",
                         color = Color(0xFFE6E1E5),
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    // Power switch icon button to toggle booster on/off
+                    // Open Main App Action
                     IconButton(
-                        onClick = { onToggleBoost(!isBoosted) },
-                        modifier = Modifier.size(28.dp)
+                        onClick = onOpenApp,
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                            .size(48.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.PowerSettingsNew,
-                            contentDescription = "Toggle Booster Power",
-                            tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.5f),
+                            imageVector = Icons.Default.Launch,
+                            contentDescription = "Open main app",
+                            tint = Color(0xFFD0BCFF),
                             modifier = Modifier.size(18.dp)
                         )
                     }
 
-                    // '>' Button to disable floating overlay
+                    // Disable Floating Overlay ('>')
                     IconButton(
                         onClick = onDisableOverlay,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                            .size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ChevronRight,
@@ -512,16 +629,18 @@ fun FloatingDashboard(
                         )
                     }
 
-                    // Close/Collapse menu
+                    // Collapse Menu Action
                     IconButton(
                         onClick = onClose,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                            .size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Collapse menu",
                             tint = Color(0xFFCAC4D0),
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -529,31 +648,33 @@ fun FloatingDashboard(
 
             Divider(color = Color(0xFF49454F), thickness = 1.dp)
 
-            // Switch Toggle
+            // Header / Power Switch Toggle
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Amplifier State",
+                    text = "Master Power State",
                     color = Color(0xFFCAC4D0),
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
                 Switch(
                     checked = isBoosted,
                     onCheckedChange = onToggleBoost,
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color(0xFFD0BCFF),
-                        checkedTrackColor = Color(0xFF49454F),
+                        checkedTrackColor = Color(0xFF381E72),
                         uncheckedThumbColor = Color(0xFFCAC4D0),
                         uncheckedTrackColor = Color(0xFF49454F)
                     )
                 )
             }
 
-            // Slider Boost with - and + Buttons
-            val isSliderStepped by AudioEffectManager.isSliderStepped.collectAsState()
+            // Boost Amplification Controls [-] / [+]
+            val isSliderStepped by AudioEffectManager.isSliderStepped.collectAsStateWithLifecycle()
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -565,13 +686,13 @@ fun FloatingDashboard(
                 ) {
                     Text(
                         text = "Boost Amplification",
-                        color = Color(0xFFCAC4D0),
+                        color = if (isBoosted) Color(0xFFE6E1E5) else Color(0xFFCAC4D0).copy(alpha = 0.6f),
                         fontSize = 12.sp
                     )
                     Text(
                         text = "+$boostProgress%",
-                        color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
-                        fontSize = 12.sp,
+                        color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.5f),
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -590,14 +711,15 @@ fun FloatingDashboard(
                         },
                         enabled = isBoosted && boostProgress > 0,
                         modifier = Modifier
-                            .size(32.dp)
+                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                            .size(48.dp)
                             .background(if (isBoosted) Color(0xFF49454F) else Color(0xFF36343B), CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Remove,
                             contentDescription = "Decrease boost",
-                            tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.4f),
-                            modifier = Modifier.size(18.dp)
+                            tint = if (isBoosted && boostProgress > 0) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.3f),
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
@@ -631,43 +753,75 @@ fun FloatingDashboard(
                         },
                         enabled = isBoosted && boostProgress < 100,
                         modifier = Modifier
-                            .size(32.dp)
+                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                            .size(48.dp)
                             .background(if (isBoosted) Color(0xFF49454F) else Color(0xFF36343B), CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Increase boost",
-                            tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.4f),
-                            modifier = Modifier.size(18.dp)
+                            tint = if (isBoosted && boostProgress < 100) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.3f),
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
             }
 
-            // Preset Quick View
-            Row(
+            // 4 Favorite Presets Grid / Row
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = "Equalizer Preset",
+                    text = "FAVORITE PRESETS",
                     color = Color(0xFFCAC4D0),
-                    fontSize = 12.sp
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
                 )
-                Box(
-                    modifier = Modifier
-                        .background(Color(0xFF49454F), shape = RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(
-                        text = currentPreset,
-                        color = Color(0xFFE6E1E5),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    topFavorites.forEach { presetName ->
+                        val isSelected = currentPreset.equals(presetName, ignoreCase = true)
+                        val abbr = getPresetAbbreviation(presetName)
+                        
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(
+                                    color = if (isSelected) Color(0xFFD0BCFF) else Color(0xFF36343B)
+                                )
+                                .clickable { onPresetSelect(presetName) }
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = abbr,
+                                    color = if (isSelected) Color(0xFF381E72) else Color(0xFFE6E1E5),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+                                Text(
+                                    text = presetName,
+                                    color = if (isSelected) Color(0xFF381E72) else Color(0xFFCAC4D0),
+                                    fontSize = 9.sp,
+                                    maxLines = 1,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
+
