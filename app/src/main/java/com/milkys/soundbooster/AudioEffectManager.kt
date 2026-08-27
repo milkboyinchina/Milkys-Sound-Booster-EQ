@@ -9,8 +9,13 @@ import android.media.audiofx.LoudnessEnhancer
 import android.os.PowerManager
 import android.os.Build
 import android.provider.Settings
+import android.media.AudioAttributes
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +38,7 @@ object AudioEffectManager {
     private const val KEY_APP_LANGUAGE = "app_language"
     private const val KEY_CUSTOM_PRESETS = "custom_presets_json"
     private const val KEY_DEFAULT_PRESET = "default_preset_name"
+    private const val KEY_FAVORITE_PRESETS = "favorite_presets_set"
     private const val KEY_AD_CONSENT_STATUS = "ad_consent_status"
     private const val KEY_PERSONALIZED_ADS_CONSENT = "personalized_ads_consent"
 
@@ -96,6 +102,9 @@ object AudioEffectManager {
     private val _customPresets = MutableStateFlow<Map<String, IntArray>>(emptyMap())
     val customPresets: StateFlow<Map<String, IntArray>> = _customPresets
 
+    private val _favoritePresets = MutableStateFlow<Set<String>>(emptySet())
+    val favoritePresets: StateFlow<Set<String>> = _favoritePresets
+
     // 5 standard equalizer bands: 60Hz, 230Hz, 910Hz, 4kHz, 14kHz
     private val _eqBands = MutableStateFlow(intArrayOf(0, 0, 0, 0, 0)) // levels in dB (-15 to +15)
     val eqBands: StateFlow<IntArray> = _eqBands
@@ -114,6 +123,9 @@ object AudioEffectManager {
     // Silence AudioTrack for keeping global session active
     private var audioTrack: AudioTrack? = null
     private var isPlayingSilence = false
+    private var silenceJob: Job? = null
+    private val audioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private const val TAG = "AudioEffectManager"
 
     fun init(ctx: Context) {
         val appContext = ctx.applicationContext
@@ -138,6 +150,7 @@ object AudioEffectManager {
         val appLanguage = prefs.getString(KEY_APP_LANGUAGE, "system") ?: "system"
         val defaultPreset = prefs.getString(KEY_DEFAULT_PRESET, "Flat") ?: "Flat"
         val customPresetsJson = prefs.getString(KEY_CUSTOM_PRESETS, "") ?: ""
+        val favoritePresetsSet = prefs.getStringSet(KEY_FAVORITE_PRESETS, emptySet()) ?: emptySet()
 
         _isBoostEnabled.value = enabled
         _boostProgress.value = boost
@@ -175,6 +188,7 @@ object AudioEffectManager {
             }
         }
         _customPresets.value = parsedCustom
+        _favoritePresets.value = favoritePresetsSet
 
         val activePreset = if (preset.isNotEmpty()) preset else defaultPreset
         _eqPreset.value = activePreset
@@ -226,7 +240,7 @@ object AudioEffectManager {
                 }
             }
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "LoudnessEnhancer init failed: ${e.message}")
             loudnessEnhancer = null
         }
 
@@ -243,7 +257,7 @@ object AudioEffectManager {
                 }
             }
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "Equalizer init failed: ${e.message}")
             equalizer = null
         }
     }
@@ -252,20 +266,21 @@ object AudioEffectManager {
         try {
             loudnessEnhancer?.release()
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "Failed to release enhancer: ${e.message}")
         }
         try {
             equalizer?.release()
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "Failed to release equalizer: ${e.message}")
         }
         loudnessEnhancer = null
         equalizer = null
     }
 
     private fun mapProgressToGain(progress: Int): Int {
-        // Progress (0 to 100%) maps to 0 to 3000 millibels (+30 dB)
-        return progress * 30
+        // Progress (0 to 100%) maps to 0 to 1500 millibels (+15 dB) per AGENTS 5.2 safety limit (max 200% / +15-20dB).
+        // Clamped to 1500 mB to prevent hearing damage / speaker burnout; was previously 3000 mB (+30dB).
+        return (progress * 15).coerceIn(0, 1500)
     }
 
     private fun applySavedBands() {
@@ -456,9 +471,64 @@ object AudioEffectManager {
         }
     }
 
-    fun saveCustomPreset(name: String, bands: IntArray): Boolean {
+    fun toggleFavorite(name: String): Boolean {
+        val current = _favoritePresets.value.toMutableSet()
+        if (current.contains(name)) {
+            current.remove(name)
+            _favoritePresets.value = current
+            saveFavoritesToPrefs()
+            return true
+        } else {
+            if (current.size >= 4) {
+                return false // Reached max 4 favorites limit
+            }
+            current.add(name)
+            _favoritePresets.value = current
+            saveFavoritesToPrefs()
+            return true
+        }
+    }
+
+    private fun saveFavoritesToPrefs() {
+        getPrefs()?.edit()?.putStringSet(KEY_FAVORITE_PRESETS, _favoritePresets.value)?.apply()
+    }
+
+    fun getMatchedPresetName(bands: IntArray = _eqBands.value): String? {
+        for ((name, b) in BUILT_IN_PRESETS) {
+            if (b.contentEquals(bands)) return name
+        }
+        for ((name, b) in _customPresets.value) {
+            if (b.contentEquals(bands)) return name
+        }
+        return null
+    }
+
+    fun validateCustomPreset(name: String, bands: IntArray): String? {
         val cleanName = name.trim()
-        if (cleanName.isEmpty()) return false
+        if (cleanName.isEmpty() || cleanName.length > 10) {
+            return "Preset name must be between 1 and 10 characters."
+        }
+        if (_customPresets.value.size >= 7 && !_customPresets.value.containsKey(cleanName)) {
+            return "Maximum 7 custom presets allowed."
+        }
+        if (BUILT_IN_PRESETS.containsKey(cleanName) || _customPresets.value.containsKey(cleanName)) {
+            return "Preset name already exists."
+        }
+        val allPresets = BUILT_IN_PRESETS + _customPresets.value
+        if (allPresets.values.any { it.contentEquals(bands) }) {
+            return "Equalizer values match an existing preset."
+        }
+        return null
+    }
+
+    fun saveCustomPreset(name: String, bands: IntArray): Boolean {
+        return saveCustomPresetWithResult(name, bands) == null
+    }
+
+    fun saveCustomPresetWithResult(name: String, bands: IntArray): String? {
+        val err = validateCustomPreset(name, bands)
+        if (err != null) return err
+        val cleanName = name.trim()
         val newMap = _customPresets.value.toMutableMap()
         newMap[cleanName] = bands.clone()
         _customPresets.value = newMap
@@ -481,21 +551,41 @@ object AudioEffectManager {
                 e.printStackTrace()
             }
         }
-        return true
+        return null
     }
 
     fun deleteCustomPreset(name: String) {
+        deleteCustomPresets(setOf(name))
+    }
+
+    fun deleteCustomPresets(names: Set<String>) {
         val newMap = _customPresets.value.toMutableMap()
-        if (newMap.containsKey(name)) {
-            newMap.remove(name)
+        var modified = false
+        val favs = _favoritePresets.value.toMutableSet()
+        var favsModified = false
+
+        for (name in names) {
+            if (newMap.containsKey(name)) {
+                newMap.remove(name)
+                modified = true
+                if (favs.remove(name)) {
+                    favsModified = true
+                }
+                if (_eqPreset.value == name) {
+                    applyPreset(_defaultPreset.value)
+                }
+                if (_defaultPreset.value == name) {
+                    setDefaultPreset("Flat")
+                }
+            }
+        }
+        if (modified) {
             _customPresets.value = newMap
             saveCustomPresetsToPrefs()
-            if (_eqPreset.value == name) {
-                applyPreset(_defaultPreset.value)
-            }
-            if (_defaultPreset.value == name) {
-                setDefaultPreset("Flat")
-            }
+        }
+        if (favsModified) {
+            _favoritePresets.value = favs
+            saveFavoritesToPrefs()
         }
     }
 
@@ -522,10 +612,9 @@ object AudioEffectManager {
         val bands = getPresetBands(name) ?: _eqBands.value
         val json = org.json.JSONObject()
         json.put("name", name)
-        json.put("type", "sound_booster_preset")
         val arr = org.json.JSONArray()
         for (b in bands) arr.put(b)
-        json.put("bands", arr)
+        json.put("values", arr)
         return json.toString(2)
     }
 
@@ -538,7 +627,7 @@ object AudioEffectManager {
             item.put("name", name)
             val arr = org.json.JSONArray()
             for (b in bands) arr.put(b)
-            item.put("bands", arr)
+            item.put("values", arr)
             item.put("isCustom", _customPresets.value.containsKey(name))
             presetsArr.put(item)
         }
@@ -549,22 +638,32 @@ object AudioEffectManager {
     }
 
     fun importPreset(jsonStr: String): String? {
+        return importPresetWithResult(jsonStr).first
+    }
+
+    fun importPresetWithResult(jsonStr: String): Pair<String?, String?> {
         try {
             val json = org.json.JSONObject(jsonStr.trim())
             if (json.has("presets")) {
                 val presetsArr = json.getJSONArray("presets")
-                var lastImported = ""
+                var lastImported: String? = null
+                var lastError: String? = null
                 var count = 0
                 for (i in 0 until presetsArr.length()) {
                     val item = presetsArr.getJSONObject(i)
                     val name = item.getString("name")
-                    val bandsArr = item.getJSONArray("bands")
+                    val arrKey = if (item.has("values")) "values" else "bands"
+                    val bandsArr = item.getJSONArray(arrKey)
                     if (bandsArr.length() == 5) {
                         val bands = IntArray(5)
                         for (j in 0 until 5) bands[j] = bandsArr.getInt(j).coerceIn(-15, 15)
-                        saveCustomPreset(name, bands)
-                        lastImported = name
-                        count++
+                        val err = saveCustomPresetWithResult(name, bands)
+                        if (err == null) {
+                            lastImported = name
+                            count++
+                        } else {
+                            lastError = err
+                        }
                     }
                 }
                 if (json.has("defaultPreset")) {
@@ -573,21 +672,25 @@ object AudioEffectManager {
                         setDefaultPreset(def)
                     }
                 }
-                return if (count > 0) lastImported else null
-            } else if (json.has("bands")) {
-                val name = json.optString("name", "Imported Preset")
-                val bandsArr = json.getJSONArray("bands")
-                if (bandsArr.length() == 5) {
-                    val bands = IntArray(5)
-                    for (j in 0 until 5) bands[j] = bandsArr.getInt(j).coerceIn(-15, 15)
-                    saveCustomPreset(name, bands)
-                    return name
+                return if (count > 0) Pair(lastImported, null) else Pair(null, lastError ?: "Invalid preset format")
+            } else {
+                val arrKey = if (json.has("values")) "values" else if (json.has("bands")) "bands" else null
+                if (arrKey != null) {
+                    val name = json.optString("name", "Imported").trim()
+                    val bandsArr = json.getJSONArray(arrKey)
+                    if (bandsArr.length() == 5) {
+                        val bands = IntArray(5)
+                        for (j in 0 until 5) bands[j] = bandsArr.getInt(j).coerceIn(-15, 15)
+                        val err = saveCustomPresetWithResult(name, bands)
+                        return if (err == null) Pair(name, null) else Pair(null, err)
+                    }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            return Pair(null, "Invalid preset JSON format.")
         }
-        return null
+        return Pair(null, "Invalid preset JSON format.")
     }
 
     private fun startSilencePlayback() {
@@ -602,21 +705,29 @@ object AudioEffectManager {
             )
             val bufferSize = if (minBufSize > 0) minBufSize else 4096
 
-            val track = AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                sampleRate,
-                AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                bufferSize,
-                AudioTrack.MODE_STREAM
-            )
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            val audioFormat = AudioFormat.Builder()
+                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .setSampleRate(sampleRate)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                .build()
+            val track = AudioTrack.Builder()
+                .setAudioAttributes(audioAttributes)
+                .setAudioFormat(audioFormat)
+                .setBufferSizeInBytes(bufferSize)
+                .setTransferMode(AudioTrack.MODE_STREAM)
+                .build()
 
             if (track.state == AudioTrack.STATE_INITIALIZED) {
                 track.play()
                 audioTrack = track
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    val silenceBuffer = ShortArray(bufferSize)
+                silenceJob?.cancel()
+                silenceJob = audioScope.launch {
+                    val silenceBuffer = ShortArray(bufferSize / 2)
                     while (isPlayingSilence) {
                         try {
                             val activeTrack = audioTrack
@@ -624,7 +735,7 @@ object AudioEffectManager {
                                 activeTrack.write(silenceBuffer, 0, silenceBuffer.size)
                             }
                         } catch (e: Throwable) {
-                            e.printStackTrace()
+                            Log.w(TAG, "Silence write failed: ${e.message}")
                         }
                         delay(100)
                     }
@@ -633,28 +744,49 @@ object AudioEffectManager {
                 try {
                     track.release()
                 } catch (e: Throwable) {
-                    e.printStackTrace()
+                    Log.w(TAG, "Failed to release uninitialized track: ${e.message}")
                 }
                 isPlayingSilence = false
             }
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "startSilencePlayback failed: ${e.message}")
             isPlayingSilence = false
         }
     }
 
     private fun stopSilencePlayback() {
         isPlayingSilence = false
+        silenceJob?.cancel()
+        silenceJob = null
         try {
             audioTrack?.stop()
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "Failed to stop track: ${e.message}")
         }
         try {
             audioTrack?.release()
         } catch (e: Throwable) {
-            e.printStackTrace()
+            Log.w(TAG, "Failed to release track: ${e.message}")
         }
         audioTrack = null
+    }
+
+    /**
+     * Release all audio resources. Call from Service.onDestroy / Activity.onDestroy
+     * to prevent AudioEffect memory leaks and audio server crashes (AGENTS 5.2).
+     */
+    fun release() {
+        try {
+            loudnessEnhancer?.enabled = false
+        } catch (e: Throwable) {
+            Log.w(TAG, "Failed to disable enhancer: ${e.message}")
+        }
+        try {
+            equalizer?.enabled = false
+        } catch (e: Throwable) {
+            Log.w(TAG, "Failed to disable equalizer: ${e.message}")
+        }
+        releaseEffects()
+        stopSilencePlayback()
     }
 }

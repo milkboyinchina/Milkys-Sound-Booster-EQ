@@ -55,4 +55,30 @@
     <string name="content_desc_set_default_preset" translatable="false">Set current preset as default</string>
     <string name="content_desc_export_preset" translatable="false">Export selected preset to JSON</string>
     <string name="content_desc_delete_preset" translatable="false">Delete custom preset</string>
+
+    <!-- Preset Manager & Equalizer Feature -->
+    <string name="preset_manager_title" translatable="false">Preset Manager</string>
+    <string name="preset_favorite_limit_reached" translatable="false">Maximum 4 favorites reached. Untag one to add another.</string>
+    <string name="preset_error_max_limit" translatable="false">Maximum 7 custom presets allowed.</string>
+    <string name="preset_error_name_exists" translatable="false">Preset name already exists.</string>
+    <string name="preset_error_name_length" translatable="false">Preset name must be between 1 and 10 characters.</string>
+    <string name="preset_error_values_exist" translatable="false">Equalizer values match an existing preset.</string>
+    <string name="preset_error_invalid_json" translatable="false">Invalid preset JSON format.</string>
+    <string name="delete_selected_presets_confirm" translatable="false">Delete selected presets?</string>
+    <string name="btn_delete_selected" translatable="false">Delete Selected</string>
+    <string name="content_desc_favorite_preset" translatable="false">Toggle favorite preset</string>
+    <string name="content_desc_delete_mode" translatable="false">Toggle delete mode</string>
+
+    <!-- Floating Overlay Widget Strings -->
+    <string name="overlay_permission_dialog_title" translatable="false">Display Over Other Apps Permission</string>
+    <string name="overlay_permission_dialog_desc" translatable="false">Milkys Sound Booster requires system overlay permission to display quick volume boost and preset controls over other applications.</string>
+    <string name="btn_grant_permission" translatable="false">Grant Permission</string>
+    <string name="overlay_permission_toast_denied" translatable="false">Overlay permission required to run over other apps.</string>
+    <string name="overlay_open_main_app" translatable="false">Open Sound Booster App</string>
+    <string name="overlay_collapse_panel" translatable="false">Collapse Control Panel</string>
+    <string name="overlay_favorite_presets_title" translatable="false">FAVORITE PRESETS</string>
+    <string name="content_desc_floating_fab" translatable="false">Floating sound booster menu</string>
+    <string name="content_desc_open_app" translatable="false">Open main app</string>
+    <string name="overlay_control_title" translatable="false">Overlay Control</string>
+    <string name="overlay_control_desc" translatable="false">Enable floating widget over other apps</string>
 </resources>
