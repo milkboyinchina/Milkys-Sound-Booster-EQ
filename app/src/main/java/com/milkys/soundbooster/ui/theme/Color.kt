@@ -38,4 +38,30 @@ object AppColors {
     // Warning
     val WarningContainer = Color(0xFF4F378B)
     val WarningIcon = Color(0xFFFFB4AB)
+    val WarningBorder = Color(0xFFFFC107)
+    val WarningTitle = Color(0xFFFFD54F)
+    val WarningContainerDark = Color(0xFF382300)
+    val WarningContainerLight = Color(0xFF31111D)
+    val WarningBorderLight = Color(0xFF93000A)
+
+    // Error / Delete
+    val Error = Color(0xFFB3261E)
+    val ErrorLight = Color(0xFFFF8A80)
+    val ErrorDark = Color(0xFF93000A)
+    val ErrorContainerLight = Color(0xFFFFB4AB)
+
+    // Success
+    val Success = Color(0xFF81C784)
+    val SuccessLight = Color(0xFFB4E6B9)
+    val SuccessDark = Color(0xFF386A42)
+    val SuccessContainer = Color(0xFF1B2F22)
+    val SuccessLightAlt = Color(0xFFFFB74D)
+
+    // Extended surfaces
+    val SurfaceVariant = Color(0xFF25232A)
+    val DisabledCard = Color(0xFF1F1D24)
+    val BackgroundAlt = Color(0xFF1E1C28)
+    val CardAlt2 = Color(0xFF332D41)
+    val Orange = Color(0xFFFF9800)
+    val AccentSecondary = Color(0xFF805BFF)
 }

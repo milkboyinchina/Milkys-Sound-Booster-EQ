@@ -39,41 +39,41 @@ class QcVisualMatrixTest {
   @Config(qualifiers = "w320dp-h640dp-mdpi", sdk = [34])
   fun matrix_compact_320_light() {
     composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "qc/reports/roborazzi/matrix-compact-320-light.png")
+    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-compact-320-light.png")
   }
 
   @Test
   @Config(qualifiers = "w411dp-h891dp-xxhdpi", sdk = [34])
   fun matrix_standard_411_light() {
     composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "qc/reports/roborazzi/matrix-standard-411-light.png")
+    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-standard-411-light.png")
   }
 
   @Test
   @Config(qualifiers = "w600dp-h900dp-mdpi", sdk = [34])
   fun matrix_expanded_600_light() {
     composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "qc/reports/roborazzi/matrix-expanded-600-light.png")
+    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-expanded-600-light.png")
   }
 
   @Test
   @Config(qualifiers = "w320dp-h640dp-mdpi", sdk = [34])
   fun matrix_compact_320_dark() {
     composeTestRule.setContent { MyApplicationTheme(darkTheme = true, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "qc/reports/roborazzi/matrix-compact-320-dark.png")
+    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-compact-320-dark.png")
   }
 
   @Test
   @Config(qualifiers = "w600dp-h900dp-mdpi", sdk = [34])
   fun matrix_expanded_600_dark() {
     composeTestRule.setContent { MyApplicationTheme(darkTheme = true, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "qc/reports/roborazzi/matrix-expanded-600-dark.png")
+    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-expanded-600-dark.png")
   }
 
   @Test
   @Config(qualifiers = "w411dp-h640dp-land-mdpi", sdk = [34])
   fun matrix_landscape_standard_light() {
     composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "qc/reports/roborazzi/matrix-landscape-standard-light.png")
+    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-landscape-standard-light.png")
   }
 }
