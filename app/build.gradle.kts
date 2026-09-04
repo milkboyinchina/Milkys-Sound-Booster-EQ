@@ -174,6 +174,10 @@ secrets {
 
 googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
 
+roborazzi {
+  outputDir.set(rootProject.file("qc/reports/roborazzi"))
+}
+
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.activity.compose)
@@ -190,6 +194,7 @@ dependencies {
   implementation(libs.androidx.lifecycle.viewmodel.compose)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
+  implementation(libs.androidx.datastore.preferences)
   if (envIncludeGoogleAds) {
     implementation(libs.play.services.ads)
   }

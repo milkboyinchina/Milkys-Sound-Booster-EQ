@@ -12,13 +12,23 @@ environment:
   setup_script: "scripts/setup_jules_env.sh"
 
 verification:
-  test_command: "./gradlew test"
+  test_command: "./gradlew testDebugUnitTest"
   build_command: "./scripts/build.sh assembleDebug"
-  lint_command: "./gradlew lint"
+  lint_command: "./gradlew lintDebug"
+  roborazzi_command: "./gradlew verifyRoborazziDebug"
   requirements_check: "./scripts/check_requirements.sh"
+  coverage_command: null  # Phase 3 — Optional (Kover soft report-only, not blocking in v1; see qc_plan.md §11)
+
+artifacts:
+  qc_path: "qc/"
+  reports_path: "qc/reports/"
+  changelogs_path: "qc/changelogs/"
+  build_output: ".build-outputs/"
 
 context_files:
   - "AGENTS.md"
+  - "qc_plan.md"
+  - "CHANGELOG.md"
   - "howto/setup_develop_build.md"
   - "howto/general_information.md"
 
@@ -27,3 +37,4 @@ protected_paths:
   - "*.jks"
   - "*.p12"
   - ".env"
+  - "qc/changelogs/*"

@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.milkys.soundbooster.data.PreferencesRepository
 
 object AudioEffectManager {
     private const val PREFS_NAME = "volume_booster_prefs"
@@ -119,12 +120,12 @@ object AudioEffectManager {
     // Audio effects
     private var loudnessEnhancer: LoudnessEnhancer? = null
     private var equalizer: Equalizer? = null
-    
+
     // Silence AudioTrack for keeping global session active
     private var audioTrack: AudioTrack? = null
-    private var isPlayingSilence = false
+    @Volatile private var isPlayingSilence = false
     private var silenceJob: Job? = null
-    private val audioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var audioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private const val TAG = "AudioEffectManager"
 
     fun init(ctx: Context) {
@@ -201,16 +202,46 @@ object AudioEffectManager {
             _eqBands.value = presetBands
         }
 
-        // Initialize actual audio effects if enabled
+        // Initialize actual audio effects if enabled — ensure silence track before effects binding
         if (enabled) {
             startSilencePlayback()
+            // initEffects will run after track is initialized (called again from startSilencePlayback if needed)
             initEffects()
         }
-        
+
         checkBatterySaverState()
+        // One-time migration to DataStore (IO, non-blocking)
+        audioScope.launch { try { PreferencesRepository.migrateFromSharedPrefs(appContext) } catch (e: Exception) { Log.w(TAG, "DataStore migration failed: ${e.message}") } }
     }
 
     private fun getPrefs() = context?.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    // DataStore helpers — dual-write to SharedPreferences (sync compat) + DataStore (async, IO)
+    private fun persistBoolean(key: String, value: Boolean, dsKey: androidx.datastore.preferences.core.Preferences.Key<Boolean>) {
+        getPrefs()?.edit()?.putBoolean(key, value)?.apply()
+        val ctx = context ?: return
+        audioScope.launch { try { PreferencesRepository.putBoolean(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putBoolean failed: ${e.message}") } }
+    }
+    private fun persistInt(key: String, value: Int, dsKey: androidx.datastore.preferences.core.Preferences.Key<Int>) {
+        getPrefs()?.edit()?.putInt(key, value)?.apply()
+        val ctx = context ?: return
+        audioScope.launch { try { PreferencesRepository.putInt(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putInt failed: ${e.message}") } }
+    }
+    private fun persistLong(key: String, value: Long, dsKey: androidx.datastore.preferences.core.Preferences.Key<Long>) {
+        getPrefs()?.edit()?.putLong(key, value)?.apply()
+        val ctx = context ?: return
+        audioScope.launch { try { PreferencesRepository.putLong(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putLong failed: ${e.message}") } }
+    }
+    private fun persistString(key: String, value: String, dsKey: androidx.datastore.preferences.core.Preferences.Key<String>) {
+        getPrefs()?.edit()?.putString(key, value)?.apply()
+        val ctx = context ?: return
+        audioScope.launch { try { PreferencesRepository.putString(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putString failed: ${e.message}") } }
+    }
+    private fun persistStringSet(key: String, value: Set<String>, dsKey: androidx.datastore.preferences.core.Preferences.Key<Set<String>>) {
+        getPrefs()?.edit()?.putStringSet(key, value)?.apply()
+        val ctx = context ?: return
+        audioScope.launch { try { PreferencesRepository.putStringSet(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putStringSet failed: ${e.message}") } }
+    }
 
     fun checkBatterySaverState() {
         val ctx = context ?: return
@@ -232,11 +263,13 @@ object AudioEffectManager {
                 loudnessEnhancer = try {
                     LoudnessEnhancer(0)
                 } catch (t: Throwable) {
-                    if (sessionId > 0) LoudnessEnhancer(sessionId) else null
+                    if (sessionId > 0) {
+                        try { LoudnessEnhancer(sessionId) } catch (inner: Throwable) { null }
+                    } else null
                 }
                 loudnessEnhancer?.apply {
-                    enabled = _isBoostEnabled.value
-                    setTargetGain(mapProgressToGain(_boostProgress.value))
+                    try { enabled = _isBoostEnabled.value } catch (t: Throwable) { Log.w(TAG, "enable enhancer failed: ${t.message}") }
+                    try { setTargetGain(mapProgressToGain(_boostProgress.value)) } catch (t: Throwable) { Log.w(TAG, "setTargetGain failed: ${t.message}") }
                 }
             }
         } catch (e: Throwable) {
@@ -249,10 +282,12 @@ object AudioEffectManager {
                 equalizer = try {
                     Equalizer(0, 0)
                 } catch (t: Throwable) {
-                    if (sessionId > 0) Equalizer(0, sessionId) else null
+                    if (sessionId > 0) {
+                        try { Equalizer(0, sessionId) } catch (inner: Throwable) { null }
+                    } else null
                 }
                 equalizer?.apply {
-                    enabled = _isBoostEnabled.value
+                    try { enabled = _isBoostEnabled.value } catch (t: Throwable) { Log.w(TAG, "enable equalizer failed: ${t.message}") }
                     applySavedBands()
                 }
             }
@@ -300,7 +335,7 @@ object AudioEffectManager {
 
     fun setBoostEnabled(enabled: Boolean) {
         _isBoostEnabled.value = enabled
-        getPrefs()?.edit()?.putBoolean(KEY_ENABLED, enabled)?.apply()
+        persistBoolean(KEY_ENABLED, enabled, PreferencesRepository.KEY_ENABLED)
 
         if (enabled) {
             startSilencePlayback()
@@ -333,7 +368,7 @@ object AudioEffectManager {
 
     fun setBoostProgress(progress: Int) {
         _boostProgress.value = progress
-        getPrefs()?.edit()?.putInt(KEY_BOOST, progress)?.apply()
+        persistInt(KEY_BOOST, progress, PreferencesRepository.KEY_BOOST)
 
         try {
             loudnessEnhancer?.setTargetGain(mapProgressToGain(progress))
@@ -344,52 +379,52 @@ object AudioEffectManager {
 
     fun setFloatingEnabled(enabled: Boolean) {
         _isFloatingEnabled.value = enabled
-        getPrefs()?.edit()?.putBoolean(KEY_FLOATING, enabled)?.apply()
+        persistBoolean(KEY_FLOATING, enabled, PreferencesRepository.KEY_FLOATING)
     }
 
     fun setAdsEnabled(enabled: Boolean) {
         _isAdsEnabled.value = enabled
-        getPrefs()?.edit()?.putBoolean(KEY_ADS_ENABLED, enabled)?.apply()
+        persistBoolean(KEY_ADS_ENABLED, enabled, PreferencesRepository.KEY_ADS_ENABLED)
     }
 
     fun setAdConsentStatus(status: String) {
         _adConsentStatus.value = status
-        getPrefs()?.edit()?.putString(KEY_AD_CONSENT_STATUS, status)?.apply()
+        persistString(KEY_AD_CONSENT_STATUS, status, PreferencesRepository.KEY_AD_CONSENT_STATUS)
     }
 
     fun setPersonalizedAdsConsent(enabled: Boolean) {
         _isPersonalizedAdsConsent.value = enabled
-        getPrefs()?.edit()?.putBoolean(KEY_PERSONALIZED_ADS_CONSENT, enabled)?.apply()
+        persistBoolean(KEY_PERSONALIZED_ADS_CONSENT, enabled, PreferencesRepository.KEY_PERSONALIZED_ADS_CONSENT)
     }
 
     fun setSliderStepped(enabled: Boolean) {
         _isSliderStepped.value = enabled
-        getPrefs()?.edit()?.putBoolean(KEY_SLIDER_STEPPED, enabled)?.apply()
+        persistBoolean(KEY_SLIDER_STEPPED, enabled, PreferencesRepository.KEY_SLIDER_STEPPED)
     }
 
     fun setNotifControlsEnabled(enabled: Boolean) {
         _isNotifControlsEnabled.value = enabled
-        getPrefs()?.edit()?.putBoolean(KEY_NOTIF_CONTROLS_ENABLED, enabled)?.apply()
+        persistBoolean(KEY_NOTIF_CONTROLS_ENABLED, enabled, PreferencesRepository.KEY_NOTIF_CONTROLS_ENABLED)
     }
 
     fun setHasSeenOnboarding(seen: Boolean) {
         _hasSeenOnboarding.value = seen
-        getPrefs()?.edit()?.putBoolean(KEY_HAS_SEEN_ONBOARDING, seen)?.apply()
+        persistBoolean(KEY_HAS_SEEN_ONBOARDING, seen, PreferencesRepository.KEY_HAS_SEEN_ONBOARDING)
     }
 
     fun setHearingWarningDisabled(disabled: Boolean) {
         _isHearingWarningDisabled.value = disabled
-        getPrefs()?.edit()?.putBoolean(KEY_HEARING_WARNING_DISABLED, disabled)?.apply()
+        persistBoolean(KEY_HEARING_WARNING_DISABLED, disabled, PreferencesRepository.KEY_HEARING_WARNING_DISABLED)
     }
 
     fun setDarkTheme(isDark: Boolean) {
         _isDarkTheme.value = isDark
-        getPrefs()?.edit()?.putBoolean(KEY_DARK_THEME, isDark)?.apply()
+        persistBoolean(KEY_DARK_THEME, isDark, PreferencesRepository.KEY_DARK_THEME)
     }
 
     fun setAppLanguage(language: String) {
         _appLanguage.value = language
-        getPrefs()?.edit()?.putString(KEY_APP_LANGUAGE, language)?.apply()
+        persistString(KEY_APP_LANGUAGE, language, PreferencesRepository.KEY_APP_LANGUAGE)
         context?.let { ctx ->
             applyLanguageToApp(ctx, language)
         }
@@ -423,7 +458,7 @@ object AudioEffectManager {
     fun hideHearingWarningFor7Days() {
         val until = System.currentTimeMillis() + (7L * 24L * 60L * 60L * 1000L)
         _hearingWarningHiddenUntil.value = until
-        getPrefs()?.edit()?.putLong(KEY_HEARING_WARNING_HIDDEN_UNTIL, until)?.apply()
+        persistLong(KEY_HEARING_WARNING_HIDDEN_UNTIL, until, PreferencesRepository.KEY_HEARING_WARNING_HIDDEN_UNTIL)
     }
 
     fun setBandLevel(bandIndex: Int, dBLevel: Int) {
@@ -433,10 +468,8 @@ object AudioEffectManager {
             _eqBands.value = bands
             _eqPreset.value = "Custom"
             
-            getPrefs()?.edit()?.apply {
-                putString(KEY_BANDS, bands.joinToString(","))
-                putString(KEY_PRESET, "Custom")
-            }?.apply()
+            persistString(KEY_BANDS, bands.joinToString(","), PreferencesRepository.KEY_BANDS)
+            persistString(KEY_PRESET, "Custom", PreferencesRepository.KEY_PRESET)
 
             try {
                 equalizer?.setBandLevel(bandIndex.toShort(), (dBLevel * 100).toShort())
@@ -454,10 +487,8 @@ object AudioEffectManager {
         val levels = getPresetBands(presetName) ?: return
         _eqPreset.value = presetName
         _eqBands.value = levels
-        getPrefs()?.edit()?.apply {
-            putString(KEY_BANDS, levels.joinToString(","))
-            putString(KEY_PRESET, presetName)
-        }?.apply()
+        persistString(KEY_BANDS, levels.joinToString(","), PreferencesRepository.KEY_BANDS)
+        persistString(KEY_PRESET, presetName, PreferencesRepository.KEY_PRESET)
 
         val eq = equalizer
         if (eq != null) {
@@ -490,7 +521,7 @@ object AudioEffectManager {
     }
 
     private fun saveFavoritesToPrefs() {
-        getPrefs()?.edit()?.putStringSet(KEY_FAVORITE_PRESETS, _favoritePresets.value)?.apply()
+        persistStringSet(KEY_FAVORITE_PRESETS, _favoritePresets.value, PreferencesRepository.KEY_FAVORITE_PRESETS)
     }
 
     fun getMatchedPresetName(bands: IntArray = _eqBands.value): String? {
@@ -536,10 +567,8 @@ object AudioEffectManager {
         _eqBands.value = bands.clone()
         saveCustomPresetsToPrefs()
         
-        getPrefs()?.edit()?.apply {
-            putString(KEY_BANDS, bands.joinToString(","))
-            putString(KEY_PRESET, cleanName)
-        }?.apply()
+        persistString(KEY_BANDS, bands.joinToString(","), PreferencesRepository.KEY_BANDS)
+        persistString(KEY_PRESET, cleanName, PreferencesRepository.KEY_PRESET)
 
         val eq = equalizer
         if (eq != null) {
@@ -591,7 +620,7 @@ object AudioEffectManager {
 
     fun setDefaultPreset(name: String) {
         _defaultPreset.value = name
-        getPrefs()?.edit()?.putString(KEY_DEFAULT_PRESET, name)?.apply()
+        persistString(KEY_DEFAULT_PRESET, name, PreferencesRepository.KEY_DEFAULT_PRESET)
     }
 
     private fun saveCustomPresetsToPrefs() {
@@ -602,7 +631,7 @@ object AudioEffectManager {
                 for (b in value) arr.put(b)
                 jsonObj.put(key, arr)
             }
-            getPrefs()?.edit()?.putString(KEY_CUSTOM_PRESETS, jsonObj.toString())?.apply()
+            persistString(KEY_CUSTOM_PRESETS, jsonObj.toString(), PreferencesRepository.KEY_CUSTOM_PRESETS)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -759,7 +788,10 @@ object AudioEffectManager {
         silenceJob?.cancel()
         silenceJob = null
         try {
-            audioTrack?.stop()
+            // stop() throws IllegalStateException if not playing — guard via playState
+            if (audioTrack?.playState == AudioTrack.PLAYSTATE_PLAYING) {
+                audioTrack?.stop()
+            }
         } catch (e: Throwable) {
             Log.w(TAG, "Failed to stop track: ${e.message}")
         }
@@ -788,5 +820,13 @@ object AudioEffectManager {
         }
         releaseEffects()
         stopSilencePlayback()
+        // Cancel singleton scope to avoid thread-pool leak (B-002)
+        try {
+            audioScope.cancel()
+        } catch (e: Throwable) {
+            Log.w(TAG, "audioScope cancel failed: ${e.message}")
+        }
+        audioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        context = null
     }
 }

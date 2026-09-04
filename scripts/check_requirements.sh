@@ -80,6 +80,40 @@ else
     ERRORS=$((ERRORS+1))
 fi
 
+# 6. QC Tools Check (scrcpy ephemeral, gitleaks/actionlint/qc dirs — soft warnings only)
+echo -e "\n[*] Checking QC Tools (scrcpy, gitleaks, actionlint, qc/ layout)..."
+
+if command -v scrcpy >/dev/null 2>&1; then
+    SCRCPY_VER=$(scrcpy --version 2>&1 | head -n 1)
+    echo -e "    ${GREEN}[PASS] scrcpy available: ${SCRCPY_VER}${NC} (ephemeral manual QA, see qc_plan.md §5.5)"
+else
+    echo -e "    ${YELLOW}[WARN] scrcpy not found in PATH — manual QA will use adb screencap only (install: https://github.com/Genymobile/scrcpy)${NC}"
+    WARNINGS=$((WARNINGS+1))
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+    GITLEAKS_VER=$(gitleaks version 2>&1 | head -n 1)
+    echo -e "    ${GREEN}[PASS] gitleaks available: ${GITLEAKS_VER}${NC}"
+else
+    echo -e "    ${YELLOW}[WARN] gitleaks not found — secret scan will run in CI only${NC}"
+    WARNINGS=$((WARNINGS+1))
+fi
+
+if command -v actionlint >/dev/null 2>&1; then
+    ACTIONLINT_VER=$(actionlint --version 2>&1 | head -n 1)
+    echo -e "    ${GREEN}[PASS] actionlint available: ${ACTIONLINT_VER}${NC}"
+else
+    echo -e "    ${YELLOW}[WARN] actionlint not found — workflow lint will run in CI only${NC}"
+    WARNINGS=$((WARNINGS+1))
+fi
+
+if [ -d "qc" ] && [ -f "qc_plan.md" ] && [ -f "CHANGELOG.md" ]; then
+    echo -e "    ${GREEN}[PASS] qc/ layout + qc_plan.md + CHANGELOG.md present${NC}"
+else
+    echo -e "    ${YELLOW}[WARN] qc/ or qc_plan.md/CHANGELOG.md missing — run scaffold per qc_plan.md §3${NC}"
+    WARNINGS=$((WARNINGS+1))
+fi
+
 # Summary
 echo -e "\n======================================================="
 if [ $ERRORS -eq 0 ]; then

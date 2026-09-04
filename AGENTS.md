@@ -63,6 +63,14 @@ All AI agents **must run automated verification** after making code changes befo
 * **Run Unit & JVM UI Tests:**
   ```bash
   ./gradlew testDebugUnitTest
+  # reports → qc/reports/tests/ (JUnit XML + html)
+  ```
+* **Run Roborazzi Visual Matrix (24 combos, blocking on PR/main):**
+  ```bash
+  ./gradlew verifyRoborazziDebug
+  # outputs → qc/reports/roborazzi/ (reference: app/src/test/screenshots/)
+  # baseline: ./gradlew recordRoborazziDebug
+  ```
 
 
 
@@ -76,7 +84,15 @@ All AI agents **must run automated verification** after making code changes befo
 * **Run Environment Pre-checks:**
 ```bash
 ./scripts/check_requirements.sh
+# also checks scrcpy 4.1 (ephemeral manual QA, soft WARN if missing)
+```
 
+* **Optional Manual QA (ephemeral scrcpy 4.1, not CI-blocking):**
+```bash
+scrcpy -s hm5xr8gueiz5x4c6 --window-title "Redmi-API36" &
+scrcpy -s A1013A5320TH000257 --window-title "ADVAN-API34" &
+# ephemeral record (gitignored: qc/artifacts/recordings/*.mp4 or /tmp/qc-*.mp4)
+scrcpy -s <serial> --no-control --record /tmp/qc-<device>-$(date +%H%M%S).mp4
 ```
 
 ---
@@ -135,6 +151,15 @@ When creating or modifying Jetpack Compose screens, agents must ensure visual in
 * **State Coverage:** Test that screens correctly render **Loading**, **Success**, **Empty**, and **Error** states when emitted by ViewModel `StateFlow`.
 * **Event Handling:** Assert that user clicks (e.g., equalizer toggles, gain sliders) trigger expected ViewModel callbacks and update the UI accordingly.
 
+### 3.4 QA/QC Folder Convention (`qc/` canon)
+* **Master plan:** `qc_plan.md` (workspace root) is source of truth for device matrix, gates, and changelogs.
+* **Evidence root:** `qc/` — `qc/reports/{lint,tests,roborazzi,gitleaks}`, `qc/artifacts/{apks,screenshots/manual}`, `qc/traces/{heapsnapshots,perf}`, `qc/fixtures/{presets,locales}`, `qc/checklists/{smoke.md,accessibility.md}`, `qc/changelogs/`.
+* **Human summary (singleton, no datestamp):** `qc/QC_SUMMARY.md` — single rolling file with `Next Actions` (agent queue, ONLY OPEN) vs `Run YYYY-MM-DD` (log) + `Bug Status OPEN/FIXED` + pointers to reports. Read top `Next Actions` + `Bug Status` before any QC task; `Run` sections are log, not queue (loop prevention, see `.gemini/rules/model_delegation.md:§5`). History via `git log --follow qc/QC_SUMMARY.md`.
+* **Reports are gitignored** (`qc/reports/`, `qc/artifacts/`, `qc/traces/`); `qc/changelogs/*.md`, `qc/fixtures/*`, `qc/checklists/*.md`, `qc/QC_SUMMARY.md` and Roborazzi reference images `app/src/test/screenshots/` are tracked.
+* **Ephemeral recordings:** `qc/artifacts/recordings/*.mp4` (scrcpy 4.1 `--record`, gitignored) and `/tmp/qc-*.mp4` are ephemeral manual QA only, never CI-uploaded (see `qc_plan.md` §5.5).
+* **Changelogs:** `CHANGELOG.md` (root, Keep-a-Changelog) + per-tag `qc/changelogs/YYYYMMDD-HHMMSS-vX.Y.Z.md` linked from `CHANGELOG.md` (see `qc_plan.md` §10).
+* **Coverage:** Phase 3 — Optional (Kover soft report-only, not blocking in v1; see `qc_plan.md` §11).
+
 ### 3.3 Privacy & CI/CD Pipeline Verification
 
 #### 🔒 A. Personal Identifiable Information (PII) & Secret Sanity Check
@@ -179,9 +204,19 @@ Secret References: Verify that referenced secrets (e.g., ${{ secrets.SIGNING_KEY
 ```
 Milkys-Sound-Booster-EQ/
 ├── AGENTS.md                   # This instruction file for Jules & AI agents
+├── qc_plan.md                  # QA & QC master plan (qc/ canon, device matrix, gates, changelogs)
+├── CHANGELOG.md                # Keep-a-Changelog (root) + qc/changelogs/ per tag
 ├── .jules/                     # Jules agent task execution configuration & rules
 │   ├── config.yaml
 │   └── rules.md
+├── qc/                         # QA & QC evidence root
+│   ├── QC_SUMMARY.md            # human-readable rolling summary (singleton, no datestamp — queue vs log)
+│   ├── reports/{lint,tests,roborazzi,gitleaks}/
+│   ├── artifacts/{apks,screenshots/manual,recordings/}  # recordings = ephemeral scrcpy MP4s (gitignored)
+│   ├── traces/{heapsnapshots,perf}/
+│   ├── fixtures/{presets,locales}/
+│   ├── checklists/{smoke.md,accessibility.md}/
+│   └── changelogs/             # per-tag release notes
 ├── app/                        # Android application module
 │   ├── src/main/
 │   │   ├── java/com/milkys/soundbooster/
@@ -240,3 +275,5 @@ For deeper feature specifications, review:
 * 🛠️ `howto/setup_develop_build.md`: Comprehensive setup and build guide.
 * 📱 `howto/general_information.md`: Architecture overview and system design.
 * 📁 `howto/file_function_mapping.md`: Mapping of files to application capabilities.
+* 📋 `qc_plan.md`: QA & QC master plan (qc/ canon, device matrix, gates, changelogs).
+* 📝 `CHANGELOG.md` + `qc/changelogs/`: Release notes per version/tag.

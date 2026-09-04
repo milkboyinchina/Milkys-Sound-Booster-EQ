@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,7 +48,7 @@ fun HearingWarningCard(
         ) {
             Icon(
                 imageVector = Icons.Default.Warning,
-                contentDescription = "Hearing Loss Safety Warning",
+                contentDescription = stringResource(R.string.content_desc_hearing_warning),
                 tint = Color(0xFFFFC107),
                 modifier = Modifier.size(28.dp)
             )
@@ -70,12 +72,13 @@ fun HearingWarningCard(
             IconButton(
                 onClick = onClose,
                 modifier = Modifier
-                    .size(32.dp)
+                    .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                    .size(48.dp)
                     .testTag("close_hearing_warning_button")
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Hide warning for 7 days",
+                    contentDescription = stringResource(R.string.content_desc_hide_warning),
                     tint = Color(0xFFFFD54F),
                     modifier = Modifier.size(18.dp)
                 )
