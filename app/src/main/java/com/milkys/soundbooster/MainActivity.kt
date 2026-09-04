@@ -1057,7 +1057,7 @@ fun DashboardScreen(
                                 Surface(
                                     onClick = { languageDropdownExpanded = !languageDropdownExpanded },
                                     shape = RoundedCornerShape(12.dp),
-                                    color = Color(0xFF1D1B20),
+                                    color = AppColors.LightTextPrimary,
                                     border = BorderStroke(1.dp, AppColors.BorderDark),
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1487,7 +1487,7 @@ fun DashboardScreen(
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800))
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange)
                 ) {
                     Text(stringResource(R.string.btn_grant_permission), color = Color.Black)
                 }
@@ -1502,7 +1502,7 @@ fun DashboardScreen(
                     Text(stringResource(R.string.action_cancel), color = Color.Gray)
                 }
             },
-            containerColor = Color(0xFF1E1C28)
+            containerColor = AppColors.BackgroundAlt
         )
     }
 
@@ -2283,9 +2283,9 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                 // Hearing Loss Safety Warning Banner (Ultra-compact)
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF382300)),
+                    colors = CardDefaults.cardColors(containerColor = AppColors.WarningContainerDark),
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFFFFC107))
+                    border = BorderStroke(1.dp, AppColors.WarningBorder)
                 ) {
                     Row(
                         modifier = Modifier.padding(10.dp),
@@ -2295,12 +2295,12 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                         Icon(
                             imageVector = Icons.Default.Warning,
                             contentDescription = "Safety Warning",
-                            tint = Color(0xFFFFC107),
+                            tint = AppColors.WarningBorder,
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
                             text = "CAUTION: High volume can damage hearing or speakers. Boost responsibly.",
-                            color = Color(0xFFFFD54F),
+                            color = AppColors.WarningTitle,
                             fontSize = 11.sp,
                             lineHeight = 14.sp,
                             fontWeight = FontWeight.Medium
@@ -3017,7 +3017,7 @@ fun EqualizerComponent(
                 },
                 enabled = isEnabled,
                 shape = RoundedCornerShape(12.dp),
-                color = if (isEnabled) AppColors.DarkCard else Color(0xFF1F1D24),
+                color = if (isEnabled) AppColors.DarkCard else AppColors.DisabledCard,
                 border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
                 modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
             ) {
@@ -3055,8 +3055,8 @@ fun EqualizerComponent(
                         text = "${if (level > 0) "+" else ""}$level dB",
                         color = when {
                             !isEnabled -> AppColors.DarkTextSecondary.copy(alpha = 0.5f)
-                            level > 0 -> Color(0xFF81C784)
-                            level < 0 -> Color(0xFFFFB74D)
+                            level > 0 -> AppColors.Success
+                            level < 0 -> AppColors.SuccessLightAlt
                             else -> primaryAccent
                         },
                         fontSize = 10.sp,
@@ -3089,7 +3089,7 @@ fun EqualizerComponent(
                                     .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                     .padding(2.dp)
                                     .background(
-                                        if (isEnabled) Color(0xFF4F378B) else AppColors.DarkCardAlt,
+                                        if (isEnabled) AppColors.WarningContainer else AppColors.DarkCardAlt,
                                         CircleShape
                                     )
                             ) {
@@ -3107,7 +3107,7 @@ fun EqualizerComponent(
                                 modifier = Modifier
                                     .height(80.dp)
                                     .width(16.dp)
-                                    .background(Color(0xFF1D1B20), RoundedCornerShape(8.dp))
+                                    .background(AppColors.LightTextPrimary, RoundedCornerShape(8.dp))
                                     .pointerInput(isEnabled) {
                                         if (isEnabled) {
                                             detectVerticalDragGestures(
@@ -3138,7 +3138,7 @@ fun EqualizerComponent(
                                         .background(
                                             if (isEnabled) {
                                                 Brush.verticalGradient(
-                                                    colors = listOf(primaryAccent, Color(0xFF805BFF))
+                                                    colors = listOf(primaryAccent, AppColors.AccentSecondary)
                                                 )
                                             } else {
                                                 Brush.verticalGradient(
@@ -3160,7 +3160,7 @@ fun EqualizerComponent(
                                     .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                     .padding(2.dp)
                                     .background(
-                                        if (isEnabled) Color(0xFF4F378B) else AppColors.DarkCardAlt,
+                                        if (isEnabled) AppColors.WarningContainer else AppColors.DarkCardAlt,
                                         CircleShape
                                     )
                             ) {
@@ -3220,7 +3220,7 @@ fun EqualizerComponent(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4F378B)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.WarningContainer),
                     modifier = Modifier
                         .weight(1f)
                         .defaultMinSize(minHeight = 48.dp)
@@ -3251,7 +3251,7 @@ fun EqualizerComponent(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF332D41)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.CardAlt2),
                     modifier = Modifier
                         .weight(1f)
                         .defaultMinSize(minHeight = 48.dp)
@@ -3284,7 +3284,7 @@ fun EqualizerComponent(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF332D41)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.CardAlt2),
                     modifier = Modifier
                         .weight(1f)
                         .defaultMinSize(minHeight = 48.dp)
@@ -3316,7 +3316,7 @@ fun EqualizerComponent(
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isDeleteMode) Color(0xFFB3261E) else Color(0xFF332D41)
+                        containerColor = if (isDeleteMode) AppColors.Error else AppColors.CardAlt2
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -3329,14 +3329,14 @@ fun EqualizerComponent(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(R.string.content_desc_delete_mode),
-                            tint = if (isDeleteMode) Color.White else Color(0xFFFF8A80),
+                            tint = if (isDeleteMode) Color.White else AppColors.ErrorLight,
                             modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
                             text = if (isDeleteMode) "Cancel" else "Delete",
                             fontSize = 11.sp,
-                            color = if (isDeleteMode) Color.White else Color(0xFFFF8A80),
+                            color = if (isDeleteMode) Color.White else AppColors.ErrorLight,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -3374,7 +3374,7 @@ fun EqualizerComponent(
                         shape = RoundedCornerShape(16.dp),
                         color = when {
                             isSelected -> primaryAccent.copy(alpha = 0.2f)
-                            else -> Color(0xFF25232A)
+                            else -> AppColors.SurfaceVariant
                         },
                         border = BorderStroke(
                             width = if (isSelected) 1.5.dp else 1.dp,
@@ -3411,7 +3411,7 @@ fun EqualizerComponent(
                                     },
                                     enabled = !isBuiltIn && isEnabled,
                                     colors = CheckboxDefaults.colors(
-                                        checkedColor = Color(0xFFB3261E),
+                                        checkedColor = AppColors.Error,
                                         disabledUncheckedColor = AppColors.BorderDark.copy(alpha = 0.3f)
                                     )
                                 )
@@ -3429,7 +3429,7 @@ fun EqualizerComponent(
                                     Icon(
                                         imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder,
                                         contentDescription = stringResource(R.string.content_desc_favorite_preset),
-                                        tint = if (isFav) Color(0xFFFFD54F) else textSecondary.copy(alpha = 0.5f),
+                                        tint = if (isFav) AppColors.WarningTitle else textSecondary.copy(alpha = 0.5f),
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -3448,8 +3448,8 @@ fun EqualizerComponent(
                     },
                     enabled = selectedForDelete.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFB3261E),
-                        disabledContainerColor = Color(0xFFB3261E).copy(alpha = 0.4f)
+                        containerColor = AppColors.Error,
+                        disabledContainerColor = AppColors.Error.copy(alpha = 0.4f)
                     ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
@@ -3480,7 +3480,7 @@ fun EqualizerComponent(
                         supportingText = {
                             Text(
                                 text = "${newPresetName.length}/10",
-                                color = if (newPresetName.length >= 10) Color(0xFFFFB74D) else textSecondary,
+                                color = if (newPresetName.length >= 10) AppColors.SuccessLightAlt else textSecondary,
                                 fontSize = 11.sp
                             )
                         },
@@ -3669,7 +3669,7 @@ fun EqualizerComponent(
                         isDeleteMode = false
                         showDeleteConfirmDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB3261E))
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Error)
                 ) {
                     Text(stringResource(R.string.action_yes), fontWeight = FontWeight.Bold)
                 }
@@ -3694,9 +3694,9 @@ fun SystemBatteryDiagnosticCard(
     if (isBatterySaverOn || isBatteryOptimized) {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF31111D)),
+            colors = CardDefaults.cardColors(containerColor = AppColors.WarningContainerLight),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, Color(0xFF93000A))
+            border = BorderStroke(1.dp, AppColors.ErrorDark)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -3709,12 +3709,12 @@ fun SystemBatteryDiagnosticCard(
                     Icon(
                         imageVector = Icons.Default.Warning,
                         contentDescription = "Battery optimization warning",
-                        tint = Color(0xFFFFB4AB),
+                        tint = AppColors.WarningIcon,
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = stringResource(R.string.system_battery_diagnostic_title),
-                        color = Color(0xFFFFB4AB),
+                        color = AppColors.WarningIcon,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -3726,7 +3726,7 @@ fun SystemBatteryDiagnosticCard(
                     } else {
                         "The application is subject to Android Battery Optimizations. Please grant unrestricted background use to prevent abrupt service closures."
                     },
-                    color = Color(0xFFFFB4AB).copy(alpha = 0.8f),
+                    color = AppColors.WarningIcon.copy(alpha = 0.8f),
                     fontSize = 11.sp,
                     lineHeight = 16.sp
                 )
@@ -3742,7 +3742,7 @@ fun SystemBatteryDiagnosticCard(
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF93000A)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.ErrorDark),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .align(Alignment.End)
@@ -3760,9 +3760,9 @@ fun SystemBatteryDiagnosticCard(
     } else {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1B2F22)),
+            colors = CardDefaults.cardColors(containerColor = AppColors.SuccessContainer),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, Color(0xFF386A42))
+            border = BorderStroke(1.dp, AppColors.SuccessDark)
         ) {
             Row(
                 modifier = Modifier.padding(16.dp),
@@ -3772,19 +3772,19 @@ fun SystemBatteryDiagnosticCard(
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Background service safe status",
-                    tint = Color(0xFFB4E6B9),
+                    tint = AppColors.SuccessLight,
                     modifier = Modifier.size(24.dp)
                 )
                 Column {
                     Text(
                         text = "Background Optimization Safe",
-                        color = Color(0xFFB4E6B9),
+                        color = AppColors.SuccessLight,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "System has granted maximum background stability with zero latency.",
-                        color = Color(0xFFB4E6B9).copy(alpha = 0.8f),
+                        color = AppColors.SuccessLight.copy(alpha = 0.8f),
                         fontSize = 11.sp
                     )
                 }

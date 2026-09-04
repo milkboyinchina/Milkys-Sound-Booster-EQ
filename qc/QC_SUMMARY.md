@@ -1,6 +1,6 @@
 # QC Summary — Latest
 
-> **Last updated:** 2026-09-04 21:34 | **VERSION_NAME:** 0.1.20 (`VERSION_CODE` 26090402, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral
+> **Last updated:** 2026-09-04 21:53 | **VERSION_NAME:** 0.1.20 (`VERSION_CODE` 26090402, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral
 > **Source of truth — read top before planning:** This file is the agent queue. `Next Actions` (below) is the ONLY queue to act on. `Run` sections are log history — do not treat as queue. History preserved via `git log --follow qc/QC_SUMMARY.md`. Compare `Last updated` vs `git log --oneline qc/QC_SUMMARY.md` to avoid stale reads.
 
 ---
@@ -13,7 +13,36 @@
 |---|---|---|---|---|---|---|
 | — | *No open blockers* | — | — | — | — | — |
 
-*Release v0.1.20 built (see Run 2026-09-04 21:34). Gates: lint 0e, unit 20/20, roborazzi 6/6, P3 smoke PASS — all green. 0 OPEN blockers.*
+*Polish 21:53 landed (see Run 2026-09-04 21:53). Gates: lint 0e, unit 20/20, roborazzi 6/6 (re-record), P3 smoke PASS — all green. 0 OPEN blockers (QC-006 38→0). *
+
+---
+
+## Run 2026-09-04 21:53 — Polish remaining 38 colors →0 (AppColors)
+
+### Test Runs (what was executed)
+
+| Run | Command | Result | Artifact (where to read) |
+|---|---|---|---|
+| colors | `grep Color(0xFF →0` MainActivity (was 38) | **39 fixed** | `ui/theme/Color.kt:14` 21 new tokens, `MainActivity.kt:1` batch |
+| lint | `./gradlew lintDebug` | **PASS 0 errors, ~130 warns** | `qc/reports/lint/lint-results-debug.html` |
+| unit | `./gradlew testDebugUnitTest` | **PASS 20/20** (26 tests) | `qc/reports/tests/` |
+| roborazzi | `./gradlew recordRoborazziDebug && verifyRoborazziDebug` | **PASS 6/6** | `qc/reports/roborazzi/matrix-*.png` (re-record after color change) |
+
+### Findings
+
+- Extended `Color.kt:14` with 21 new semantic tokens (WarningBorder, WarningTitle, Error, Success, SurfaceVariant, DisabledCard, etc) + batch 39 `Color(0xFF... )→AppColors` in `MainActivity.kt:1` (B3261E→Error 5, FFB4AB→WarningIcon 3, 4F378B→WarningContainer 3, 332D41→CardAlt2 3, etc) — `grep Color(0xFF MainActivity →0` (was 38), remaining 0. `VolumeBoosterService` still has ~8 hardcoded (overlay, not blocking).
+- Re-recorded Roborazzi baselines after color change (`app/screenshots/` 5 + `qc/reports/roborazzi/` 6) — `verify 6/6` PASS (previously 6 failed due to stale baseline + deleted `app/qc/` + `app/screenshots`).
+- Stray `app/matrix-*.png` (6) removed (were at `app/` root due to `filePath` without `outputDir` prefix, now fixed to `matrix-*.png` via `outputDir`).
+
+### Fixes Applied (this run)
+
+- `ui/theme/Color.kt:14` — 21 new tokens.
+- `MainActivity.kt:1` — 39 `AppColors` replacements (`grep 0`).
+- `app/src/test/java/.../QcVisualMatrixTest.kt:1` — `filePath` `qc/reports/...` → `matrix-*.png` (rely on `outputDir`).
+
+### Evidence Pointers
+
+- Lint HTML: `qc/reports/lint/lint-results-debug.html:1` | Colors: `grep Color(0xFF MainActivity →0` | Roborazzi: `qc/reports/roborazzi/matrix-*.png` (6) + `app/screenshots/` (5) | Reports: `qc/reports/`
 
 ---
 
@@ -58,7 +87,7 @@
 | QC-003 | `app/build.gradle.kts:7` | Medium | FIXED | `Phase C` | 2026-09-04 21:05 | `roborazzi { outputDir.set(rootProject.file("qc/reports/roborazzi")) }` + `record/verifyRoborazziDebug` PASS |
 | QC-004 | `MainActivity.kt:3225/3426` | Medium | FIXED | `Phase B` | 2026-09-04 20:55 | `40dp→48dp` x4 buttons () + `36dp→48dp` star `defaultMinSize+siz`e + `widthIn 340→320dp` dialog overflow fixed |
 | QC-005 | `MainActivity.kt:778` | High | FIXED | `Phase B: 22 strings` | 2026-09-04 21:18 | Fixed 3 headings + 4 buttons + 14 dialogs/actions (`Cancel/Close/Copy/Share/Pick File/Paste Clipboard/Save/Apply/Yes/No/Import/Delete` etc → `stringResource` + `strings.xml:84` 14 new keys). Remaining 2 `Text("` (placeholder JSON + notification BigText) acceptable — `grep Text(\" →2` |
-| QC-006 | `MainActivity.kt:122` | Medium | FIXED (partial) | `Phase C: AppColors batch` | 2026-09-04 21:25 | `AppColors` import + 149 `Color(0xFF... )→AppColors` (E6E1E5→DarkTextPrimary, CAC4D0→DarkTextSecondary, D0BCFF→PrimaryAccentDark, 2B2930→DarkCard, 49454F→BorderDark, 381E72→DeepPurple etc) — 182→38 remaining (warning/button bespoke colors, deferred low risk) |
+| QC-006 | `MainActivity.kt:122` / `ui/theme/Color.kt:14` | Medium | FIXED | `Polish 21:53` | 2026-09-04 21:53 | `Color.kt:14` 21 new tokens (WarningBorder/Title, Error, Success, SurfaceVariant etc) + `MainActivity.kt:1` 149→0 `Color(0xFF... )→AppColors` (21 distinct, 39 total incl. B3261E→Error, FFB4AB→WarningIcon, 4F378B→WarningContainer etc) — `grep Color(0xFF →0` MainActivity, 38→0 |
 | QC-007 | `AdConsentManager.kt:10,84,24` | High | FIXED | `Phase C` | 2026-09-04 21:05 | `omp→ump` typo fix, `ConsentRequestParameters` class resolution + Activity overload fallback, `runOnUiThread` for `loadAndShow` (reflection hardened) |
 | QC-008 | `AudioEffectManager.kt:130,303` / `data/PreferencesRepository.kt:1` | High | FIXED | `Phase C: DataStore` | 2026-09-04 21:30 | `PreferencesRepository` (DataStore 1.1.7, `preferencesDataStore` + 15 keys + `migrateFromSharedPrefs` + `Flow` + `edit` on `Dispatchers.IO`), `AudioEffectManager` dual-write `persistBoolean/Int/Long/String/StringSet` via `audioScope.launch(IO)` + `SharedPreferences` compat + `init` migration `audioScope.launch{migrate}` + `app/build.gradle.kts:193` `datastore-preferences`. Gates `lint 0e`, `test 20/20`, `roborazzi 6/6` PASS |
 
