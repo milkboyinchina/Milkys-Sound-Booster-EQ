@@ -29,6 +29,7 @@ context_files:
   - "AGENTS.md"
   - "qc_plan.md"
   - "CHANGELOG.md"
+  - "qc/QC_SUMMARY.md"
   - "howto/setup_develop_build.md"
   - "howto/general_information.md"
 
