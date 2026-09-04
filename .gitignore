@@ -29,7 +29,7 @@ debug.keystore.base64
 /qc/reports/
 /qc/artifacts/
 /qc/artifacts/recordings/
-*.mp4
+# ephemeral scrcpy recordings (qc/ only, /tmp outside repo is not tracked)
 /qc/traces/
 *.hprof
 *.heapsnapshot
@@ -47,6 +47,12 @@ release.keystore
 !qc/changelogs/*.md
 !qc/fixtures/**/*
 !qc/checklists/*.md
+!qc/QC_SUMMARY.md
+
+# Agent task logs (ephemeral)
+.ai-agent-task/
+app/qc/
+app/screenshots/
 
 # Dynamic asset directories for multi-resolution icons & logos
 /assets/logo/

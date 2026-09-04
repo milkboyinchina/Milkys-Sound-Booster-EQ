@@ -4,7 +4,7 @@
 - `/quick <task>` → `@quick-task` (`flash_lite`): Git ops, reads, greps, minor edits, status checks.
 - `/standard <task>` → `@standard-dev` (`flash`): Features, Compose/UI tweaks, unit tests, build log checks.
 - `/hard-fix-sonnet <task>` or `/hard-fix <task>` → `@complex-architect` (`pro` / Sonnet 4.6): Multi-file refactor, audio DSP, services.
-  - Workflow: Read `transcript_full.jsonl` → Check `.plan/` & `.ai-agent-task/` → Update `implementation_plan.md` → Execute → Run `./gradlew testDebugUnitTest` & `lintDebug`.
+  - Workflow: Read `qc/QC_SUMMARY.md:1-30` (queue vs log) → Check `qc_plan.md` + `qc/checklists/*` → Execute → Run `./gradlew testDebugUnitTest` (`qc/reports/tests/`), `./gradlew lintDebug` (`qc/reports/lint/`), `./gradlew verifyRoborazziDebug` (`qc/reports/roborazzi/`), then update `qc/QC_SUMMARY.md` + `qc/changelogs/` if release. Mirrored in `.opencode/skills/qa-automation/SKILL.md:1` (keep `.gemini/` for compat).
 
 ## 🎯 Auto Classifier (Default)
 - **T1 (`flash_lite`)**: Git, file reads/greps, minor edits, script runs.

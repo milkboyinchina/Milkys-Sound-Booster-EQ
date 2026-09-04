@@ -151,7 +151,7 @@ When creating or modifying Jetpack Compose screens, agents must ensure visual in
 * **State Coverage:** Test that screens correctly render **Loading**, **Success**, **Empty**, and **Error** states when emitted by ViewModel `StateFlow`.
 * **Event Handling:** Assert that user clicks (e.g., equalizer toggles, gain sliders) trigger expected ViewModel callbacks and update the UI accordingly.
 
-### 3.4 QA/QC Folder Convention (`qc/` canon)
+### 3.3 QA/QC Folder Convention (`qc/` canon)
 * **Master plan:** `qc_plan.md` (workspace root) is source of truth for device matrix, gates, and changelogs.
 * **Evidence root:** `qc/` — `qc/reports/{lint,tests,roborazzi,gitleaks}`, `qc/artifacts/{apks,screenshots/manual}`, `qc/traces/{heapsnapshots,perf}`, `qc/fixtures/{presets,locales}`, `qc/checklists/{smoke.md,accessibility.md}`, `qc/changelogs/`.
 * **Human summary (singleton, no datestamp):** `qc/QC_SUMMARY.md` — single rolling file with `Next Actions` (agent queue, ONLY OPEN) vs `Run YYYY-MM-DD` (log) + `Bug Status OPEN/FIXED` + pointers to reports. Read top `Next Actions` + `Bug Status` before any QC task; `Run` sections are log, not queue (loop prevention, see `.gemini/rules/model_delegation.md:§5`). History via `git log --follow qc/QC_SUMMARY.md`.
@@ -160,7 +160,7 @@ When creating or modifying Jetpack Compose screens, agents must ensure visual in
 * **Changelogs:** `CHANGELOG.md` (root, Keep-a-Changelog) + per-tag `qc/changelogs/YYYYMMDD-HHMMSS-vX.Y.Z.md` linked from `CHANGELOG.md` (see `qc_plan.md` §10).
 * **Coverage:** Phase 3 — Optional (Kover soft report-only, not blocking in v1; see `qc_plan.md` §11).
 
-### 3.3 Privacy & CI/CD Pipeline Verification
+### 3.4 Privacy & CI/CD Pipeline Verification
 
 #### 🔒 A. Personal Identifiable Information (PII) & Secret Sanity Check
 * **Objective:** Prevent committing sensitive credentials, private keys, developer paths, personal email addresses, or personal names into source code or test fixtures.
@@ -220,10 +220,13 @@ Milkys-Sound-Booster-EQ/
 ├── app/                        # Android application module
 │   ├── src/main/
 │   │   ├── java/com/milkys/soundbooster/
-│   │   │   ├── audio/          # DSP engine, Equalizer, LoudnessEnhancer wrappers
-│   │   │   ├── service/        # Audio processing foreground service, Tile service, Overlay
-│   │   │   ├── ui/             # Jetpack Compose screens, components, viewmodels, theme
-│   │   │   └── data/           # Room DB entities, DAOs, repositories, preferences
+│   │   │   ├── MainActivity.kt            # Dashboard + 3 window-size groups (COMPACT/MEDIUM/EXPANDED)
+│   │   │   ├── AudioEffectManager.kt      # DSP engine (Equalizer, LoudnessEnhancer, AudioTrack silence)
+│   │   │   ├── VolumeBoosterService.kt    # Foreground service (mediaPlayback) + overlay WindowManager
+│   │   │   ├── VolumeBoosterTileService.kt# Quick Settings Tile
+│   │   │   ├── AdConsentManager.kt        # UMP consent (reflection)
+│   │   │   ├── data/PreferencesRepository.kt # DataStore 1.1.7 (15 keys, migrate)
+│   │   │   └── ui/                        # Compose: components/HearingWarningCard, theme/AppColors
 │   │   ├── res/                # XML layouts, drawables, localized string resources (res/values-*/)
 │   │   └── AndroidManifest.xml # System permissions, service declarations
 │   └── build.gradle.kts
@@ -249,7 +252,7 @@ Agents must follow these strict coding practices:
 
 ### 2. Audio DSP & Safety Boundaries
 * **Safety Warning Banner**: Always maintain the prominent safety warning banner regarding hearing protection and speaker damage risks.
-* **Volume Amplification Limit**: Boost level is strictly capped at **200% (+15dB to +20dB)**. Do not bypass or remove gain ceiling limits.
+* **Volume Amplification Limit**: Boost level is strictly capped at **200% (+15dB)** — `AudioEffectManager.kt:281` `mapProgressToGain` 1500 mB. Do not bypass or remove gain ceiling limits.
 * **Resource Cleanup**: Always release `AudioEffect`, `Equalizer`, and `LoudnessEnhancer` handles inside `onDestroy()` or `onCleared()` to prevent audio service memory leaks and system audio server crashes.
 
 ### 3. Threading & Asynchronous Operations

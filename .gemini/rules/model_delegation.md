@@ -69,11 +69,16 @@ Use the following parameters when invoking subagents via `invoke_subagent`:
 
 This rule is fully portable across all projects (e.g. `Milkys-Sound-Booster-EQ`, `Grav AI Chatbot`, `grav-lamp-docker`). 
 To apply to any project directory:
-Copy `.gemini/rules/model_delegation.md` into the target workspace root directory.
+Copy `.gemini/rules/model_delegation.md` + `opencode.json` + `.opencode/skills/qa-automation/SKILL.md` into target. `qc/QC_SUMMARY.md` (`AGENTS.md:§3.3`) is the portability anchor for Muse Spark (opencode) — `.plan/` is Jules only.
 
 ---
 
-## 🔍 5. Mandatory Workspace Audit & Auto-Implementation Directive
+## 🔍 5. Loop Prevention — QC Summary Queue vs Log
+
+- **Before any QC task, subagents MUST read `qc/QC_SUMMARY.md:1-30` top:** `Next Actions` (queue, ONLY `Status == OPEN`) + `Bug Status` (skip `FIXED`/`WONTFIX`) + compare `Last updated` vs `git log --oneline qc/QC_SUMMARY.md` to avoid stale reads.
+- **Rule:** `Run YYYY-MM-DD` sections are log history — never treat as queue. Act only on top `Next Actions`. This prevents re-fixing `FIXED` bugs (agentic loop).
+
+## 🔍 6. Mandatory Workspace Audit & Auto-Implementation Directive
 
 Upon opening or initializing any project workspace:
 1. **Audit Check**: Verify if `.gemini/rules/model_delegation.md`, `scripts/delegation_orchestrator.py`, or `scripts/setup_project_rules.sh` are missing or incomplete.
