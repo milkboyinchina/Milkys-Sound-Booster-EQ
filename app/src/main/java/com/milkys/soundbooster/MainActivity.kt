@@ -66,6 +66,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.milkys.soundbooster.ui.theme.AppColors
 import com.milkys.soundbooster.ui.theme.MyApplicationTheme
 import com.milkys.soundbooster.ui.components.HearingWarningCard
 import androidx.compose.ui.viewinterop.AndroidView
@@ -119,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             MyApplicationTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    containerColor = Color(0xFF1C1B1F) // Clean Minimalism background
+                    containerColor = MaterialTheme.colorScheme.background
                 ) { innerPadding ->
                     DashboardScreen(
                         modifier = Modifier
@@ -759,8 +760,8 @@ fun DashboardScreen(
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFF1C1B1F)),
-                color = Color(0xFF1C1B1F)
+                    .background(AppColors.DarkBackground),
+                color = AppColors.DarkBackground
             ) {
                 Column(
                     modifier = Modifier
@@ -775,8 +776,8 @@ fun DashboardScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "SETTINGS",
-                            color = Color(0xFFE6E1E5),
+                            text = stringResource(R.string.settings_title),
+                            color = AppColors.DarkTextPrimary,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp
@@ -785,7 +786,7 @@ fun DashboardScreen(
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Close Settings",
-                                tint = Color(0xFFE6E1E5)
+                                tint = AppColors.DarkTextPrimary
                             )
                         }
                     }
@@ -795,7 +796,7 @@ fun DashboardScreen(
                     // Loudness & Notification Controls Section
                     Text(
                         text = stringResource(R.string.amplifier_notification_controls),
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
@@ -805,9 +806,9 @@ fun DashboardScreen(
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                         shape = RoundedCornerShape(24.dp),
-                        border = BorderStroke(1.dp, Color(0xFF49454F))
+                        border = BorderStroke(1.dp, AppColors.BorderDark)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -822,14 +823,14 @@ fun DashboardScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = stringResource(R.string.stepped_slider_title),
-                                        color = Color(0xFFE6E1E5),
+                                        color = AppColors.DarkTextPrimary,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = if (isSliderStepped) stringResource(R.string.stepped_slider_desc_on) else stringResource(R.string.stepped_slider_desc_off),
-                                        color = Color(0xFFCAC4D0),
+                                        color = AppColors.DarkTextSecondary,
                                         fontSize = 12.sp
                                     )
                                 }
@@ -837,16 +838,16 @@ fun DashboardScreen(
                                     checked = isSliderStepped,
                                     onCheckedChange = { AudioEffectManager.setSliderStepped(it) },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color(0xFFD0BCFF),
-                                        checkedTrackColor = Color(0xFF49454F),
-                                        uncheckedThumbColor = Color(0xFFCAC4D0),
-                                        uncheckedTrackColor = Color(0xFF49454F)
+                                        checkedThumbColor = AppColors.PrimaryAccentDark,
+                                        checkedTrackColor = AppColors.BorderDark,
+                                        uncheckedThumbColor = AppColors.DarkTextSecondary,
+                                        uncheckedTrackColor = AppColors.BorderDark
                                     ),
                                     modifier = Modifier.testTag("stepped_slider_toggle")
                                 )
                             }
 
-                            Divider(color = Color(0xFF49454F), thickness = 1.dp)
+                            Divider(color = AppColors.BorderDark, thickness = 1.dp)
 
                             // Notification Bar Controls Toggle
                             Row(
@@ -857,14 +858,14 @@ fun DashboardScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = stringResource(R.string.notification_controls_title),
-                                        color = Color(0xFFE6E1E5),
+                                        color = AppColors.DarkTextPrimary,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = stringResource(R.string.notification_controls_desc),
-                                        color = Color(0xFFCAC4D0),
+                                        color = AppColors.DarkTextSecondary,
                                         fontSize = 12.sp
                                     )
                                 }
@@ -872,16 +873,16 @@ fun DashboardScreen(
                                     checked = isNotifControlsEnabled,
                                     onCheckedChange = { AudioEffectManager.setNotifControlsEnabled(it) },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color(0xFFD0BCFF),
-                                        checkedTrackColor = Color(0xFF49454F),
-                                        uncheckedThumbColor = Color(0xFFCAC4D0),
-                                        uncheckedTrackColor = Color(0xFF49454F)
+                                        checkedThumbColor = AppColors.PrimaryAccentDark,
+                                        checkedTrackColor = AppColors.BorderDark,
+                                        uncheckedThumbColor = AppColors.DarkTextSecondary,
+                                        uncheckedTrackColor = AppColors.BorderDark
                                     ),
                                     modifier = Modifier.testTag("notif_controls_toggle")
                                 )
                             }
 
-                            Divider(color = Color(0xFF49454F), thickness = 1.dp)
+                            Divider(color = AppColors.BorderDark, thickness = 1.dp)
 
                             // Disable Hearing Protection Warning Toggle
                             Row(
@@ -892,14 +893,14 @@ fun DashboardScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = stringResource(R.string.disable_hearing_warning_title),
-                                        color = Color(0xFFE6E1E5),
+                                        color = AppColors.DarkTextPrimary,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = stringResource(R.string.disable_hearing_warning_desc),
-                                        color = Color(0xFFCAC4D0),
+                                        color = AppColors.DarkTextSecondary,
                                         fontSize = 12.sp
                                     )
                                 }
@@ -907,16 +908,16 @@ fun DashboardScreen(
                                     checked = isHearingWarningDisabled,
                                     onCheckedChange = { AudioEffectManager.setHearingWarningDisabled(it) },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color(0xFFD0BCFF),
-                                        checkedTrackColor = Color(0xFF49454F),
-                                        uncheckedThumbColor = Color(0xFFCAC4D0),
-                                        uncheckedTrackColor = Color(0xFF49454F)
+                                        checkedThumbColor = AppColors.PrimaryAccentDark,
+                                        checkedTrackColor = AppColors.BorderDark,
+                                        uncheckedThumbColor = AppColors.DarkTextSecondary,
+                                        uncheckedTrackColor = AppColors.BorderDark
                                     ),
                                     modifier = Modifier.testTag("disable_hearing_warning_toggle")
                                 )
                             }
 
-                            Divider(color = Color(0xFF49454F), thickness = 1.dp)
+                            Divider(color = AppColors.BorderDark, thickness = 1.dp)
 
                             // Overlay Control Settings Card Row
                             Row(
@@ -931,7 +932,7 @@ fun DashboardScreen(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.overlay_control_title),
-                                        color = Color(0xFFE6E1E5),
+                                        color = AppColors.DarkTextPrimary,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium,
                                         maxLines = 1,
@@ -940,7 +941,7 @@ fun DashboardScreen(
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = stringResource(R.string.overlay_control_desc),
-                                        color = Color(0xFFCAC4D0),
+                                        color = AppColors.DarkTextSecondary,
                                         fontSize = 12.sp,
                                         maxLines = 2,
                                         overflow = TextOverflow.Ellipsis
@@ -967,10 +968,10 @@ fun DashboardScreen(
                                         }
                                     },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color(0xFFD0BCFF),
-                                        checkedTrackColor = Color(0xFF49454F),
-                                        uncheckedThumbColor = Color(0xFFCAC4D0),
-                                        uncheckedTrackColor = Color(0xFF49454F)
+                                        checkedThumbColor = AppColors.PrimaryAccentDark,
+                                        checkedTrackColor = AppColors.BorderDark,
+                                        uncheckedThumbColor = AppColors.DarkTextSecondary,
+                                        uncheckedTrackColor = AppColors.BorderDark
                                     ),
                                     modifier = Modifier.testTag("overlay_control_toggle")
                                 )
@@ -983,7 +984,7 @@ fun DashboardScreen(
                     // Language Selection Section (Android Per-App Language Preferences)
                     Text(
                         text = stringResource(R.string.language_preference_section),
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
@@ -993,9 +994,9 @@ fun DashboardScreen(
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                         shape = RoundedCornerShape(24.dp),
-                        border = BorderStroke(1.dp, Color(0xFF49454F))
+                        border = BorderStroke(1.dp, AppColors.BorderDark)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -1008,27 +1009,27 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.Language,
                                     contentDescription = null,
-                                    tint = Color(0xFFD0BCFF),
+                                    tint = AppColors.PrimaryAccentDark,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = stringResource(R.string.app_language_title),
-                                        color = Color(0xFFE6E1E5),
+                                        color = AppColors.DarkTextPrimary,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = stringResource(R.string.app_language_desc),
-                                        color = Color(0xFFCAC4D0),
+                                        color = AppColors.DarkTextSecondary,
                                         fontSize = 12.sp
                                     )
                                 }
                             }
 
-                            Divider(color = Color(0xFF49454F), thickness = 1.dp)
+                            Divider(color = AppColors.BorderDark, thickness = 1.dp)
 
                             var languageDropdownExpanded by remember { mutableStateOf(false) }
 
@@ -1057,7 +1058,7 @@ fun DashboardScreen(
                                     onClick = { languageDropdownExpanded = !languageDropdownExpanded },
                                     shape = RoundedCornerShape(12.dp),
                                     color = Color(0xFF1D1B20),
-                                    border = BorderStroke(1.dp, Color(0xFF49454F)),
+                                    border = BorderStroke(1.dp, AppColors.BorderDark),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .testTag("language_dropdown_selector")
@@ -1071,14 +1072,14 @@ fun DashboardScreen(
                                     ) {
                                         Text(
                                             text = currentSelectedLabel,
-                                            color = Color(0xFFE6E1E5),
+                                            color = AppColors.DarkTextPrimary,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium
                                         )
                                         Icon(
                                             imageVector = if (languageDropdownExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                                             contentDescription = null,
-                                            tint = Color(0xFFD0BCFF)
+                                            tint = AppColors.PrimaryAccentDark
                                         )
                                     }
                                 }
@@ -1088,8 +1089,8 @@ fun DashboardScreen(
                                     onDismissRequest = { languageDropdownExpanded = false },
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
-                                        .background(Color(0xFF2B2930))
-                                        .border(1.dp, Color(0xFF49454F), RoundedCornerShape(12.dp))
+                                        .background(AppColors.DarkCard)
+                                        .border(1.dp, AppColors.BorderDark, RoundedCornerShape(12.dp))
                                 ) {
                                     languageOptions.forEach { (code, label) ->
                                         val isSelected = (appLanguage == code) || (code == "system" && (appLanguage.isEmpty() || appLanguage == "system"))
@@ -1097,7 +1098,7 @@ fun DashboardScreen(
                                             text = {
                                                 Text(
                                                     text = label,
-                                                    color = if (isSelected) Color(0xFFD0BCFF) else Color(0xFFE6E1E5),
+                                                    color = if (isSelected) AppColors.PrimaryAccentDark else AppColors.DarkTextPrimary,
                                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                                     fontSize = 14.sp
                                                 )
@@ -1112,13 +1113,13 @@ fun DashboardScreen(
                                                     Icon(
                                                         imageVector = Icons.Default.Check,
                                                         contentDescription = null,
-                                                        tint = Color(0xFFD0BCFF),
+                                                        tint = AppColors.PrimaryAccentDark,
                                                         modifier = Modifier.size(18.dp)
                                                     )
                                                 }
                                             } else null,
                                             modifier = Modifier.background(
-                                                if (isSelected) Color(0xFF49454F).copy(alpha = 0.5f) else Color.Transparent
+                                                if (isSelected) AppColors.BorderDark.copy(alpha = 0.5f) else Color.Transparent
                                             )
                                         )
                                     }
@@ -1133,8 +1134,8 @@ fun DashboardScreen(
 
                     // Developer & Legal Section
                     Text(
-                        text = "DEVELOPER & LEGAL",
-                        color = Color(0xFFD0BCFF),
+                        text = stringResource(R.string.developer_legal_title),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
@@ -1156,9 +1157,9 @@ fun DashboardScreen(
                                     }
                                 }
                                 .testTag("developer_website_button"),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                             shape = RoundedCornerShape(20.dp),
-                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                            border = BorderStroke(1.dp, AppColors.BorderDark)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -1174,19 +1175,19 @@ fun DashboardScreen(
                                     Icon(
                                         imageVector = Icons.Default.Language,
                                         contentDescription = null,
-                                        tint = Color(0xFFD0BCFF),
+                                        tint = AppColors.PrimaryAccentDark,
                                         modifier = Modifier.size(22.dp)
                                     )
                                     Column {
                                         Text(
                                             text = "Developer Website",
-                                            color = Color(0xFFE6E1E5),
+                                            color = AppColors.DarkTextPrimary,
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Medium
                                         )
                                         Text(
                                             text = BuildConfig.DEVELOPER_WEBSITE_URL,
-                                            color = Color(0xFFD0BCFF),
+                                            color = AppColors.PrimaryAccentDark,
                                             fontSize = 12.sp
                                         )
                                     }
@@ -1194,7 +1195,7 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.OpenInNew,
                                     contentDescription = "Open Developer Website",
-                                    tint = Color(0xFFCAC4D0),
+                                    tint = AppColors.DarkTextSecondary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -1208,9 +1209,9 @@ fun DashboardScreen(
                                     showPrivacyTermsDialog = true
                                 }
                                 .testTag("privacy_terms_button"),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                             shape = RoundedCornerShape(20.dp),
-                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                            border = BorderStroke(1.dp, AppColors.BorderDark)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -1226,19 +1227,19 @@ fun DashboardScreen(
                                     Icon(
                                         imageVector = Icons.Default.Policy,
                                         contentDescription = null,
-                                        tint = Color(0xFFD0BCFF),
+                                        tint = AppColors.PrimaryAccentDark,
                                         modifier = Modifier.size(22.dp)
                                     )
                                     Column {
                                         Text(
                                             text = "Privacy Policy & Terms",
-                                            color = Color(0xFFE6E1E5),
+                                            color = AppColors.DarkTextPrimary,
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Medium
                                         )
                                         Text(
                                             text = "View privacy terms & data handling disclosures",
-                                            color = Color(0xFFCAC4D0),
+                                            color = AppColors.DarkTextSecondary,
                                             fontSize = 12.sp
                                         )
                                     }
@@ -1246,7 +1247,7 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.ChevronRight,
                                     contentDescription = "Open Privacy Policy & Terms",
-                                    tint = Color(0xFFCAC4D0),
+                                    tint = AppColors.DarkTextSecondary,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -1258,9 +1259,9 @@ fun DashboardScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("gdpr_privacy_settings_card"),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                             shape = RoundedCornerShape(20.dp),
-                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                            border = BorderStroke(1.dp, AppColors.BorderDark)
                         ) {
                             Column(
                                 modifier = Modifier.padding(16.dp),
@@ -1278,19 +1279,19 @@ fun DashboardScreen(
                                         Icon(
                                             imageVector = Icons.Default.Security,
                                             contentDescription = null,
-                                            tint = Color(0xFFD0BCFF),
+                                            tint = AppColors.PrimaryAccentDark,
                                             modifier = Modifier.size(22.dp)
                                         )
                                         Column {
                                             Text(
                                                 text = "Personalized Ads (GDPR)",
-                                                color = Color(0xFFE6E1E5),
+                                                color = AppColors.DarkTextPrimary,
                                                 fontSize = 15.sp,
                                                 fontWeight = FontWeight.Medium
                                             )
                                             Text(
                                                 text = if (isPersonalizedConsent) "Consent: Granted (Personalized)" else "Consent: Non-personalized Ads Only",
-                                                color = Color(0xFFCAC4D0),
+                                                color = AppColors.DarkTextSecondary,
                                                 fontSize = 12.sp
                                             )
                                         }
@@ -1302,14 +1303,14 @@ fun DashboardScreen(
                                             AudioEffectManager.setAdConsentStatus(if (it) "GRANTED" else "DENIED")
                                         },
                                         colors = SwitchDefaults.colors(
-                                            checkedThumbColor = Color(0xFFD0BCFF),
-                                            checkedTrackColor = Color(0xFF49454F)
+                                            checkedThumbColor = AppColors.PrimaryAccentDark,
+                                            checkedTrackColor = AppColors.BorderDark
                                         ),
                                         modifier = Modifier.testTag("settings_personalized_ads_toggle")
                                     )
                                 }
                                 if (AdConsentManager.isUmpAvailable()) {
-                                    Divider(color = Color(0xFF49454F), thickness = 1.dp)
+                                    Divider(color = AppColors.BorderDark, thickness = 1.dp)
                                     TextButton(
                                         onClick = {
                                             (context as? android.app.Activity)?.let { act ->
@@ -1322,7 +1323,7 @@ fun DashboardScreen(
                                     ) {
                                         Text(
                                             text = "Update GDPR Consent Preferences",
-                                            color = Color(0xFFD0BCFF),
+                                            color = AppColors.PrimaryAccentDark,
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -1339,9 +1340,9 @@ fun DashboardScreen(
                                     showLicenseDialog = true
                                 }
                                 .testTag("open_source_license_button"),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                            colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                             shape = RoundedCornerShape(20.dp),
-                            border = BorderStroke(1.dp, Color(0xFF49454F))
+                            border = BorderStroke(1.dp, AppColors.BorderDark)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -1357,19 +1358,19 @@ fun DashboardScreen(
                                     Icon(
                                         imageVector = Icons.Default.Gavel,
                                         contentDescription = null,
-                                        tint = Color(0xFFD0BCFF),
+                                        tint = AppColors.PrimaryAccentDark,
                                         modifier = Modifier.size(22.dp)
                                     )
                                     Column {
                                         Text(
                                             text = "Open Source License",
-                                            color = Color(0xFFE6E1E5),
+                                            color = AppColors.DarkTextPrimary,
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Medium
                                         )
                                         Text(
                                             text = "GNU General Public License v3.0 (GPLv3)",
-                                            color = Color(0xFFCAC4D0),
+                                            color = AppColors.DarkTextSecondary,
                                             fontSize = 12.sp
                                         )
                                     }
@@ -1377,7 +1378,7 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.ChevronRight,
                                     contentDescription = "Open License Page",
-                                    tint = Color(0xFFCAC4D0),
+                                    tint = AppColors.DarkTextSecondary,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -1396,19 +1397,19 @@ fun DashboardScreen(
                             .fillMaxWidth()
                             .height(48.dp)
                             .testTag("replay_onboarding_button"),
-                        border = BorderStroke(1.dp, Color(0xFFD0BCFF)),
+                        border = BorderStroke(1.dp, AppColors.PrimaryAccentDark),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Lightbulb,
                             contentDescription = null,
-                            tint = Color(0xFFD0BCFF),
+                            tint = AppColors.PrimaryAccentDark,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Replay Quick Start Guide",
-                            color = Color(0xFFD0BCFF),
+                            color = AppColors.PrimaryAccentDark,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -1418,8 +1419,8 @@ fun DashboardScreen(
 
                     // About section
                     Text(
-                        text = "ABOUT",
-                        color = Color(0xFFD0BCFF),
+                        text = stringResource(R.string.about_title),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
@@ -1427,20 +1428,20 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2930)),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
                         shape = RoundedCornerShape(24.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = "Vibe Amplifier v1.0",
-                                color = Color(0xFFE6E1E5),
+                                color = AppColors.DarkTextPrimary,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "High-Fidelity global sound booster and 5-band equalizer for Android.",
-                                color = Color(0xFFCAC4D0),
+                                color = AppColors.DarkTextSecondary,
                                 fontSize = 12.sp
                             )
                         }
@@ -1498,7 +1499,7 @@ fun DashboardScreen(
                         AudioEffectManager.setFloatingEnabled(false)
                     }
                 ) {
-                    Text("Cancel", color = Color.Gray)
+                    Text(stringResource(R.string.action_cancel), color = Color.Gray)
                 }
             },
             containerColor = Color(0xFF1E1C28)
@@ -1519,7 +1520,7 @@ fun DashboardScreen(
                     Icon(
                         imageVector = Icons.Default.Security,
                         contentDescription = null,
-                        tint = Color(0xFFD0BCFF),
+                        tint = AppColors.PrimaryAccentDark,
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
@@ -1539,20 +1540,20 @@ fun DashboardScreen(
                 ) {
                     Text(
                         text = "1. Voluntary Development & Service",
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "Milkys Sound Booster & EQ is an independent, voluntarily developed application provided to enhance device volume and frequency response. The app is provided 'as-is' for personal utility.",
-                        color = Color(0xFFE6E1E5),
+                        color = AppColors.DarkTextPrimary,
                         fontSize = 12.sp,
                         lineHeight = 16.sp
                     )
 
                     Text(
                         text = "2. Data Privacy & Processing",
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -1560,27 +1561,27 @@ fun DashboardScreen(
                         text = "• Zero Personal Data Collection: Milkys App does not collect, record, transmit, or store any personal user identifiers, location data, or private audio recordings.\n" +
                                 "• On-Device Processing: All audio amplification and 5-band graphic equalization occur 100% locally on your device via standard Android system DSP engines.\n" +
                                 "• Local Storage: User preferences (volume boost levels, equalizer band profiles, theme settings) are saved strictly inside private local device storage.",
-                        color = Color(0xFFE6E1E5),
+                        color = AppColors.DarkTextPrimary,
                         fontSize = 12.sp,
                         lineHeight = 16.sp
                     )
 
                     Text(
                         text = "3. Google AdMob Advertising",
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "Optional banner advertisements are served via the Google AdMob SDK to help sustain voluntary development and server infrastructure. Google AdMob may process non-personalized diagnostic metrics in accordance with Google's Privacy Policy. Users can disable ads anytime in the app Settings menu.",
-                        color = Color(0xFFE6E1E5),
+                        color = AppColors.DarkTextPrimary,
                         fontSize = 12.sp,
                         lineHeight = 16.sp
                     )
 
                     Text(
                         text = "4. Device Permissions Disclosure",
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -1588,7 +1589,7 @@ fun DashboardScreen(
                         text = "• Modify Audio Settings: Required to modify equalization frequency bands and master output gains.\n" +
                                 "• Foreground Service & Tile: Keeps volume processing active when minimized and supports Android notification drawer controls.\n" +
                                 "• System Overlay: Optional permission used solely to render floating overlay volume controls above active apps.",
-                        color = Color(0xFFE6E1E5),
+                        color = AppColors.DarkTextPrimary,
                         fontSize = 12.sp,
                         lineHeight = 16.sp
                     )
@@ -1609,9 +1610,9 @@ fun DashboardScreen(
                                 }
                             }
                             .testTag("privacy_policy_web_link"),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1B1F)),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.DarkBackground),
                         shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, Color(0xFFD0BCFF))
+                        border = BorderStroke(1.dp, AppColors.PrimaryAccentDark)
                     ) {
                         Row(
                             modifier = Modifier
@@ -1623,20 +1624,20 @@ fun DashboardScreen(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "Official Privacy Policy Web Page",
-                                    color = Color(0xFFD0BCFF),
+                                    color = AppColors.PrimaryAccentDark,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
                                     text = BuildConfig.PRIVACY_POLICY_URL,
-                                    color = Color(0xFFCAC4D0),
+                                    color = AppColors.DarkTextSecondary,
                                     fontSize = 11.sp
                                 )
                             }
                             Icon(
                                 imageVector = Icons.Default.OpenInNew,
                                 contentDescription = "Open Privacy Policy URL",
-                                tint = Color(0xFFD0BCFF),
+                                tint = AppColors.PrimaryAccentDark,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -1646,13 +1647,13 @@ fun DashboardScreen(
             confirmButton = {
                 Button(
                     onClick = { showPrivacyTermsDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.PrimaryAccentDark),
                     modifier = Modifier.testTag("close_privacy_terms_button")
                 ) {
-                    Text("Close", color = Color(0xFF381E72), fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_close), color = AppColors.DeepPurple, fontWeight = FontWeight.Bold)
                 }
             },
-            containerColor = Color(0xFF2B2930),
+            containerColor = AppColors.DarkCard,
             shape = RoundedCornerShape(24.dp)
         )
     }
@@ -1669,7 +1670,7 @@ fun DashboardScreen(
                     Icon(
                         imageVector = Icons.Default.Gavel,
                         contentDescription = null,
-                        tint = Color(0xFFD0BCFF),
+                        tint = AppColors.PrimaryAccentDark,
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
@@ -1699,9 +1700,9 @@ fun DashboardScreen(
                                 }
                             }
                             .testTag("github_repo_link_button"),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1B1F)),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.DarkBackground),
                         shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(1.dp, Color(0xFFD0BCFF))
+                        border = BorderStroke(1.dp, AppColors.PrimaryAccentDark)
                     ) {
                         Row(
                             modifier = Modifier
@@ -1718,7 +1719,7 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.Code,
                                     contentDescription = "GitHub Repository",
-                                    tint = Color(0xFFD0BCFF),
+                                    tint = AppColors.PrimaryAccentDark,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Column {
@@ -1730,7 +1731,7 @@ fun DashboardScreen(
                                     )
                                     Text(
                                         text = BuildConfig.GITHUB_REPO_URL,
-                                        color = Color(0xFFD0BCFF),
+                                        color = AppColors.PrimaryAccentDark,
                                         fontSize = 11.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
@@ -1740,7 +1741,7 @@ fun DashboardScreen(
                             Icon(
                                 imageVector = Icons.Default.OpenInNew,
                                 contentDescription = "Open GitHub Repo",
-                                tint = Color(0xFFD0BCFF),
+                                tint = AppColors.PrimaryAccentDark,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -1748,7 +1749,7 @@ fun DashboardScreen(
 
                     Text(
                         text = "GNU GENERAL PUBLIC LICENSE v3.0",
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp
@@ -1758,10 +1759,10 @@ fun DashboardScreen(
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(260.dp),
-                        color = Color(0xFF1C1B1F),
+                            .heightIn(min = 260.dp),
+                        color = AppColors.DarkBackground,
                         shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, Color(0xFF49454F))
+                        border = BorderStroke(1.dp, AppColors.BorderDark)
                     ) {
                         Column(
                             modifier = Modifier
@@ -1791,7 +1792,7 @@ fun DashboardScreen(
                                         "You may convey a work based on the Program, or the modifications to produce it from the Program, in the form of source code under the terms of section 3, provided that you also license the entire work under this License.\n\n" +
                                         "5. Disclaimer of Warranty.\n" +
                                         "THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY OF ANY KIND.",
-                                color = Color(0xFFE6E1E5),
+                                color = AppColors.DarkTextPrimary,
                                 fontSize = 11.sp,
                                 lineHeight = 15.sp,
                                 fontFamily = FontFamily.Monospace
@@ -1803,13 +1804,13 @@ fun DashboardScreen(
             confirmButton = {
                 Button(
                     onClick = { showLicenseDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.PrimaryAccentDark),
                     modifier = Modifier.testTag("close_license_button")
                 ) {
-                    Text("Close", color = Color(0xFF381E72), fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_close), color = AppColors.DeepPurple, fontWeight = FontWeight.Bold)
                 }
             },
-            containerColor = Color(0xFF2B2930),
+            containerColor = AppColors.DarkCard,
             shape = RoundedCornerShape(24.dp)
         )
     }
@@ -1863,7 +1864,7 @@ fun AudioVisualizer(isPlaying: Boolean, modifier: Modifier = Modifier) {
                     .weight(1f)
                     .fillMaxHeight(heightRatio)
                     .background(
-                        color = Color(0xFFD0BCFF),
+                        color = AppColors.PrimaryAccentDark,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
@@ -2240,11 +2241,11 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
     ) {
         Surface(
             modifier = Modifier
-                .widthIn(max = 340.dp)
+                .widthIn(max = 320.dp)
                 .fillMaxWidth(0.88f)
                 .wrapContentHeight(),
             shape = RoundedCornerShape(20.dp),
-            color = Color(0xFF2B2930),
+            color = AppColors.DarkCard,
             tonalElevation = 8.dp
         ) {
             Column(
@@ -2259,7 +2260,7 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                     modifier = Modifier
                         .size(48.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .border(1.dp, Color(0xFFD0BCFF), RoundedCornerShape(12.dp)),
+                        .border(1.dp, AppColors.PrimaryAccentDark, RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -2271,13 +2272,13 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
 
                 Text(
                     text = "Welcome to Milkys App",
-                    color = Color(0xFFE6E1E5),
+                    color = AppColors.DarkTextPrimary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
 
-                HorizontalDivider(color = Color(0xFF49454F), thickness = 1.dp)
+                HorizontalDivider(color = AppColors.BorderDark, thickness = 1.dp)
 
                 // Hearing Loss Safety Warning Banner (Ultra-compact)
                 Card(
@@ -2331,9 +2332,9 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("onboarding_gdpr_consent_card"),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1B1F)),
+                    colors = CardDefaults.cardColors(containerColor = AppColors.DarkBackground),
                     shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.dp, Color(0xFF49454F))
+                    border = BorderStroke(1.dp, AppColors.BorderDark)
                 ) {
                     Column(
                         modifier = Modifier.padding(12.dp),
@@ -2346,19 +2347,19 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                             Icon(
                                 imageVector = Icons.Default.Security,
                                 contentDescription = "Privacy & Consent",
-                                tint = Color(0xFFD0BCFF),
+                                tint = AppColors.PrimaryAccentDark,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
                                 text = "Privacy & Admob Consent",
-                                color = Color(0xFFE6E1E5),
+                                color = AppColors.DarkTextPrimary,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         Text(
                             text = "We use Google AdMob to show ads supporting development. You can choose whether to allow personalized or non-personalized ads.",
-                            color = Color(0xFFCAC4D0),
+                            color = AppColors.DarkTextSecondary,
                             fontSize = 11.sp,
                             lineHeight = 14.sp
                         )
@@ -2369,7 +2370,7 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                         ) {
                             Text(
                                 text = "Personalized Ads",
-                                color = Color(0xFFE6E1E5),
+                                color = AppColors.DarkTextPrimary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium
                             )
@@ -2377,8 +2378,8 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                                 checked = tempPersonalizedConsent,
                                 onCheckedChange = { tempPersonalizedConsent = it },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color(0xFFD0BCFF),
-                                    checkedTrackColor = Color(0xFF49454F)
+                                    checkedThumbColor = AppColors.PrimaryAccentDark,
+                                    checkedTrackColor = AppColors.BorderDark
                                 ),
                                 modifier = Modifier.testTag("onboarding_personalized_ads_toggle")
                             )
@@ -2399,14 +2400,14 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                         ) {
                             Text(
                                 text = "Read Privacy Policy",
-                                color = Color(0xFFD0BCFF),
+                                color = AppColors.PrimaryAccentDark,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium
                             )
                             Icon(
                                 imageVector = Icons.Default.OpenInNew,
                                 contentDescription = "Privacy Policy",
-                                tint = Color(0xFFD0BCFF),
+                                tint = AppColors.PrimaryAccentDark,
                                 modifier = Modifier.size(14.dp)
                             )
                         }
@@ -2425,12 +2426,12 @@ fun OnboardingQuickStartDialog(onDismiss: () -> Unit) {
                         .fillMaxWidth()
                         .height(44.dp)
                         .testTag("onboarding_get_started_button"),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0BCFF)),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.PrimaryAccentDark),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
                         text = "GET STARTED",
-                        color = Color(0xFF381E72),
+                        color = AppColors.DeepPurple,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -2454,13 +2455,13 @@ fun OnboardingFeatureItem(
         Box(
             modifier = Modifier
                 .size(32.dp)
-                .background(Color(0xFF49454F), RoundedCornerShape(8.dp)),
+                .background(AppColors.BorderDark, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color(0xFFD0BCFF),
+                tint = AppColors.PrimaryAccentDark,
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -2468,13 +2469,13 @@ fun OnboardingFeatureItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                color = Color(0xFFE6E1E5),
+                color = AppColors.DarkTextPrimary,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = description,
-                color = Color(0xFFCAC4D0),
+                color = AppColors.DarkTextSecondary,
                 fontSize = 11.sp,
                 lineHeight = 14.sp
             )
@@ -3016,7 +3017,7 @@ fun EqualizerComponent(
                 },
                 enabled = isEnabled,
                 shape = RoundedCornerShape(12.dp),
-                color = if (isEnabled) Color(0xFF2B2930) else Color(0xFF1F1D24),
+                color = if (isEnabled) AppColors.DarkCard else Color(0xFF1F1D24),
                 border = BorderStroke(1.dp, if (isEnabled) primaryAccent.copy(alpha = 0.5f) else borderDivider.copy(alpha = 0.3f)),
                 modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
             ) {
@@ -3035,7 +3036,7 @@ fun EqualizerComponent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp),
+                .heightIn(min = 240.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val frequencies = listOf("60Hz", "230Hz", "910Hz", "4kHz", "14kHz")
@@ -3053,7 +3054,7 @@ fun EqualizerComponent(
                     Text(
                         text = "${if (level > 0) "+" else ""}$level dB",
                         color = when {
-                            !isEnabled -> Color(0xFFCAC4D0).copy(alpha = 0.5f)
+                            !isEnabled -> AppColors.DarkTextSecondary.copy(alpha = 0.5f)
                             level > 0 -> Color(0xFF81C784)
                             level < 0 -> Color(0xFFFFB74D)
                             else -> primaryAccent
@@ -3070,7 +3071,7 @@ fun EqualizerComponent(
                             .weight(1f)
                             .padding(vertical = 4.dp)
                             .width(48.dp)
-                            .background(Color(0xFF2B2930), RoundedCornerShape(24.dp)),
+                            .background(AppColors.DarkCard, RoundedCornerShape(24.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
@@ -3088,14 +3089,14 @@ fun EqualizerComponent(
                                     .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                     .padding(2.dp)
                                     .background(
-                                        if (isEnabled) Color(0xFF4F378B) else Color(0xFF36343B),
+                                        if (isEnabled) Color(0xFF4F378B) else AppColors.DarkCardAlt,
                                         CircleShape
                                     )
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = stringResource(R.string.content_desc_increase_band, i + 1),
-                                    tint = if (isEnabled) Color.White else Color(0xFFCAC4D0).copy(alpha = 0.4f),
+                                    tint = if (isEnabled) Color.White else AppColors.DarkTextSecondary.copy(alpha = 0.4f),
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -3141,7 +3142,7 @@ fun EqualizerComponent(
                                                 )
                                             } else {
                                                 Brush.verticalGradient(
-                                                    colors = listOf(Color(0xFF49454F), Color(0xFF49454F))
+                                                    colors = listOf(AppColors.BorderDark, AppColors.BorderDark)
                                                 )
                                             },
                                             RoundedCornerShape(8.dp)
@@ -3159,14 +3160,14 @@ fun EqualizerComponent(
                                     .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                     .padding(2.dp)
                                     .background(
-                                        if (isEnabled) Color(0xFF4F378B) else Color(0xFF36343B),
+                                        if (isEnabled) Color(0xFF4F378B) else AppColors.DarkCardAlt,
                                         CircleShape
                                     )
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Remove,
                                     contentDescription = stringResource(R.string.content_desc_decrease_band, i + 1),
-                                    tint = if (isEnabled) Color.White else Color(0xFFCAC4D0).copy(alpha = 0.4f),
+                                    tint = if (isEnabled) Color.White else AppColors.DarkTextSecondary.copy(alpha = 0.4f),
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -3176,7 +3177,7 @@ fun EqualizerComponent(
                     // Frequency Label
                     Text(
                         text = frequencies[i],
-                        color = Color(0xFFCAC4D0),
+                        color = AppColors.DarkTextSecondary,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
@@ -3186,7 +3187,7 @@ fun EqualizerComponent(
             }
         }
 
-        HorizontalDivider(color = Color(0xFF49454F), thickness = 1.dp)
+        HorizontalDivider(color = AppColors.BorderDark, thickness = 1.dp)
 
         // Preset Manager Bottom Section
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -3222,7 +3223,7 @@ fun EqualizerComponent(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4F378B)),
                     modifier = Modifier
                         .weight(1f)
-                        .defaultMinSize(minHeight = 40.dp)
+                        .defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -3235,7 +3236,7 @@ fun EqualizerComponent(
                             modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
-                        Text("Save", fontSize = 11.sp, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(stringResource(R.string.action_save), fontSize = 11.sp, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }
 
@@ -3253,7 +3254,7 @@ fun EqualizerComponent(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF332D41)),
                     modifier = Modifier
                         .weight(1f)
-                        .defaultMinSize(minHeight = 40.dp)
+                        .defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -3266,7 +3267,7 @@ fun EqualizerComponent(
                             modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
-                        Text("Import", fontSize = 11.sp, color = primaryAccent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(stringResource(R.string.action_import), fontSize = 11.sp, color = primaryAccent, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }
 
@@ -3286,7 +3287,7 @@ fun EqualizerComponent(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF332D41)),
                     modifier = Modifier
                         .weight(1f)
-                        .defaultMinSize(minHeight = 40.dp)
+                        .defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -3299,7 +3300,7 @@ fun EqualizerComponent(
                             modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
-                        Text("Export", fontSize = 11.sp, color = primaryAccent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(stringResource(R.string.action_export), fontSize = 11.sp, color = primaryAccent, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }
 
@@ -3319,7 +3320,7 @@ fun EqualizerComponent(
                     ),
                     modifier = Modifier
                         .weight(1f)
-                        .defaultMinSize(minHeight = 40.dp)
+                        .defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -3377,7 +3378,7 @@ fun EqualizerComponent(
                         },
                         border = BorderStroke(
                             width = if (isSelected) 1.5.dp else 1.dp,
-                            color = if (isSelected) primaryAccent else Color(0xFF36343B)
+                            color = if (isSelected) primaryAccent else AppColors.DarkCardAlt
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -3411,7 +3412,7 @@ fun EqualizerComponent(
                                     enabled = !isBuiltIn && isEnabled,
                                     colors = CheckboxDefaults.colors(
                                         checkedColor = Color(0xFFB3261E),
-                                        disabledUncheckedColor = Color(0xFF49454F).copy(alpha = 0.3f)
+                                        disabledUncheckedColor = AppColors.BorderDark.copy(alpha = 0.3f)
                                     )
                                 )
                             } else {
@@ -3423,7 +3424,7 @@ fun EqualizerComponent(
                                         }
                                     },
                                     enabled = isEnabled,
-                                    modifier = Modifier.size(36.dp)
+                                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).size(48.dp)
                                 ) {
                                     Icon(
                                         imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder,
@@ -3468,14 +3469,14 @@ fun EqualizerComponent(
     if (showSaveDialog) {
         AlertDialog(
             onDismissRequest = { showSaveDialog = false },
-            title = { Text("Save Custom Preset") },
+            title = { Text(stringResource(R.string.dialog_save_preset_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Enter a unique profile name for your current 5-band gain settings:", fontSize = 13.sp)
+                    Text(stringResource(R.string.dialog_save_preset_desc), fontSize = 13.sp)
                     OutlinedTextField(
                         value = newPresetName,
                         onValueChange = { if (it.length <= 10) newPresetName = it },
-                        label = { Text("Preset Name (Max 10 chars)") },
+                        label = { Text(stringResource(R.string.dialog_preset_name_hint)) },
                         supportingText = {
                             Text(
                                 text = "${newPresetName.length}/10",
@@ -3505,12 +3506,12 @@ fun EqualizerComponent(
                         }
                     }
                 ) {
-                    Text("Save Preset", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.label_save_preset), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSaveDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )
@@ -3520,10 +3521,10 @@ fun EqualizerComponent(
     if (showExportDialog) {
         AlertDialog(
             onDismissRequest = { showExportDialog = false },
-            title = { Text("Export JSON - $exportTitleText") },
+            title = { Text(stringResource(R.string.dialog_export_title_prefix, exportTitleText)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Copy or share this preset payload to transfer sound profiles across devices:", fontSize = 12.sp)
+                    Text(stringResource(R.string.dialog_export_desc), fontSize = 12.sp)
                     OutlinedTextField(
                         value = exportJsonText,
                         onValueChange = {},
@@ -3531,7 +3532,7 @@ fun EqualizerComponent(
                         maxLines = 8,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(160.dp),
+                            .heightIn(min = 160.dp),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontFamily = FontFamily.Monospace,
                             fontSize = 11.sp
@@ -3549,7 +3550,7 @@ fun EqualizerComponent(
                     ) {
                         Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Copy")
+                        Text(stringResource(R.string.action_copy))
                     }
                     Button(
                         onClick = {
@@ -3566,13 +3567,13 @@ fun EqualizerComponent(
                     ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Share")
+                        Text(stringResource(R.string.action_share))
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExportDialog = false }) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         )
@@ -3582,10 +3583,10 @@ fun EqualizerComponent(
     if (showImportDialog) {
         AlertDialog(
             onDismissRequest = { showImportDialog = false },
-            title = { Text("Import Preset JSON") },
+            title = { Text(stringResource(R.string.dialog_import_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Paste a preset JSON payload or choose a .json file:", fontSize = 12.sp)
+                    Text(stringResource(R.string.dialog_import_desc), fontSize = 12.sp)
                     OutlinedTextField(
                         value = importJsonInput,
                         onValueChange = { importJsonInput = it },
@@ -3593,7 +3594,7 @@ fun EqualizerComponent(
                         maxLines = 8,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(140.dp),
+                            .heightIn(min = 140.dp),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontFamily = FontFamily.Monospace,
                             fontSize = 11.sp
@@ -3610,7 +3611,7 @@ fun EqualizerComponent(
                         ) {
                             Icon(imageVector = Icons.Default.Download, contentDescription = null, modifier = Modifier.size(14.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Pick File (.json)", fontSize = 12.sp)
+                            Text(stringResource(R.string.action_pick_file), fontSize = 12.sp)
                         }
 
                         TextButton(
@@ -3625,7 +3626,7 @@ fun EqualizerComponent(
                         ) {
                             Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Paste Clipboard", fontSize = 12.sp)
+                            Text(stringResource(R.string.action_paste_clipboard), fontSize = 12.sp)
                         }
                     }
                 }
@@ -3642,12 +3643,12 @@ fun EqualizerComponent(
                         }
                     }
                 ) {
-                    Text("Save/Apply", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_save_apply), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showImportDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )
@@ -3657,7 +3658,7 @@ fun EqualizerComponent(
     if (showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
-            title = { Text("Confirm Delete") },
+            title = { Text(stringResource(R.string.dialog_delete_title)) },
             text = { Text(stringResource(R.string.delete_selected_presets_confirm)) },
             confirmButton = {
                 Button(
@@ -3670,12 +3671,12 @@ fun EqualizerComponent(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB3261E))
                 ) {
-                    Text("Yes", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_yes), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmDialog = false }) {
-                    Text("No")
+                    Text(stringResource(R.string.action_no))
                 }
             }
         )

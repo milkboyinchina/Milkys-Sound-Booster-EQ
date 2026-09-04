@@ -44,6 +44,7 @@
     <string name="github_repository">GitHub Repository</string>
     <string name="privacy_terms">Privacy Policy &amp; Terms of Service</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="about_title" translatable="false">ABOUT</string>
 
     <!-- Equalizer Content Descriptions -->
     <string name="content_desc_reset_bands" translatable="false">Reset equalizer bands to zero</string>
@@ -81,4 +82,28 @@
     <string name="content_desc_open_app" translatable="false">Open main app</string>
     <string name="overlay_control_title" translatable="false">Overlay Control</string>
     <string name="overlay_control_desc" translatable="false">Enable floating widget over other apps</string>
+    <string name="content_desc_hearing_warning" translatable="false">Hearing Loss Safety Warning</string>
+    <string name="content_desc_hide_warning" translatable="false">Hide warning for 7 days</string>
+    <string name="action_save" translatable="false">Save</string>
+    <string name="action_import" translatable="false">Import</string>
+    <string name="action_export" translatable="false">Export</string>
+    <string name="action_cancel" translatable="false">Cancel</string>
+    <string name="action_close" translatable="false">Close</string>
+    <string name="action_yes" translatable="false">Yes</string>
+    <string name="action_no" translatable="false">No</string>
+    <string name="dialog_save_preset_title" translatable="false">Save Custom Preset</string>
+    <string name="action_copy" translatable="false">Copy</string>
+    <string name="action_share" translatable="false">Share</string>
+    <string name="action_pick_file" translatable="false">Pick File (.json)</string>
+    <string name="action_paste_clipboard" translatable="false">Paste Clipboard</string>
+    <string name="action_save_apply" translatable="false">Save/Apply</string>
+    <string name="dialog_import_title" translatable="false">Import Preset JSON</string>
+    <string name="dialog_export_title_prefix" translatable="false">Export JSON - %1$s</string>
+    <string name="dialog_delete_title" translatable="false">Confirm Delete</string>
+    <string name="dialog_save_preset_desc" translatable="false">Enter a unique profile name for your current 5-band gain settings:</string>
+    <string name="dialog_preset_name_hint" translatable="false">Preset Name (Max 10 chars)</string>
+    <string name="dialog_export_desc" translatable="false">Copy or share this preset payload to transfer sound profiles across devices:</string>
+    <string name="dialog_import_desc" translatable="false">Paste a preset JSON payload or choose a .json file:</string>
+    <string name="dialog_delete_confirm" translatable="false">Delete selected presets?</string>
+    <string name="label_save_preset" translatable="false">Save Preset</string>
 </resources>

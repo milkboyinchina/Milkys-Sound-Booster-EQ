@@ -54,6 +54,7 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -85,8 +86,8 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     private var windowManager: WindowManager? = null
     private var overlayView: ComposeView? = null
     private var overlayParams: WindowManager.LayoutParams? = null
-    
-    private val serviceScope = CoroutineScope(Dispatchers.Main)
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     override fun onCreate() {
         super.onCreate()
@@ -131,6 +132,13 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         super.onStartCommand(intent, flags, startId)
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
 
+        // Null intent means system restarted service after kill (START_STICKY) — do not re-enable booster
+        if (intent == null) {
+            // Restore notification without re-starting booster effects
+            try { startForegroundService() } catch (e: Throwable) { e.printStackTrace() }
+            return START_NOT_STICKY
+        }
+
         // Call startForegroundService immediately so Android 8.0+ never throws ForegroundServiceDidNotStartInTimeException
         startForegroundService()
 
@@ -138,7 +146,7 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
             showFloatingOverlay()
         }
 
-        when (intent?.action) {
+        when (intent.action) {
             ACTION_STOP -> {
                 stopSelf()
             }
@@ -160,7 +168,7 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
             }
         }
 
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -169,9 +177,10 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
 
     override fun onDestroy() {
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        store.clear()
-        serviceScope.cancel()
         hideFloatingOverlay()
+        // Cancel scope before clearing store to avoid collectors writing after cancel
+        serviceScope.cancel()
+        store.clear()
         // AGENTS 5.2 - release AudioEffect handles to prevent audio server crashes
         AudioEffectManager.release()
         super.onDestroy()
@@ -191,6 +200,15 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     }
 
     private fun startForegroundService() {
+        // Android 13+ requires POST_NOTIFICATIONS for foreground notification — guard to avoid ForegroundServiceDidNotStartInTimeException
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (!nm.areNotificationsEnabled()) {
+                // Cannot show notification — stop service gracefully
+                stopSelf()
+                return
+            }
+        }
         try {
             val notification = buildNotification()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -208,10 +226,16 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     }
 
     private fun updateNotification() {
+        // Guard POST_NOTIFICATIONS on Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (!nm.areNotificationsEnabled()) return
+        }
         try {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(NOTIFICATION_ID, buildNotification())
         } catch (e: Throwable) {
+            if (e is SecurityException) return
             e.printStackTrace()
         }
     }

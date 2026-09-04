@@ -25,6 +25,29 @@ debug.keystore.base64
 /screenshots/
 /screenshots-bug/
 
+# --- QC outputs (generated, do not track) ---
+/qc/reports/
+/qc/artifacts/
+/qc/artifacts/recordings/
+*.mp4
+/qc/traces/
+*.hprof
+*.heapsnapshot
+*.trace
+*.trace.gz
+.roborazzi/
+app/build/
+captures/
+.env.*
+*.jks
+*.p12
+release.keystore
+
+# Track QC references but ignore generated outputs (recordings are ephemeral scrcpy MP4s, never tracked)
+!qc/changelogs/*.md
+!qc/fixtures/**/*
+!qc/checklists/*.md
+
 # Dynamic asset directories for multi-resolution icons & logos
 /assets/logo/
 /assets/icon/

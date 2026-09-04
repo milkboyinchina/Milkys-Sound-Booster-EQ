@@ -26,8 +26,11 @@ These guidelines govern how **Google Jules** must analyze, edit, build, verify, 
 
 Before submitting a Pull Request, Jules **MUST**:
 1. Run `./scripts/setup_jules_env.sh` to ensure the environment dependencies are synced.
-2. Run `./gradlew test` to ensure all unit tests pass without failure.
-3. Run `./scripts/build.sh assembleDebug` to confirm that the Android Debug APK builds successfully and outputs to `.build-outputs/`.
+2. Run `./gradlew testDebugUnitTest` to ensure all unit tests pass without failure (reports → `qc/reports/tests/`).
+3. Run `./gradlew lintDebug` — must show 0 errors (report → `qc/reports/lint/`).
+4. Run `./gradlew verifyRoborazziDebug` and ensure 0 failures before PR (outputs → `qc/reports/roborazzi/`, reference `app/src/test/screenshots/`).
+5. Run `./scripts/build.sh assembleDebug` to confirm that the Android Debug APK builds successfully and outputs to `.build-outputs/` (copy to `qc/artifacts/apks/`).
+6. Ensure `qc_plan.md` §9 gates and `CHANGELOG.md` + `qc/changelogs/` linkage are satisfied (see `qc/checklists/smoke.md`).
 
 ---
 
