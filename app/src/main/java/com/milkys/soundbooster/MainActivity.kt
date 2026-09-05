@@ -241,6 +241,7 @@ fun DashboardScreen(
     val appLanguage by AudioEffectManager.appLanguage.collectAsStateWithLifecycle()
 
     var showSettings by remember { mutableStateOf(false) }
+    var showAdsConfirmDialog by remember { mutableStateOf(false) }
     var showOnboardingManually by remember { mutableStateOf(false) }
     var isSoundTesting by remember { mutableStateOf(false) }
     var showPrivacyTermsDialog by remember { mutableStateOf(false) }
@@ -351,7 +352,20 @@ fun DashboardScreen(
             .background(bgColor)
             .padding(10.dp)
     ) {
-        when (windowSizeGroup) {
+        // Single banner top center for all window sizes (1 banner only)
+        AdaptiveBannerAdCard(
+            cardColor = cardColor,
+            borderDivider = borderDivider,
+            textPrimary = textPrimary,
+            textSecondary = textSecondary,
+            primaryAccent = primaryAccent,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Box(
+            modifier = Modifier.weight(1f).fillMaxWidth()
+        ) {
+            when (windowSizeGroup) {
             WindowSizeGroup.COMPACT -> {
                 // Compact (Phones): 1-Column Layout
                 Column(
@@ -359,15 +373,6 @@ fun DashboardScreen(
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
-                    // Fixed banner always visible at top on phones (outside LazyColumn)
-                    AdaptiveBannerAdCard(
-                        cardColor = cardColor,
-                        borderDivider = borderDivider,
-                        textPrimary = textPrimary,
-                        textSecondary = textSecondary,
-                        primaryAccent = primaryAccent
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier
                             .weight(1f)
@@ -407,17 +412,6 @@ fun DashboardScreen(
                                     }
                                 )
                             }
-                        }
-
-                        // Native Ad card on top of Decibel Booster
-                        item {
-                            NativeAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
-                            )
                         }
 
                         // Circular Dial & Boost Controls
@@ -463,6 +457,17 @@ fun DashboardScreen(
                                 textSecondary = textSecondary,
                                 primaryAccent = primaryAccent,
                                 onSelectPreset = { AudioEffectManager.setBoostProgress(it) }
+                            )
+                        }
+
+                        // Native Ad #1 middle - 1 row middle
+                        item {
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
                             )
                         }
 
@@ -517,6 +522,17 @@ fun DashboardScreen(
                                 onExportPreset = { name -> AudioEffectManager.exportPreset(name) },
                                 onExportAllPresets = { AudioEffectManager.exportAllPresets() },
                                 onImportPreset = { json -> AudioEffectManager.importPreset(json) }
+                            )
+                        }
+
+                        // Native Ad #2 end - 1 row end
+                        item {
+                            NativeAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
                             )
                         }
 
@@ -635,7 +651,7 @@ fun DashboardScreen(
                             modifier = Modifier.weight(1.1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            AdaptiveBannerAdCard(
+                            NativeAdCard(
                                 cardColor = cardColor,
                                 borderDivider = borderDivider,
                                 textPrimary = textPrimary,
@@ -671,14 +687,6 @@ fun DashboardScreen(
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    AdaptiveBannerAdCard(
-                        cardColor = cardColor,
-                        borderDivider = borderDivider,
-                        textPrimary = textPrimary,
-                        textSecondary = textSecondary,
-                        primaryAccent = primaryAccent
-                    )
 
                     PresetManagerCard(
                         isEnabled = isEqEnabled,
@@ -807,14 +815,6 @@ fun DashboardScreen(
                             modifier = Modifier.weight(1.3f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            AdaptiveBannerAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
-                            )
-
                             VisualEqualizerCard(
                                 isEnabled = isEqEnabled,
                                 onToggleEq = { AudioEffectManager.setEqEnabled(it) },
@@ -842,12 +842,12 @@ fun DashboardScreen(
 
                         }
 
-                        // Pane 3: Preset Manager + System Status (with ads banner on top)
+                        // Pane 3: Preset Manager + System Status (Native top)
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            AdaptiveBannerAdCard(
+                            NativeAdCard(
                                 cardColor = cardColor,
                                 borderDivider = borderDivider,
                                 textPrimary = textPrimary,
@@ -888,6 +888,7 @@ fun DashboardScreen(
                     }
                 }
             }
+        }
         }
     }
 
@@ -1114,6 +1115,70 @@ fun DashboardScreen(
                                         uncheckedTrackColor = AppColors.BorderDark
                                     ),
                                     modifier = Modifier.testTag("overlay_control_toggle")
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Ads Support Section
+                    Text(
+                        text = "ADS SUPPORT",
+                        color = AppColors.PrimaryAccentDark,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.DarkCard),
+                        shape = RoundedCornerShape(24.dp),
+                        border = BorderStroke(1.dp, AppColors.BorderDark)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                                    Text(
+                                        text = stringResource(R.string.settings_ads_title),
+                                        color = AppColors.DarkTextPrimary,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = if (isAdsEnabled) stringResource(R.string.settings_ads_desc_on) else stringResource(R.string.settings_ads_desc_off),
+                                        color = AppColors.DarkTextSecondary,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                                Switch(
+                                    checked = isAdsEnabled,
+                                    onCheckedChange = { newVal ->
+                                        if (newVal) {
+                                            AudioEffectManager.setAdsEnabled(true)
+                                        } else {
+                                            showAdsConfirmDialog = true
+                                        }
+                                    },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = AppColors.PrimaryAccentDark,
+                                        checkedTrackColor = AppColors.BorderDark,
+                                        uncheckedThumbColor = AppColors.DarkTextSecondary,
+                                        uncheckedTrackColor = AppColors.BorderDark
+                                    ),
+                                    modifier = Modifier.testTag("ads_toggle")
+                                        .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                 )
                             }
                         }
@@ -1589,6 +1654,66 @@ fun DashboardScreen(
                 }
             }
         }
+    }
+
+    // Ads Support Confirm Dialog - shown when user tries to turn off ads
+    if (showAdsConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showAdsConfirmDialog = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.dialog_ads_confirm_title),
+                    color = AppColors.PrimaryAccentDark,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.dialog_ads_confirm_message),
+                    color = AppColors.DarkTextSecondary,
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        AudioEffectManager.setAdsEnabled(false)
+                        showAdsConfirmDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.PrimaryAccentDark),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                        .testTag("ads_confirm_turn_off")
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_turn_off),
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showAdsConfirmDialog = false },
+                    border = BorderStroke(1.dp, AppColors.PrimaryAccentDark),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                        .testTag("ads_confirm_keep_on")
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_keep_on),
+                        color = AppColors.PrimaryAccentDark,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            containerColor = AppColors.DarkCard,
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 
     // Floating Overlay Permission Request Explanation Dialog
