@@ -69,6 +69,7 @@ import androidx.core.content.ContextCompat
 import com.milkys.soundbooster.ui.theme.AppColors
 import com.milkys.soundbooster.ui.theme.MyApplicationTheme
 import com.milkys.soundbooster.ui.components.HearingWarningCard
+import com.milkys.soundbooster.ui.components.PresetManagerCard
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -174,6 +175,7 @@ fun DashboardScreen(
 ) {
     val context = LocalContext.current
     val isEnabled by AudioEffectManager.isBoostEnabled.collectAsStateWithLifecycle()
+    val isEqEnabled by AudioEffectManager.isEqEnabled.collectAsStateWithLifecycle()
     val boostProgress by AudioEffectManager.boostProgress.collectAsStateWithLifecycle()
     val currentPreset by AudioEffectManager.eqPreset.collectAsStateWithLifecycle()
     val defaultPreset by AudioEffectManager.defaultPreset.collectAsStateWithLifecycle()
@@ -202,6 +204,9 @@ fun DashboardScreen(
             }
         }
     }
+
+    // Debounce for Power toggle to prevent rapid on>off>on race (Q: button pattern on>off>on fail)
+    var lastPowerToggleTime by remember { androidx.compose.runtime.mutableLongStateOf(0L) }
 
     // Checking overlay permission dynamically when app returns from background
     var hasOverlayPermission by remember { mutableStateOf(true) }
@@ -416,9 +421,19 @@ fun DashboardScreen(
                                 dialBgColor = dialBgColor,
                                 onSoundTest = { playSoundTest3Sec() },
                                 onTogglePower = {
-                                    val nextState = !isEnabled
-                                    AudioEffectManager.setBoostEnabled(nextState)
-                                    if (nextState) onStartService() else onStopService()
+                                    val now = System.currentTimeMillis()
+                                    if (now - lastPowerToggleTime < 500) {
+                                        android.util.Log.w("DashboardScreen", "Power toggle debounced ${now - lastPowerToggleTime}ms")
+                                    } else {
+                                        lastPowerToggleTime = now
+                                        val nextState = !isEnabled
+                                        AudioEffectManager.setBoostEnabled(nextState)
+                                        if (nextState) {
+                                            try { onStartService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStartService failed: ${e.message}"); AudioEffectManager.setBoostEnabled(false) }
+                                        } else {
+                                            try { onStopService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStopService failed: ${e.message}") }
+                                        }
+                                    }
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
                             )
@@ -437,21 +452,11 @@ fun DashboardScreen(
                             )
                         }
 
-                        // Adaptive Banner Ad on top of Equalizer
-                        item {
-                            AdaptiveBannerAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
-                            )
-                        }
-
                         // Visual Equalizer Section
                         item {
                             VisualEqualizerCard(
-                                isEnabled = isEnabled,
+                                isEnabled = isEqEnabled,
+                                onToggleEq = { AudioEffectManager.setEqEnabled(it) },
                                 eqBands = eqBands,
                                 currentPreset = currentPreset,
                                 defaultPreset = defaultPreset,
@@ -463,6 +468,43 @@ fun DashboardScreen(
                                 textSecondary = textSecondary,
                                 primaryAccent = primaryAccent,
                                 onBandChange = { band, level -> AudioEffectManager.setBandLevel(band, level) },
+                                onApplyPreset = { preset -> AudioEffectManager.applyPreset(preset) },
+                                onSaveCustomPreset = { name, bands -> AudioEffectManager.saveCustomPreset(name, bands) },
+                                onDeleteCustomPreset = { name -> AudioEffectManager.deleteCustomPreset(name) },
+                                onDeleteCustomPresets = { names -> AudioEffectManager.deleteCustomPresets(names) },
+                                onToggleFavorite = { name -> AudioEffectManager.toggleFavorite(name) },
+                                onSetDefaultPreset = { name -> AudioEffectManager.setDefaultPreset(name) },
+                                onExportPreset = { name -> AudioEffectManager.exportPreset(name) },
+                                onExportAllPresets = { AudioEffectManager.exportAllPresets() },
+                                onImportPreset = { json -> AudioEffectManager.importPreset(json) }
+                            )
+                        }
+
+                        // Adaptive Banner Ad below Equalizer
+                        item {
+                            AdaptiveBannerAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+                        }
+
+                        // Preset Manager (own card)
+                        item {
+                            PresetManagerCard(
+                                isEnabled = isEqEnabled,
+                                currentPreset = currentPreset,
+                                defaultPreset = defaultPreset,
+                                customPresets = customPresets,
+                                favoritePresets = favoritePresets,
+                                eqBands = eqBands,
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent,
                                 onApplyPreset = { preset -> AudioEffectManager.applyPreset(preset) },
                                 onSaveCustomPreset = { name, bands -> AudioEffectManager.saveCustomPreset(name, bands) },
                                 onDeleteCustomPreset = { name -> AudioEffectManager.deleteCustomPreset(name) },
@@ -550,9 +592,19 @@ fun DashboardScreen(
                                 dialBgColor = dialBgColor,
                                 onSoundTest = { playSoundTest3Sec() },
                                 onTogglePower = {
-                                    val nextState = !isEnabled
-                                    AudioEffectManager.setBoostEnabled(nextState)
-                                    if (nextState) onStartService() else onStopService()
+                                    val now = System.currentTimeMillis()
+                                    if (now - lastPowerToggleTime < 500) {
+                                        android.util.Log.w("DashboardScreen", "Power toggle debounced ${now - lastPowerToggleTime}ms")
+                                    } else {
+                                        lastPowerToggleTime = now
+                                        val nextState = !isEnabled
+                                        AudioEffectManager.setBoostEnabled(nextState)
+                                        if (nextState) {
+                                            try { onStartService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStartService failed: ${e.message}"); AudioEffectManager.setBoostEnabled(false) }
+                                        } else {
+                                            try { onStopService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStopService failed: ${e.message}") }
+                                        }
+                                    }
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
                             )
@@ -588,7 +640,8 @@ fun DashboardScreen(
                             )
 
                             VisualEqualizerCard(
-                                isEnabled = isEnabled,
+                                isEnabled = isEqEnabled,
+                                onToggleEq = { AudioEffectManager.setEqEnabled(it) },
                                 eqBands = eqBands,
                                 currentPreset = currentPreset,
                                 defaultPreset = defaultPreset,
@@ -612,6 +665,45 @@ fun DashboardScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    AdaptiveBannerAdCard(
+                        cardColor = cardColor,
+                        borderDivider = borderDivider,
+                        textPrimary = textPrimary,
+                        textSecondary = textSecondary,
+                        primaryAccent = primaryAccent
+                    )
+
+                    PresetManagerCard(
+                        isEnabled = isEqEnabled,
+                        currentPreset = currentPreset,
+                        defaultPreset = defaultPreset,
+                        customPresets = customPresets,
+                        favoritePresets = favoritePresets,
+                        eqBands = eqBands,
+                        cardColor = cardColor,
+                        borderDivider = borderDivider,
+                        textPrimary = textPrimary,
+                        textSecondary = textSecondary,
+                        primaryAccent = primaryAccent,
+                        onApplyPreset = { preset -> AudioEffectManager.applyPreset(preset) },
+                        onSaveCustomPreset = { name, bands -> AudioEffectManager.saveCustomPreset(name, bands) },
+                        onDeleteCustomPreset = { name -> AudioEffectManager.deleteCustomPreset(name) },
+                        onDeleteCustomPresets = { names -> AudioEffectManager.deleteCustomPresets(names) },
+                        onToggleFavorite = { name -> AudioEffectManager.toggleFavorite(name) },
+                        onSetDefaultPreset = { name -> AudioEffectManager.setDefaultPreset(name) },
+                        onExportPreset = { name -> AudioEffectManager.exportPreset(name) },
+                        onExportAllPresets = { AudioEffectManager.exportAllPresets() },
+                        onImportPreset = { json -> AudioEffectManager.importPreset(json) }
+                    )
+
+                    SystemBatteryDiagnosticCard(
+                        isBatterySaverOn = isBatterySaverOn,
+                        isBatteryOptimized = isBatteryOptimized,
+                        context = context
+                    )
                 }
             }
 
@@ -678,11 +770,31 @@ fun DashboardScreen(
                                 dialBgColor = dialBgColor,
                                 onSoundTest = { playSoundTest3Sec() },
                                 onTogglePower = {
-                                    val nextState = !isEnabled
-                                    AudioEffectManager.setBoostEnabled(nextState)
-                                    if (nextState) onStartService() else onStopService()
+                                    val now = System.currentTimeMillis()
+                                    if (now - lastPowerToggleTime < 500) {
+                                        android.util.Log.w("DashboardScreen", "Power toggle debounced ${now - lastPowerToggleTime}ms")
+                                    } else {
+                                        lastPowerToggleTime = now
+                                        val nextState = !isEnabled
+                                        AudioEffectManager.setBoostEnabled(nextState)
+                                        if (nextState) {
+                                            try { onStartService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStartService failed: ${e.message}"); AudioEffectManager.setBoostEnabled(false) }
+                                        } else {
+                                            try { onStopService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStopService failed: ${e.message}") }
+                                        }
+                                    }
                                 },
                                 onBoostChange = { AudioEffectManager.setBoostProgress(it) }
+                            )
+
+                            QuickBoostPresetsCard(
+                                isEnabled = isEnabled,
+                                boostProgress = boostProgress,
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent,
+                                onSelectPreset = { AudioEffectManager.setBoostProgress(it) }
                             )
                         }
 
@@ -700,7 +812,8 @@ fun DashboardScreen(
                             )
 
                             VisualEqualizerCard(
-                                isEnabled = isEnabled,
+                                isEnabled = isEqEnabled,
+                                onToggleEq = { AudioEffectManager.setEqEnabled(it) },
                                 eqBands = eqBands,
                                 currentPreset = currentPreset,
                                 defaultPreset = defaultPreset,
@@ -723,22 +836,45 @@ fun DashboardScreen(
                                 onImportPreset = { json -> AudioEffectManager.importPreset(json) }
                             )
 
-                            QuickBoostPresetsCard(
-                                isEnabled = isEnabled,
-                                boostProgress = boostProgress,
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent,
-                                onSelectPreset = { AudioEffectManager.setBoostProgress(it) }
-                            )
                         }
 
-                        // Pane 3: System Status
+                        // Pane 3: Preset Manager + System Status (with ads banner on top)
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
+                            AdaptiveBannerAdCard(
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent
+                            )
+
+                            PresetManagerCard(
+                                isEnabled = isEqEnabled,
+                                currentPreset = currentPreset,
+                                defaultPreset = defaultPreset,
+                                customPresets = customPresets,
+                                favoritePresets = favoritePresets,
+                                eqBands = eqBands,
+                                cardColor = cardColor,
+                                borderDivider = borderDivider,
+                                textPrimary = textPrimary,
+                                textSecondary = textSecondary,
+                                primaryAccent = primaryAccent,
+                                onApplyPreset = { preset -> AudioEffectManager.applyPreset(preset) },
+                                onSaveCustomPreset = { name, bands -> AudioEffectManager.saveCustomPreset(name, bands) },
+                                onDeleteCustomPreset = { name -> AudioEffectManager.deleteCustomPreset(name) },
+                                onDeleteCustomPresets = { names -> AudioEffectManager.deleteCustomPresets(names) },
+                                onToggleFavorite = { name -> AudioEffectManager.toggleFavorite(name) },
+                                onSetDefaultPreset = { name -> AudioEffectManager.setDefaultPreset(name) },
+                                onExportPreset = { name -> AudioEffectManager.exportPreset(name) },
+                                onExportAllPresets = { AudioEffectManager.exportAllPresets() },
+                                onImportPreset = { json -> AudioEffectManager.importPreset(json) },
+                                showText = false
+                            )
+
                             SystemBatteryDiagnosticCard(
                                 isBatterySaverOn = isBatterySaverOn,
                                 isBatteryOptimized = isBatteryOptimized,
@@ -2878,7 +3014,8 @@ fun VisualEqualizerCard(
     onSetDefaultPreset: (String) -> Unit,
     onExportPreset: (String) -> String,
     onExportAllPresets: () -> String,
-    onImportPreset: (String) -> String?
+    onImportPreset: (String) -> String?,
+    onToggleEq: (Boolean) -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -2888,6 +3025,7 @@ fun VisualEqualizerCard(
     ) {
         EqualizerComponent(
             isEnabled = isEnabled,
+            onToggleEq = onToggleEq,
             eqBands = eqBands,
             currentPreset = currentPreset,
             defaultPreset = defaultPreset,
@@ -2934,7 +3072,8 @@ fun EqualizerComponent(
     onSetDefaultPreset: (String) -> Unit,
     onExportPreset: (String) -> String,
     onExportAllPresets: () -> String,
-    onImportPreset: (String) -> String?
+    onImportPreset: (String) -> String?,
+    onToggleEq: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -3031,12 +3170,26 @@ fun EqualizerComponent(
                 }
             }
         }
+        // EQ On/Off Toggle
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "EQ Enabled", color = textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+            androidx.compose.material3.Switch(
+                checked = isEnabled,
+                onCheckedChange = onToggleEq,
+                modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
+                colors = androidx.compose.material3.SwitchDefaults.colors(checkedThumbColor = AppColors.PrimaryAccentDark, checkedTrackColor = AppColors.DeepPurple, uncheckedThumbColor = AppColors.DarkTextSecondary, uncheckedTrackColor = AppColors.BorderDark)
+            )
+        }
 
         // 5-Band Dynamic Frequency Sliders
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 240.dp),
+                .height(260.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val frequencies = listOf("60Hz", "230Hz", "910Hz", "4kHz", "14kHz")
@@ -3068,7 +3221,7 @@ fun EqualizerComponent(
                     // Vertical Slider / Track Component
                     Box(
                         modifier = Modifier
-                            .weight(1f)
+                            .height(120.dp)
                             .padding(vertical = 4.dp)
                             .width(48.dp)
                             .background(AppColors.DarkCard, RoundedCornerShape(24.dp)),

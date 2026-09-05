@@ -10,6 +10,7 @@
 1. [ ] Install: `adb -s <serial> install -r .build-outputs/app-playstore-debug.apk`, grant `POST_NOTIFICATIONS`, enable booster → notification `Milkys Sound Booster & EQ Active (+XX%)` with `-10%/+10%/OFF` when `isNotifControlsEnabled`.
 2. [ ] Overlay: Toggle `Overlay Control` → grant `SYSTEM_ALERT_WINDOW` → bubble draggable, snap to edge, expand to `Booster Overlay` with 4 favorites.
 3. [ ] EQ presets: `Flat`, `Bass Booster`, save custom `MyPreset` (1-10 chars, max 7), favorite max 4, export/import JSON (`qc/fixtures/presets/`).
+   - [ ] **EQ 5-band `+/-` always tunable (Q1, Q4):** With booster **OFF and ON**, tap `60Hz` `+`/`-` on **both** `hm5xr8gueiz5x4c6` + `A1013A5320TH000257` — verify `Text +1dB` + `_eqBands` Flow + `equalizer?.setBandLevel` (`Flat`→`Custom` Q4 and `Custom` presets, booster OFF/ON, 16 taps total, 4 fontScales per device if needed). `EQ is always tunable` — `enabled = level <15 / >-15` (not `isBoostEnabled`), see `MainActivity.kt:3088` + `AudioEffectManager.kt:464` (screencap `qc/artifacts/screenshots/manual/eq-*.png`, `screencap` only per Q6).
 4. [ ] Warning: `HearingWarningCard` dismiss → hidden 7 days (`hideHearingWarningFor7Days`), reappears after clearing prefs.
 5. [ ] Language: Settings → `AppCompatDelegate.setApplicationLocales` + `config.setLocale` — verify 13 locales.
 6. [ ] Theme: Toggle light/dark → no hardcoded `Color(0xFF...)` regressions.

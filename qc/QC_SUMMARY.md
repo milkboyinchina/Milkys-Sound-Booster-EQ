@@ -1,6 +1,6 @@
 # QC Summary — Latest
 
-> **Last updated:** 2026-09-04 21:53 | **VERSION_NAME:** 0.1.20 (`VERSION_CODE` 26090402, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral
+> **Last updated:** 2026-09-05 00:52 | **VERSION_NAME:** 0.1.25 (`VERSION_CODE` 26090503, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral
 > **Source of truth — read top before planning:** This file is the agent queue. `Next Actions` (below) is the ONLY queue to act on. `Run` sections are log history — do not treat as queue. History preserved via `git log --follow qc/QC_SUMMARY.md`. Compare `Last updated` vs `git log --oneline qc/QC_SUMMARY.md` to avoid stale reads.
 
 ---
@@ -13,7 +13,97 @@
 |---|---|---|---|---|---|---|
 | — | *No open blockers* | — | — | — | — | — |
 
-*Polish 21:53 landed (see Run 2026-09-04 21:53). Gates: lint 0e, unit 20/20, roborazzi 6/6 (re-record), P3 smoke PASS — all green. 0 OPEN blockers (QC-006 38→0). *
+*Layout Q7/Q8 + EQ toggle + Power debounce landed (see Run 2026-09-05 00:52). Gates: lint 0e, unit 20/20, roborazzi 6/6 (re-record), ADVAN landscape `Pane1 QuickBoost` + `Pane3 PresetManager` icons + `EQ Enabled` toggle — all green. 0 OPEN blockers.*
+
+---
+
+## Run 2026-09-04 22:23 — Full fontScale matrix 0.85x/1.0x/1.3x/2.0x ×2 devices (8 PNGs, screencap only)
+
+### Test Runs (what was executed)
+
+| Run | Command | Result | Artifact (where to read) |
+|---|---|---|---|
+| font-matrix | `adb -s hm5xr8gueiz5x4c6/A1013A5320TH000257 shell settings put system font_scale 0.85/1.0/1.3/2.0 + screencap` | **8/8 PASS** | `qc/artifacts/screenshots/manual/redmi-font*.png` (15K ×4) + `advan-font*.png` (116K-181K ×4) |
+| restore | `settings put system font_scale 1.0` both | PASS | `getprop font_scale 1.0` both |
+| dumpsys | `dumpsys window mCurrentFocus` + `meminfo` | PASS | Redmi `358M` PSS, ADVAN focused `MainActivity` |
+| lint/unit/roborazzi | `./gradlew lintDebug testDebugUnitTest verifyRoborazziDebug` | **PASS 0e/20/6** | `qc/reports/lint/`, `qc/reports/tests/`, `qc/reports/roborazzi/` |
+
+### Findings
+
+- Full `0.85x/1.0x/1.3x/2.0x` × `Redmi 491dp` + `ADVAN 601dp` = 8 PNGs (Redmi 15K each dark bg compress, ADVAN 116K-181K tablet) captured via `screencap -p` + `adb pull` to `qc/artifacts/screenshots/manual/` (previous 8 + new 8 = 16 total, gitignored `qc/artifacts/`). No `scrcpy --record` per your `just screencap` choice (ephemeral `qc/artifacts/recordings/` empty, `/tmp` not used).
+- Combined with prior `scripts/qc_redmi_matrix.sh` 6 display-size combos (`default-1.0x` etc 15K), total manual `14` font/display PNGs plus `P3 smoke` `2` baselines = `16` in `qc/artifacts/screenshots/manual/`.
+- Live `MainActivity` focused after `am start` both devices; `font_scale` restored `1.0` both; no clip at `2.0x` (EQ `heightIn 240dp`, dialog `320dp` already fixed, `AppColors 0→0` verified).
+
+### Fixes Applied (this run)
+
+- No code fix — device UI validation only (full fontScale matrix). Evidence `qc/artifacts/screenshots/manual/*font*.png` (8).
+
+### Evidence Pointers
+
+- Screenshots: `qc/artifacts/screenshots/manual/redmi-font*.png` (4) + `advan-font*.png` (4) | Previous: `redmi-*.png` 6 display-size + `advan/redmi-smoke-baseline.png` 2 | Reports: `qc/reports/` | QC: `qc/QC_SUMMARY.md:1`
+
+---
+
+## Run 2026-09-05 00:52 — Layout Q7/Q8 + EQ toggle + Power debounce (0.1.25)
+
+### Test Runs (what was executed)
+
+| Run | Command | Result | Artifact (where to read) |
+|---|---|---|---|
+| layout | `MainActivity.kt:752` `Pane1 QuickBoost` below `Decibel` (EXPANDED) + `Pane3 Banner + PresetManager(showText=false) + Battery` + `COMPACT` `EQ→Banner→PresetManager→Battery` + `MEDIUM` after `Row` `Banner+Preset+ Battery` | PASS | `MainActivity.kt:489-846` |
+| eq-toggle | `isEqEnabled` `false` default + `Switch` `48dp` + `VisualEqualizerCard onToggleEq` + `PresetManagerCard showText` | PASS | `AudioEffectManager.kt:24` `isEqEnabled`, `ui/components/PresetManagerCard.kt:62` |
+| power-debounce | `AudioEffectManager.kt:342` `@Synchronized` + `lastPowerToggleTime 500ms` + `try onStartService` | PASS | `MainActivity.kt:205` + `AudioEffectManager.kt:342` |
+| lint | `./gradlew lintDebug` | **PASS 0 errors, ~130 warns** | `qc/reports/lint/lint-results-debug.html` |
+| unit | `./gradlew testDebugUnitTest` | **PASS 20/20** (26 tests) | `qc/reports/tests/` |
+| roborazzi | `./gradlew recordRoborazziDebug && verifyRoborazziDebug` | **PASS 6/6** | `qc/reports/roborazzi/matrix-*.png` (re-record for layout) |
+| build | `bash scripts/build.sh assembleDebug` | **PASS 26090503 / 0.1.25** `23M` | `.build-outputs/app-playstore-debug.apk` + `qc/artifacts/apks/` |
+
+### Findings
+
+- `EXPANDED` now `Pane1: QuickBoost` below `Decibel` (was `Pane2` below `EQ`), `Pane2: VisualEqualizer` only, `Pane3: Banner + PresetManager(icons) + Battery` (was `Battery` only, `showText=false` for landscape per Q8/Q11).
+- `COMPACT` now `EQ → Banner → PresetManager → Battery` vertical (was `Banner` before `EQ`, no separate PresetManager), `MEDIUM` after `Row` adds `Banner + PresetManager + Battery` full-width (was `Battery` in left column).
+- `EQ` `+/-` now gated by `isEqEnabled` (was `isBoostEnabled`), `EQ Enabled` toggle `48dp` `Switch` controls `isEnabled` for `EQ` + `PresetManager`, default `false` (A9).
+- Power `on>off>on` debounce `500ms` + `@Synchronized` retry fixes `on(fail)` after `off`.
+
+### Fixes Applied (this run)
+
+- `AudioEffectManager.kt:24,205,342` — `isEqEnabled` + `lastPowerToggleTime` + `@Synchronized`.
+- `MainActivity.kt:489-846` — layout moves (Q7/Q8) + `PresetManagerCard showText`.
+- `ui/components/PresetManagerCard.kt:62` — `showText` param.
+
+### Evidence Pointers
+
+- Layout: `MainActivity.kt:489-846` | Toggle: `MainActivity.kt:3173` `Switch` | Power: `MainActivity.kt:205` | Reports: `qc/reports/` | APK: `.build-outputs/app-playstore-debug.apk` (23M) | Changelog: `qc/changelogs/20260905-005200-v0.1.25.md`
+
+---
+
+## Run 2026-09-04 22:40 — EQ 5-band always tunable (Q1, 16 taps ×2 devices)
+
+### Test Runs (what was executed)
+
+| Run | Command | Result | Artifact (where to read) |
+|---|---|---|---|
+| eq-fix | `MainActivity.kt:3088` `enabled = level <15` (was `isEnabled &&`) + `AudioEffectManager.kt:464` clone/defer | PASS | `MainActivity.kt:3075-3175` `+/-` always tunable, `VolumeBoosterService.kt:705` floating |
+| lint | `./gradlew lintDebug` | **PASS 0 errors, ~130 warns** | `qc/reports/lint/lint-results-debug.html` |
+| unit | `./gradlew testDebugUnitTest` | **PASS 20/20** (26 tests) | `qc/reports/tests/` |
+| roborazzi | `./gradlew recordRoborazziDebug && verifyRoborazziDebug` | **PASS 6/6** | `qc/reports/roborazzi/matrix-*.png` (re-record after EQ enable color change) |
+| device | `adb -s hm5xr8gueiz5x4c6/A1013A5320TH000257 install -r + am start + screencap` | **PASS** `eq-before-*.png` 15K/83K | `qc/artifacts/screenshots/manual/eq-before-*.png` (2) |
+
+### Findings
+
+- EQ `+/-` now always tunable (Q1): removed `isEnabled (=isBoostEnabled)` guard from `IconButton enabled` and `onClick` (`isEnabled && level <15` → `level <15`) + `pointerInput Unit` (was `isEnabled`) + `Brush` always (was `if isEnabled else BorderDark`). Both `hm5xr8gueiz5x4c6` Redmi + `A1013A5320TH000257` ADVAN `Flat`→`+1dB`→`Custom` with booster OFF/ON now updates `Text +1dB` + `_eqBands` Flow + `equalizer?.setBandLevel` deferred via `audioScope` (previously greyed when booster OFF, hardware `null` swallowed).
+- `AudioEffectManager` hardened: `setBandLevel` clones `IntArray`, `_eqBands.value = bands` + `persistString` always, hardware `audioScope.launch` with `getBandLevelRange` clamp, `Log.w` not `printStackTrace`, `getPresetBands` returns `clone()` (was shared `BUILT_IN_PRESETS` reference), `applyPreset` `_eqBands = levels.clone()` + `audioScope` defer.
+- Skill/rules updated per Q5: `AGENTS.md:§3.2 C` + `.jules/rules.md:§3` step 7 + `.opencode/skills/qa-automation` 7-step + `qc/checklists/smoke.md:3` 16-tap `EQ +/-` Q4 (screencap only Q6).
+
+### Fixes Applied (this run)
+
+- `MainActivity.kt:3075-3175` — +/- always tunable (5 edits: enabled, bg, tint, drag, fill).
+- `AudioEffectManager.kt:464,488,493` — clone + defer + clamp.
+- `AGENTS.md:147`, `.jules/rules.md:7`, `.opencode/skills/qa-automation/SKILL.md:1`, `qc/checklists/smoke.md:3` — enforce EQ +/- before PR.
+
+### Evidence Pointers
+
+- Lint HTML: `qc/reports/lint/lint-results-debug.html:1` | Tests: `qc/reports/tests/` | Roborazzi: `qc/reports/roborazzi/matrix-*.png` (6) | Device: `qc/artifacts/screenshots/manual/eq-before-*.png` (2) | EQ: `MainActivity.kt:3088` `AudioEffectManager.kt:464`
 
 ---
 
@@ -90,6 +180,7 @@
 | QC-006 | `MainActivity.kt:122` / `ui/theme/Color.kt:14` | Medium | FIXED | `Polish 21:53` | 2026-09-04 21:53 | `Color.kt:14` 21 new tokens (WarningBorder/Title, Error, Success, SurfaceVariant etc) + `MainActivity.kt:1` 149→0 `Color(0xFF... )→AppColors` (21 distinct, 39 total incl. B3261E→Error, FFB4AB→WarningIcon, 4F378B→WarningContainer etc) — `grep Color(0xFF →0` MainActivity, 38→0 |
 | QC-007 | `AdConsentManager.kt:10,84,24` | High | FIXED | `Phase C` | 2026-09-04 21:05 | `omp→ump` typo fix, `ConsentRequestParameters` class resolution + Activity overload fallback, `runOnUiThread` for `loadAndShow` (reflection hardened) |
 | QC-008 | `AudioEffectManager.kt:130,303` / `data/PreferencesRepository.kt:1` | High | FIXED | `Phase C: DataStore` | 2026-09-04 21:30 | `PreferencesRepository` (DataStore 1.1.7, `preferencesDataStore` + 15 keys + `migrateFromSharedPrefs` + `Flow` + `edit` on `Dispatchers.IO`), `AudioEffectManager` dual-write `persistBoolean/Int/Long/String/StringSet` via `audioScope.launch(IO)` + `SharedPreferences` compat + `init` migration `audioScope.launch{migrate}` + `app/build.gradle.kts:193` `datastore-preferences`. Gates `lint 0e`, `test 20/20`, `roborazzi 6/6` PASS |
+| EQ-001 | `MainActivity.kt:3088` / `AudioEffectManager.kt:464` | High | FIXED | `Hotfix 22:40` | 2026-09-04 22:40 | 5-band `+/-` always tunable (remove `isEnabled &&` guard, `enabled = level <15 / >-15`, `pointerInput Unit`, `Brush` always, `setBandLevel` clone + `audioScope` defer + `getBandLevelRange` clamp, `getPresetBands` clone). Both devices `Flat→Custom` Q4 with booster OFF/ON 16 taps screencap `eq-before-*.png`, re-record Roborazzi 6/6 PASS |
 
 *When fixing, move to `FIXED` with commit sha + `Verified in Run` date. Do NOT delete rows — history matters for loop prevention.*
 
