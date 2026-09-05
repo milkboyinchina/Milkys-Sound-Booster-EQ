@@ -46,6 +46,7 @@ object PreferencesRepository {
     val KEY_FAVORITE_PRESETS = stringSetPreferencesKey("favorite_presets_set")
     val KEY_AD_CONSENT_STATUS = stringPreferencesKey("ad_consent_status")
     val KEY_PERSONALIZED_ADS_CONSENT = booleanPreferencesKey("personalized_ads_consent")
+    val KEY_EQ_ENABLED = booleanPreferencesKey("eq_enabled")
 
     fun flowBoolean(context: Context, key: Preferences.Key<Boolean>, default: Boolean): Flow<Boolean> =
         context.dataStore.data
@@ -132,6 +133,7 @@ object PreferencesRepository {
                             "has_seen_onboarding" -> ds[KEY_HAS_SEEN_ONBOARDING] = v
                             "hearing_warning_disabled" -> ds[KEY_HEARING_WARNING_DISABLED] = v
                             "personalized_ads_consent" -> ds[KEY_PERSONALIZED_ADS_CONSENT] = v
+                            "eq_enabled" -> ds[KEY_EQ_ENABLED] = v
                             "dark_theme" -> ds[KEY_DARK_THEME] = v
                         }
                         is Int -> when (k) {

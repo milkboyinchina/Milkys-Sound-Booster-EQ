@@ -11,7 +11,19 @@ Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scri
 - Planned Phase 3 — Optional Kover coverage (soft report-only, deferred from v1 gates).
 
 ### Changed
-- Deferred `Color(0xFF...)` remaining 38 bespoke warning colors — low risk, tracked in `qc/QC_SUMMARY.md`.
+- Deferred `Color(0xFF...)` remaining bespoke warning colors — low risk, tracked in `qc/QC_SUMMARY.md`.
+
+## [0.1.25] - 2026-09-05
+### Added
+- `isEqEnabled` StateFlow `false` default + `DataStore` `eq_enabled` + `PresetManagerCard` own card (`showText` icons-only in `EXPANDED` `Pane3` landscape, `true` in `COMPACT`/`MEDIUM` vertical below `Banner`).
+- `EQ Enabled` `Switch` `48dp` in `EqualizerComponent` header (`VisualEqualizerCard` `onToggleEq`).
+
+### Changed
+- **Layout `Q7/Q8`:** `EXPANDED` `Pane1: QuickBoost` below `Decibel` (was `Pane2` below `EQ`), `Pane3: Banner + PresetManager(icons) + Battery` (was `Battery` only); `COMPACT` `LazyColumn` now `EQ → Banner → PresetManager → Battery` (was `Banner` before `EQ`); `MEDIUM` after `Row` adds `Banner + PresetManager + Battery` full-width below `Row` (was `Battery` in left column).
+
+### Fixed
+- **EQ `+/-` always tunable `Q1`:** `EqualizerComponent:3088` `IconButton enabled = isEnabled && level<15` where `isEnabled` is now `isEqEnabled` (was `isBoostEnabled`), so `EQ` tunable when `EQ` toggle `ON` even if booster `OFF`; `pointerInput(isEnabled)` + `Brush` + `background/tint` gated by `isEqEnabled`, `AudioEffectManager` `setBandLevel` `clone` + `audioScope` defer + `getBandLevelRange` clamp, `getPresetBands` `clone()`.
+- **Power toggle `on>off>on(fail)>on(ok)`:** `AudioEffectManager.kt:342` `@Synchronized setBoostEnabled` with stale `audioTrack` check + retry, `DashboardScreen:205` `lastPowerToggleTime` `500ms` debounce + `try {onStartService} catch {setBoostEnabled(false)}`.
 
 ## [0.1.20] - 2026-09-04
 ### Added

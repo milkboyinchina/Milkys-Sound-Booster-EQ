@@ -6,7 +6,7 @@ These guidelines govern how **Google Jules** must analyze, edit, build, verify, 
 
 ## 🔒 1. Audio DSP Engine & Safety Guardrails
 
-1. **Volume Boost Ceiling**: Maximum gain amplifications must **NEVER exceed 200% (+20 dB)** under any circumstance.
+1. **Volume Boost Ceiling**: Maximum gain amplifications must **NEVER exceed 200% (+15dB)** (`AudioEffectManager.kt:281` 1500 mB). EQ is always tunable — do not gate `+/-` with `isBoostEnabled`.
 2. **Hearing Protection Warning**: Do not modify, hide, or alter the high-contrast safety warning banner for speaker damage and hearing impairment.
 3. **Audio Effect Lifecycle**: All `AudioEffect`, `Equalizer`, `LoudnessEnhancer`, and `PresetReverb` instances **MUST** be explicitly released in `onDestroy()` / `onCleared()`.
 4. **Session ID Binding**: Always pass the correct global system audio session ID (`0`) or active media player audio session ID to the audio service.
@@ -26,11 +26,12 @@ These guidelines govern how **Google Jules** must analyze, edit, build, verify, 
 
 Before submitting a Pull Request, Jules **MUST**:
 1. Run `./scripts/setup_jules_env.sh` to ensure the environment dependencies are synced.
-2. Run `./gradlew testDebugUnitTest` to ensure all unit tests pass without failure (reports → `qc/reports/tests/`).
+2. Run `./gradlew testDebugUnitTest` to ensure all unit tests pass without failure (reports → `qc/reports/tests/`) — must include `EqualizerComponent +/-` `performClick` → `Text +1dB` + `_eqBands` Flow (booster OFF/ON, Flat→Custom, both devices).
 3. Run `./gradlew lintDebug` — must show 0 errors (report → `qc/reports/lint/`).
 4. Run `./gradlew verifyRoborazziDebug` and ensure 0 failures before PR (outputs → `qc/reports/roborazzi/`, reference `app/src/test/screenshots/`).
 5. Run `./scripts/build.sh assembleDebug` to confirm that the Android Debug APK builds successfully and outputs to `.build-outputs/` (copy to `qc/artifacts/apks/`).
 6. Ensure `qc_plan.md` §9 gates and `CHANGELOG.md` + `qc/changelogs/` linkage are satisfied (see `qc/checklists/smoke.md`).
+7. Verify 5-band EQ `+/-` always tunable on both `hm5xr8gueiz5x4c6` + `A1013A5320TH000257` (screencap `qc/artifacts/screenshots/manual/eq-*.png`, Flat→Custom and Custom, booster OFF/ON) — EQ is always tunable per `MainActivity.kt:3088` + `AudioEffectManager.kt:464`, Q1.
 
 ---
 

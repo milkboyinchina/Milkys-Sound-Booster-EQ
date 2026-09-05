@@ -150,6 +150,7 @@ When creating or modifying Jetpack Compose screens, agents must ensure visual in
 * **Execution Task:** Place JVM Compose tests in `app/src/test/` using `createComposeRule()` + **Robolectric**:
 * **State Coverage:** Test that screens correctly render **Loading**, **Success**, **Empty**, and **Error** states when emitted by ViewModel `StateFlow`.
 * **Event Handling:** Assert that user clicks (e.g., equalizer toggles, gain sliders) trigger expected ViewModel callbacks and update the UI accordingly.
+* **Equalizer 5-Band `+/-` (always tunable, Q1):** Must test `EqualizerComponent` `IconButton 48dp` `+`/`-` `performClick` → `Text +1dB` + `_eqBands` Flow + `equalizer?.setBandLevel` (booster OFF and ON, `Flat`→`Custom` and `Custom` presets, both `hm5xr8gueiz5x4c6` + `A1013A5320TH000257`). EQ is always tunable — `enabled = level <15 / >-15` (not `isBoostEnabled`), see `MainActivity.kt:3088` + `AudioEffectManager.kt:464`.
 
 ### 3.3 QA/QC Folder Convention (`qc/` canon)
 * **Master plan:** `qc_plan.md` (workspace root) is source of truth for device matrix, gates, and changelogs.
