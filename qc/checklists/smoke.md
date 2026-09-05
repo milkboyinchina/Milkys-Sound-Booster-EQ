@@ -7,6 +7,7 @@
 - [ ] ADVAN TAB A10 `A1013A5320TH000257` (Android 14, 1280×800 tablet)
 
 ## Steps
+0. [ ] **Device prep (Q17/Q18, before any dump/screencap/swipe/click after pm clear/install -r):** `bash scripts/device_prep.sh hm5xr8gueiz5x4c6 .build-outputs/app-playstore-debug.apk` + `bash scripts/device_prep.sh A1013A5320TH000257 .build-outputs/app-playstore-debug.apk` — silent `pm grant POST_NOTIFICATIONS` + `run-as has_seen_onboarding=true` (fallback tap `GET STARTED`) — prevents `Allow`/`GET STARTED` blocking `uiautomator dump`/`screencap` (see `AGENTS.md:§3.2 D`).
 1. [ ] Install: `adb -s <serial> install -r .build-outputs/app-playstore-debug.apk`, grant `POST_NOTIFICATIONS`, enable booster → notification `Milkys Sound Booster & EQ Active (+XX%)` with `-10%/+10%/OFF` when `isNotifControlsEnabled`.
 2. [ ] Overlay: Toggle `Overlay Control` → grant `SYSTEM_ALERT_WINDOW` → bubble draggable, snap to edge, expand to `Booster Overlay` with 4 favorites.
 3. [ ] EQ presets: `Flat`, `Bass Booster`, save custom `MyPreset` (1-10 chars, max 7), favorite max 4, export/import JSON (`qc/fixtures/presets/`).

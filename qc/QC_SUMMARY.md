@@ -15,7 +15,39 @@
 | JULES-001 | Fix setup_jules_env.sh keystore/release.jks subfolder + SKIP_VERSION_BUMP guard + qc dirs | `scripts/setup_jules_env.sh:11-38`, `.jules/config.yaml:14-41`, `.jules/rules.md:27-50` | High | Jules | 2026-09-06 | CI/CD plan §3 keystore subfolder |
 | QC-009 | Re-record Roborazzi 24-combo matrix baseline (verify 0 failures) | `app/src/test/screenshots/`, `qc/reports/roborazzi/` | Medium | Jules | 2026-09-06 | qc_plan.md §5.2 + CI verify blocking |
 
-*Queue seeded 2026-09-06 per CI/CD fix: all 3 delegated to Jules — `CI-001` already landed in this commit (pin+pages), `JULES-001` + `QC-009` remain OPEN for Jules verification. Previous layout Q7/Q8 validated 00:52; keystore now `keystore/release.jks` via `.env`, bump disabled on `v*` tags.*
+*Queue seeded 2026-09-06 per CI/CD fix: all 3 delegated to Jules — `CI-001` already landed in this commit (pin+pages), `JULES-001` + `QC-009` remain OPEN for Jules verification. Previous layout Q7/Q8 validated 00:52; keystore now `keystore/release.jks` via `.env`, bump disabled on `v*` tags. Banner fix + device_prep landed 12:48 (see Run 2026-09-06).*
+
+---
+
+## Run 2026-09-06 — Banner fix + device_prep (Redmi hm5xr8gueiz5x4c6 COMPACT 491dp)
+
+### Test Runs (what was executed)
+
+| Run | Command | Result | Artifact (where to read) |
+|---|---|---|---|
+| banner-fix | `MainActivity.kt:2082` `AdaptiveBannerAdCard` fallback always visible (`Column Row SPONSORED AD` + `AndroidView FrameLayout+fallback+AdListener`) + `COMPACT` fixed banner outside `LazyColumn` (`Column fillMaxSize → Banner + Spacer + Row LazyColumn`) | PASS | `MainActivity.kt:2082-2234` |
+| device-prep | `bash scripts/device_prep.sh hm5xr8gueiz5x4c6 .build-outputs/app-playstore-debug.apk` (Q17 `pm grant POST_NOTIFICATIONS` silent + Q18 `run-as has_seen_onboarding=true` fallback tap) | PASS | `scripts/device_prep.sh:1` `rwxr-xr-x`, `scripts/check_requirements.sh:83` soft `WARN` |
+| roborazzi | `./gradlew recordRoborazziDebug && verifyRoborazziDebug` | **PASS 8/8 → 0 failures** (re-record after banner move) | `app/src/test/screenshots/greeting.png` `247K` + `qc/reports/roborazzi/matrix-*.png` `41K-302K` `6` |
+| unit/lint | `./gradlew testDebugUnitTest lintDebug` | **PASS 20/20 + 0e ~130w** | `qc/reports/tests/` `qc/reports/lint/lint-results-debug.html` |
+| device-verify | `adb -s hm5xr8gueiz5x4c6 install -r app/build/outputs/apk/debug/app-debug.apk + pm grant + run-as + am start + uiautomator dump` | **PASS** `SPONSORED AD 1` `Adaptive 1` at top before `MILKYS APP` | `qc/artifacts/screenshots/manual/redmi-final-banner.png` `286K` `ui_final_banner.xml` |
+
+### Findings
+
+- Banner was below `EQ` in `COMPACT` `LazyColumn` (after `VisualEqualizer` `60Hz 14kHz`), required scroll past `EQ` `260dp` + `PresetManager` to see — on `Redmi` `491dp` phone below-fold, users perceived missing. `uiautomator dump` after `pm clear` also blocked by `Allow notifications` + `Onboarding GET STARTED` (`has_seen_onboarding false`), so `grep SPONSORED AD 0` masked.
+- Fixed: `AdaptiveBannerAdCard` now always shows `Column Row[SPONSORED AD + Adaptive Equalizer Boost]` + `AndroidView` with `fallbackLayout` added before `AdView` + `AdListener proxy` hides fallback on `onAdLoaded` (never empty). `COMPACT` now has fixed banner outside `LazyColumn` (`Column fillMaxSize → Banner + Spacer 12dp + Row weight LazyColumn`), visible at top before `MILKYS APP` without scroll (`ui_final_banner.xml` `SPONSORED AD 1` `Adaptive 1` at top, `redmi-final-banner.png` `286K`).
+- Device prep: `scripts/device_prep.sh` `3.6K` `rwxr-xr-x` handles `svc power wakeup` + `pm grant POST_NOTIFICATIONS` (Q17 silent) + `run-as has_seen_onboarding=true` via `SharedPrefs` `sed` (Q18) + fallback tap `GET STARTED` + `force-stop + am start` + `dumpsys window mCurrentFocus/mAwake true`. Added to `AGENTS.md:§3.2 D`, `.jules/rules.md:§3` step 0, `.gemini/rules/rules.md`, `.opencode/skills/{qa-automation,qc-device-farm}`, `qc/checklists/smoke.md:0`, `scripts/check_requirements.sh:83` soft `WARN`.
+- Gates green after re-record: `lint 0e`, `test 20/20` (26 with matrix), `verifyRoborazzi 6/6` (was 8 failed due to banner move, now 0 after `record`).
+
+### Fixes Applied (this run)
+
+- `MainActivity.kt:2082` — `AdaptiveBannerAdCard` fallback always visible + `COMPACT` fixed banner outside `LazyColumn`.
+- `scripts/device_prep.sh:1` — new `3.6K` device prep (Q17/Q18/Q19).
+- `AGENTS.md:§3.2 D`, `.jules/rules.md:§3`, `.gemini/rules/rules.md`, `.opencode/skills/qa-automation/SKILL.md:0`, `.opencode/skills/qc-device-farm/SKILL.md`, `qc/checklists/smoke.md:0`, `scripts/check_requirements.sh:83` — Device Prep preamble.
+- `app/src/test/screenshots/greeting.png` — re-record `247K` after banner move.
+
+### Evidence Pointers
+
+- Banner: `MainActivity.kt:2082` + `MainActivity.kt:363` fixed `COMPACT` | Device prep: `scripts/device_prep.sh:1` | Screenshots: `qc/artifacts/screenshots/manual/redmi-final-banner.png` `286K` `SPONSORED AD 1` + `app/src/test/screenshots/greeting.png` `247K` | Reports: `qc/reports/lint/` `qc/reports/tests/` `qc/reports/roborazzi/` | QC: `qc/QC_SUMMARY.md:1`
 
 ---
 
