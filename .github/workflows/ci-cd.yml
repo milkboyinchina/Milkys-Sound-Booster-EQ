@@ -309,7 +309,6 @@ jobs:
           fetch-depth: 0
 
       - name: Invoke Google Jules
-        if: ${{ secrets.JULES_API_KEY != '' }}
         uses: google-labs-code/jules-action@v1
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
