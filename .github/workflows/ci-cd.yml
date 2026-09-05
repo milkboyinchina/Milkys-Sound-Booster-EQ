@@ -2,19 +2,28 @@ name: Android CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "staging" ]
+    branches: [ "main" ]
+    tags: [ "v*.*.*", "v*" ]
   pull_request:
-    branches: [ "main", "staging" ]
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       create_release:
         description: 'Publish a GitHub Release with build binaries'
-        required: true
+        required: false
         type: boolean
         default: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
+  pull-requests: write
+  actions: read
+  pages: write
+  id-token: write
 
 jobs:
   # =================================================================
@@ -23,10 +32,11 @@ jobs:
   verify:
     name: Run Tests, Lint & Security Checks
     runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # pin: check with actionlint
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -42,14 +52,59 @@ jobs:
           chmod +x gradlew
           chmod +x scripts/*.sh
 
+      - name: Hydrate .env from secrets
+        env:
+          GOOGLE_ADS_API_KEY: ${{ secrets.GOOGLE_ADS_API_KEY }}
+          VARS_APPLICATION_ID: ${{ vars.APPLICATION_ID }}
+        run: |
+          if [ -f .env.example ]; then
+            cp .env.example .env
+          fi
+          if ! grep -q "^KEYSTORE_PATH=" .env; then
+            echo "KEYSTORE_PATH=keystore/release.jks" >> .env
+          fi
+          if [ -n "$GOOGLE_ADS_API_KEY" ]; then
+            sed -i "s|^GOOGLE_ADS_API_KEY=.*|GOOGLE_ADS_API_KEY=$GOOGLE_ADS_API_KEY|" .env
+          fi
+          if [ -n "$VARS_APPLICATION_ID" ]; then
+            sed -i "s|^APPLICATION_ID=.*|APPLICATION_ID=$VARS_APPLICATION_ID|" .env
+          fi
+          echo "[*] .env hydrated:"
+          grep -E "^(APPLICATION_ID|BUILD_TARGET|VERSION_CODE|VERSION_NAME|KEYSTORE_PATH|GOOGLE_ADS_API_KEY)=" .env | sed 's/GOOGLE_ADS_API_KEY=.*/GOOGLE_ADS_API_KEY=***/'
+          mkdir -p qc/reports/{lint,tests,roborazzi,gitleaks} qc/artifacts/{apks,screenshots/manual} qc/traces
+
       - name: Verify Prerequisites
         run: ./scripts/check_requirements.sh
 
       - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Prepare QC report dirs
+        if: always()
+        run: mkdir -p qc/reports/{lint,tests,roborazzi,gitleaks}
+
+      - name: Copy Unit Test Reports to qc/reports
+        if: always()
+        run: |
+          mkdir -p qc/reports/tests
+          if [ -d app/build/reports/tests ]; then cp -r app/build/reports/tests/* qc/reports/tests/ 2>/dev/null || true; fi
+          if [ -d app/build/test-results ]; then cp -r app/build/test-results qc/reports/tests/ 2>/dev/null || true; fi
+          ls -R qc/reports/tests 2>/dev/null | head -n 50 || true
+
+      - name: Run Roborazzi Visual Matrix (blocking)
+        run: ./gradlew verifyRoborazziDebug --stacktrace
 
       - name: Run Android Lint
-        run: ./gradlew lintDebug
+        run: ./gradlew lintDebug --stacktrace
+
+      - name: Copy Lint Reports to qc/reports
+        if: always()
+        run: |
+          mkdir -p qc/reports/lint
+          if [ -d app/build/reports ]; then cp -r app/build/reports/lint* qc/reports/lint/ 2>/dev/null || true; fi
+          if [ -f app/build/reports/lint-results-debug.html ]; then cp app/build/reports/lint-results-debug.html qc/reports/lint/ 2>/dev/null || true; fi
+          if [ -f app/build/reports/lint-results-debug.xml ]; then cp app/build/reports/lint-results-debug.xml qc/reports/lint/ 2>/dev/null || true; fi
+          ls -R qc/reports/lint 2>/dev/null | head -n 30 || true
 
       - name: Scan for Hardcoded Secrets (Gitleaks)
         uses: gitleaks/gitleaks-action@v2
@@ -59,15 +114,33 @@ jobs:
       - name: Validate Workflow Files (actionlint)
         uses: reviewdog/action-actionlint@v1
 
+      - name: Upload QC Reports Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qc-reports
+          path: qc/reports/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Lint HTML Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: app/build/reports/lint-results-debug.html
+          if-no-files-found: warn
+          retention-days: 14
+
   # =================================================================
-  # JOB 2: Build, Sign & Release Artifacts (Manual Trigger Only)
+  # JOB 2: Build, Sign & Release Artifacts (Auto on main/tags + Manual)
   # =================================================================
   build-and-release:
-    name: Build, Sign & Publish Release (Manual Trigger)
+    name: Build, Sign & Publish Release
     needs: verify
-    # ONLY run when manually triggered via workflow_dispatch AND verification passed
-    if: success() && github.event_name == 'workflow_dispatch'
+    if: success() && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout Repository
@@ -87,18 +160,57 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Copy .env Configuration
+      - name: Hydrate .env Configuration
+        env:
+          GOOGLE_ADS_API_KEY: ${{ secrets.GOOGLE_ADS_API_KEY }}
+          VARS_APPLICATION_ID: ${{ vars.APPLICATION_ID }}
         run: |
           if [ -f .env.example ]; then
             cp .env.example .env
+          fi
+          if ! grep -q "^KEYSTORE_PATH=" .env; then
+            echo "KEYSTORE_PATH=keystore/release.jks" >> .env
+          fi
+          if [ -n "$GOOGLE_ADS_API_KEY" ]; then
+            sed -i "s|^GOOGLE_ADS_API_KEY=.*|GOOGLE_ADS_API_KEY=$GOOGLE_ADS_API_KEY|" .env
+          fi
+          if [ -n "$VARS_APPLICATION_ID" ]; then
+            sed -i "s|^APPLICATION_ID=.*|APPLICATION_ID=$VARS_APPLICATION_ID|" .env
+          fi
+          echo "[*] .env for release:"
+          grep -E "^(APPLICATION_ID|BUILD_TARGET|VERSION_CODE|VERSION_NAME|KEYSTORE_PATH|GOOGLE_ADS_API_KEY)=" .env | sed 's/GOOGLE_ADS_API_KEY=.*/GOOGLE_ADS_API_KEY=***/'
+
+      - name: Decode Keystore to .env subfolder path
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          KEYSTORE_PATH=$(grep -E "^KEYSTORE_PATH=" .env | cut -d= -f2- | tr -d '\r"' | xargs)
+          KEYSTORE_PATH=${KEYSTORE_PATH:-keystore/release.jks}
+          echo "[*] KEYSTORE_PATH=$KEYSTORE_PATH"
+          mkdir -p "$(dirname "$KEYSTORE_PATH")"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$KEYSTORE_PATH"
+            echo "[+] Keystore decoded to $KEYSTORE_PATH"
+            ls -l "$KEYSTORE_PATH" || true
+          else
+            echo "[*] No KEYSTORE_BASE64 secret — fallback to debug.keystore per app/build.gradle.kts:116"
           fi
 
       - name: Make Scripts Executable
         run: chmod +x scripts/*.sh
 
       - name: Build Debug & Release Binaries
+        env:
+          KEYSTORE_PATH: keystore/release.jks
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SKIP_VERSION_BUMP: ${{ startsWith(github.ref, 'refs/tags/v') && '1' || '0' }}
+          # ternary form preferred by actionlint, equivalent: startsWith(...) ? '1' : '0'
         run: |
-          bash scripts/build.sh
+          echo "[*] SKIP_VERSION_BUMP=$SKIP_VERSION_BUMP (1=tag source of truth, 0=allow bump on main)"
+          export SKIP_VERSION_BUMP
+          bash scripts/build.sh assembleRelease
           bash scripts/build_play_console_release.sh
 
       - name: Upload Build Artifacts
@@ -106,24 +218,35 @@ jobs:
         with:
           name: android-release-outputs
           path: .build-outputs/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Generate Tag Name
         id: tag
         run: |
-          TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
-          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          echo "tag_name=v0.1-build.${TIMESTAMP}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "tag_name=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "[*] Using git tag as release tag: ${{ github.ref_name }}"
+          else
+            TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+            SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+            TAG="v0.1-build.${TIMESTAMP}-${SHORT_SHA}"
+            echo "tag_name=$TAG" >> $GITHUB_OUTPUT
+            echo "[*] Generated prerelease tag: $TAG"
+          fi
 
       - name: Create GitHub Release
-        if: ${{ inputs.create_release == true }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.create_release == true || github.event_name != 'workflow_dispatch' }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag_name }}
           name: "Milkys Sound Booster Release ${{ steps.tag.outputs.tag_name }}"
           body: |
-            Manual Release Build for branch `${{ github.ref_name }}` (Commit: `${{ github.sha }}`).
+            Auto Release for `${{ github.ref_name }}` (Commit: `${{ github.sha }}`).
+            Trigger: `${{ github.event_name }}` | Prerelease: `${{ github.ref == 'refs/heads/main' }}`
           draft: false
-          prerelease: false
+          prerelease: ${{ github.ref == 'refs/heads/main' }}
+          generate_release_notes: true
           files: |
             .build-outputs/*.apk
             .build-outputs/*.aab
@@ -133,32 +256,75 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # =================================================================
-  # JOB 3: Auto-Fix Failures via Google Jules (Triggers on ANY Job Failure)
+  # JOB 3: Publish QC Reports to GitHub Pages (Full + Pages)
   # =================================================================
-  jules-fix:
-    name: Trigger Google Jules Fixer Agent
+  publish-pages:
+    name: Publish QC Reports to Pages
     needs: [verify, build-and-release]
-    # Runs if EITHER 'verify' OR 'build-and-release' encounters an error
-    if: always() && (needs.verify.result == 'failure' || needs.build-and-release.result == 'failure')
+    if: always() && needs.verify.result == 'success' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Download QC Reports Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qc-reports
+          path: qc/reports
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: qc/reports
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # =================================================================
+  # JOB 4: Auto-Fix Failures via Google Jules (Triggers on ANY Job Failure)
+  # =================================================================
+  jules-fix:
+    name: Trigger Google Jules Fixer Agent
+    needs: [verify, build-and-release]
+    if: always() && (needs.verify.result == 'failure' || needs.build-and-release.result == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Invoke Google Jules
+        if: ${{ secrets.JULES_API_KEY != '' }}
         uses: google-labs-code/jules-action@v1
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          starting_branch: ${{ github.head_ref || github.ref_name }}
+          starting_branch: ${{ github.head_ref || format('fix/jules-{0}', github.run_id) }}
           include_last_commit: true
           include_commit_log: true
           prompt: |
-            An error occurred while executing the GitHub Actions workflow.
+            Fix CI failure for workflow `${{ github.workflow }}` run `${{ github.run_id }}` (ref `${{ github.ref }}`, event `${{ github.event_name }}`).
+            Results: verify=${{ needs.verify.result }}, build-and-release=${{ needs.build-and-release.result }}.
 
-            Please perform the following steps:
-            1. Review `AGENTS.md` for repository rules, architecture constraints, and testing commands.
-            2. Check the workflow logs to determine whether the failure occurred during static verification (`./gradlew testDebugUnitTest`, `./gradlew lintDebug`) or during release compilation (`scripts/build.sh`).
-            3. Reproduce and fix the issue inside your environment.
-            4. Verify that all tests and build scripts complete successfully.
-            5. Submit a Pull Request with the fix, including a summary of changes.
+            Context: KEYSTORE_PATH=keystore/release.jks via .env subfolder (fallback debug.keystore OK for verify); bump disabled when ref is refs/tags/v* (SKIP_VERSION_BUMP=1, tag is source of truth, see scripts/bump_version.py); Roborazzi blocking (./gradlew verifyRoborazziDebug, output qc/reports/roborazzi, reference app/src/test/screenshots/).
+
+            Please perform:
+            1. Review AGENTS.md, qc_plan.md §9, .jules/config.yaml + .jules/rules.md, and scripts/setup_jules_env.sh for repository rules and verification commands.
+            2. Check workflow logs to determine whether failure occurred during static verification (./gradlew testDebugUnitTest, lintDebug, verifyRoborazziDebug) or during release compilation (scripts/build.sh, scripts/build_play_console_release.sh — note keystore subfolder handle).
+            3. Reproduce and fix the issue inside your environment (respect protected_paths keystore/*, *.jks, .env, qc/changelogs/* and audio safety 1500 mB cap).
+            4. Verify: ./scripts/check_requirements.sh && ./gradlew testDebugUnitTest lintDebug verifyRoborazziDebug && SKIP_VERSION_BUMP=0 ./scripts/build.sh assembleDebug
+            5. Submit a Pull Request with summary, verification logs, and evidence pointers to qc/reports/*.

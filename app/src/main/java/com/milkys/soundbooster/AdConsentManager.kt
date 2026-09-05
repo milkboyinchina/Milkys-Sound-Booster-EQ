@@ -10,14 +10,11 @@ object AdConsentManager {
     fun isUmpAvailable(): Boolean {
         return try {
             Class.forName("com.google.android.ump.UserMessagingPlatform")
+            // verify ConsentInformation also exists (correct package is ump, not omp)
+            Class.forName("com.google.android.ump.ConsentInformation")
             true
         } catch (e: Exception) {
-            try {
-                Class.forName("com.google.android.gms.ads.omp.ConsentInformation")
-                true
-            } catch (e2: Exception) {
-                false
-            }
+            false
         }
     }
 
@@ -65,7 +62,15 @@ object AdConsentManager {
                 arrayOf(successListenerClass)
             ) { _, _, _ ->
                 try {
-                    loadAndShowMethod.invoke(null, activity, proxyListener)
+                    // UMP requires loadAndShow on main thread
+                    activity.runOnUiThread {
+                        try {
+                            loadAndShowMethod.invoke(null, activity, proxyListener)
+                        } catch (e: Exception) {
+                            Log.d(TAG, "loadAndShow failed: ${e.message}")
+                            onComplete()
+                        }
+                    }
                 } catch (e: Exception) {
                     onComplete()
                 }
@@ -81,14 +86,37 @@ object AdConsentManager {
                     null
                 }
 
-                val requestMethod = consentInfoClass.getMethod(
-                    "requestConsentInfoUpdate",
-                    Activity::class.java,
-                    params::class.java,
-                    successListenerClass,
-                    failureListenerClass
-                )
-                requestMethod.invoke(consentInformation, activity, params, successProxy, failureProxy)
+                val requestParamsClass = Class.forName("com.google.android.ump.ConsentRequestParameters")
+                val requestMethod = try {
+                    consentInfoClass.getMethod(
+                        "requestConsentInfoUpdate",
+                        requestParamsClass,
+                        successListenerClass,
+                        failureListenerClass
+                    )
+                } catch (e: NoSuchMethodException) {
+                    // Fallback with Activity param for older lib variant
+                    consentInfoClass.getMethod(
+                        "requestConsentInfoUpdate",
+                        Activity::class.java,
+                        requestParamsClass,
+                        successListenerClass,
+                        failureListenerClass
+                    )
+                }
+                try {
+                    requestMethod.invoke(consentInformation, params, successProxy, failureProxy)
+                } catch (e: Exception) {
+                    // Try Activity-overload
+                    val alt = consentInfoClass.getMethod(
+                        "requestConsentInfoUpdate",
+                        Activity::class.java,
+                        requestParamsClass,
+                        successListenerClass,
+                        failureListenerClass
+                    )
+                    alt.invoke(consentInformation, activity, params, successProxy, failureProxy)
+                }
             } else {
                 onComplete()
             }
