@@ -1,6 +1,0 @@
-{
-  "name": "Milkys Sound Booster & EQ",
-  "description": "A high-performance volume booster and frequency equalizer with custom presets, floating quick-control overlay, and battery optimization monitoring.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

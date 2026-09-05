@@ -1,0 +1,40 @@
+{
+  "$schema": "https://opencode.ai/schema.json",
+  "name": "Milkys Sound Booster & EQ",
+  "type": "android-kotlin",
+  "version": "1.0",
+  "engine": {
+    "java_version": "21",
+    "android_sdk_target": 36,
+    "android_sdk_min": 24
+  },
+  "skills": [
+    "qa-automation",
+    "qc-device-farm"
+  ],
+  "delegates": {
+    "quick": {
+      "agent": "@quick-task",
+      "model": "flash_lite",
+      "description": "Git ops, reads, greps, minor edits, status checks"
+    },
+    "standard": {
+      "agent": "@standard-dev",
+      "model": "flash",
+      "description": "Compose UI screens, unit tests, bug fixes, build analysis"
+    },
+    "hard-fix": {
+      "agent": "@complex-architect",
+      "model": "pro",
+      "description": "Audio DSP engine refactoring, architecture overhauls, memory leak debugging"
+    }
+  },
+  "qc": {
+    "plan": "qc_plan.md",
+    "summary": "qc/QC_SUMMARY.md",
+    "changelog": "CHANGELOG.md",
+    "reports_path": "qc/reports/",
+    "artifacts_path": "qc/artifacts/",
+    "protected_paths": ["qc/changelogs/*", "release.keystore", "*.jks", "*.p12", ".env"]
+  }
+}

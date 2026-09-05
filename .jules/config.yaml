@@ -10,20 +10,39 @@ environment:
   android_sdk_target: 36
   android_sdk_min: 24
   setup_script: "scripts/setup_jules_env.sh"
+  keystore_path: "keystore/release.jks"
 
 verification:
-  test_command: "./gradlew test"
-  build_command: "./scripts/build.sh assembleDebug"
-  lint_command: "./gradlew lint"
+  test_command: "./gradlew testDebugUnitTest"
+  build_command: "SKIP_VERSION_BUMP=${SKIP_VERSION_BUMP:-0} ./scripts/build.sh assembleDebug"
+  lint_command: "./gradlew lintDebug"
+  roborazzi_command: "./gradlew verifyRoborazziDebug"
   requirements_check: "./scripts/check_requirements.sh"
+  coverage_command: null  # Phase 3 — Optional (Kover soft report-only, not blocking in v1; see qc_plan.md §11)
+  bump_guard: "SKIP_VERSION_BUMP=1 on refs/tags/v* (tag is source of truth, see scripts/build.sh:19-22)"
+
+artifacts:
+  qc_path: "qc/"
+  reports_path: "qc/reports/"
+  changelogs_path: "qc/changelogs/"
+  build_output: ".build-outputs/"
 
 context_files:
   - "AGENTS.md"
+  - "qc_plan.md"
+  - "CHANGELOG.md"
+  - "qc/QC_SUMMARY.md"
   - "howto/setup_develop_build.md"
   - "howto/general_information.md"
+  - ".env.example"
+  - "scripts/bump_version.py"
+  - ".github/workflows/ci-cd.yml"
 
 protected_paths:
   - "release.keystore"
   - "*.jks"
   - "*.p12"
   - ".env"
+  - "qc/changelogs/*"
+  - "keystore/*"
+  - "keystore/**/*.jks"

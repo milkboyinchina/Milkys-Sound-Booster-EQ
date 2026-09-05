@@ -39,11 +39,19 @@
     <string formatted="false" name="notification_controls_desc">Display loudness adjustment (-10%, +10%) and OFF button in the notification bar when booster is enabled.</string>
     <string name="disable_hearing_warning_title">Disable Safety Warning Banner</string>
     <string name="disable_hearing_warning_desc">Completely hide the hearing and speaker damage warning banner on main dashboard.</string>
+    <string name="settings_ads_title" translatable="false">Ads</string>
+    <string name="settings_ads_desc_on" translatable="false">Ads are enabled — thank you for supporting development.</string>
+    <string name="settings_ads_desc_off" translatable="false">Ads are disabled.</string>
+    <string name="dialog_ads_confirm_title" translatable="false">Support Development</string>
+    <string name="dialog_ads_confirm_message" translatable="false">Ads support developer — please kindly leave ads on to support voluntary development and server costs.</string>
+    <string name="action_keep_on" translatable="false">Keep On</string>
+    <string name="action_turn_off" translatable="false">Turn Off</string>
     <string name="developer_legal_title">DEVELOPER &amp; LEGAL</string>
     <string name="developer_website">Developer Website</string>
     <string name="github_repository">GitHub Repository</string>
     <string name="privacy_terms">Privacy Policy &amp; Terms of Service</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="about_title" translatable="false">ABOUT</string>
 
     <!-- Equalizer Content Descriptions -->
     <string name="content_desc_reset_bands" translatable="false">Reset equalizer bands to zero</string>
@@ -55,4 +63,54 @@
     <string name="content_desc_set_default_preset" translatable="false">Set current preset as default</string>
     <string name="content_desc_export_preset" translatable="false">Export selected preset to JSON</string>
     <string name="content_desc_delete_preset" translatable="false">Delete custom preset</string>
+
+    <!-- Preset Manager & Equalizer Feature -->
+    <string name="preset_manager_title" translatable="false">Preset Manager</string>
+    <string name="preset_favorite_limit_reached" translatable="false">Maximum 4 favorites reached. Untag one to add another.</string>
+    <string name="preset_error_max_limit" translatable="false">Maximum 7 custom presets allowed.</string>
+    <string name="preset_error_name_exists" translatable="false">Preset name already exists.</string>
+    <string name="preset_error_name_length" translatable="false">Preset name must be between 1 and 10 characters.</string>
+    <string name="preset_error_values_exist" translatable="false">Equalizer values match an existing preset.</string>
+    <string name="preset_error_invalid_json" translatable="false">Invalid preset JSON format.</string>
+    <string name="delete_selected_presets_confirm" translatable="false">Delete selected presets?</string>
+    <string name="btn_delete_selected" translatable="false">Delete Selected</string>
+    <string name="content_desc_favorite_preset" translatable="false">Toggle favorite preset</string>
+    <string name="content_desc_delete_mode" translatable="false">Toggle delete mode</string>
+
+    <!-- Floating Overlay Widget Strings -->
+    <string name="overlay_permission_dialog_title" translatable="false">Display Over Other Apps Permission</string>
+    <string name="overlay_permission_dialog_desc" translatable="false">Milkys Sound Booster requires system overlay permission to display quick volume boost and preset controls over other applications.</string>
+    <string name="btn_grant_permission" translatable="false">Grant Permission</string>
+    <string name="overlay_permission_toast_denied" translatable="false">Overlay permission required to run over other apps.</string>
+    <string name="overlay_open_main_app" translatable="false">Open Sound Booster App</string>
+    <string name="overlay_collapse_panel" translatable="false">Collapse Control Panel</string>
+    <string name="overlay_favorite_presets_title" translatable="false">FAVORITE PRESETS</string>
+    <string name="content_desc_floating_fab" translatable="false">Floating sound booster menu</string>
+    <string name="content_desc_open_app" translatable="false">Open main app</string>
+    <string name="overlay_control_title" translatable="false">Overlay Control</string>
+    <string name="overlay_control_desc" translatable="false">Enable floating widget over other apps</string>
+    <string name="content_desc_hearing_warning" translatable="false">Hearing Loss Safety Warning</string>
+    <string name="content_desc_hide_warning" translatable="false">Hide warning for 7 days</string>
+    <string name="action_save" translatable="false">Save</string>
+    <string name="action_import" translatable="false">Import</string>
+    <string name="action_export" translatable="false">Export</string>
+    <string name="action_cancel" translatable="false">Cancel</string>
+    <string name="action_close" translatable="false">Close</string>
+    <string name="action_yes" translatable="false">Yes</string>
+    <string name="action_no" translatable="false">No</string>
+    <string name="dialog_save_preset_title" translatable="false">Save Custom Preset</string>
+    <string name="action_copy" translatable="false">Copy</string>
+    <string name="action_share" translatable="false">Share</string>
+    <string name="action_pick_file" translatable="false">Pick File (.json)</string>
+    <string name="action_paste_clipboard" translatable="false">Paste Clipboard</string>
+    <string name="action_save_apply" translatable="false">Save/Apply</string>
+    <string name="dialog_import_title" translatable="false">Import Preset JSON</string>
+    <string name="dialog_export_title_prefix" translatable="false">Export JSON - %1$s</string>
+    <string name="dialog_delete_title" translatable="false">Confirm Delete</string>
+    <string name="dialog_save_preset_desc" translatable="false">Enter a unique profile name for your current 5-band gain settings:</string>
+    <string name="dialog_preset_name_hint" translatable="false">Preset Name (Max 10 chars)</string>
+    <string name="dialog_export_desc" translatable="false">Copy or share this preset payload to transfer sound profiles across devices:</string>
+    <string name="dialog_import_desc" translatable="false">Paste a preset JSON payload or choose a .json file:</string>
+    <string name="dialog_delete_confirm" translatable="false">Delete selected presets?</string>
+    <string name="label_save_preset" translatable="false">Save Preset</string>
 </resources>
