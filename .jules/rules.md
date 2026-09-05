@@ -32,6 +32,8 @@ Before submitting a Pull Request, Jules **MUST**:
 5. Run `./scripts/build.sh assembleDebug` to confirm that the Android Debug APK builds successfully and outputs to `.build-outputs/` (copy to `qc/artifacts/apks/`).
 6. Ensure `qc_plan.md` §9 gates and `CHANGELOG.md` + `qc/changelogs/` linkage are satisfied (see `qc/checklists/smoke.md`).
 7. Verify 5-band EQ `+/-` always tunable on both `hm5xr8gueiz5x4c6` + `A1013A5320TH000257` (screencap `qc/artifacts/screenshots/manual/eq-*.png`, Flat→Custom and Custom, booster OFF/ON) — EQ is always tunable per `MainActivity.kt:3088` + `AudioEffectManager.kt:464`, Q1.
+8. **Version bump guard**: If `GITHUB_REF` starts with `refs/tags/v*`, set `SKIP_VERSION_BUMP=1` and DO NOT edit `VERSION_CODE/NAME` in `.env` — tag is source of truth (`scripts/build.sh:19-22`, `scripts/build_play_console_release.sh:19-22`).
+9. **Keystore subfolder**: `KEYSTORE_PATH=keystore/release.jks` via `.env` (`.jules/config.yaml:environment.keystore_path`); never commit `keystore/*` or `*.jks`; `verify` may use `debug.keystore` fallback `app/build.gradle.kts:116` but `release` needs real keystore via `KEYSTORE_BASE64` secret decoded to that path.
 
 ---
 
@@ -42,3 +44,13 @@ Before submitting a Pull Request, Jules **MUST**:
    - **Summary**: Concise overview of what was changed and why.
    - **Verification**: Output log confirmation of `./gradlew test` and APK compilation.
    - **Ref**: Link to the original GitHub issue.
+
+---
+
+## 🤖 5. Jules Automation & Delegation (CI hook)
+
+1. **Trigger**: `jules-fix` runs only when `verify` or `build-and-release` fails (`ci-cd.yml:142`, guard `secrets.JULES_API_KEY != ''`), not cron.
+2. **Branch**: `starting_branch` must be `github.head_ref || fix/jules-${run_id}` — never a tag name `v*`.
+3. **Scope**: Good for `quick` (lint 48dp/contentDescription, strings, AppColors) + `standard` (Roberazzi re-record, unit quench) — keep `hard-fix` (audio DSP 1500 mB, foreground service) human.
+4. **Recommendation queue** (`qc/QC_SUMMARY.md:Next Actions`, all 3 queued): `1) pin actions to SHA + qc-reports/pages 2) setup_jules_env subfolder+bump 3) re-record 24-combo matrix`.
+5. **Protected**: Never edit `keystore/*`, `*.jks`, `.env`, `qc/changelogs/*` — respect `.jules/config.yaml:protected_paths`.
