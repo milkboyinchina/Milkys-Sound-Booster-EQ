@@ -80,8 +80,8 @@ else
     ERRORS=$((ERRORS+1))
 fi
 
-# 6. QC Tools Check (scrcpy ephemeral, gitleaks/actionlint/qc dirs — soft warnings only)
-echo -e "\n[*] Checking QC Tools (scrcpy, gitleaks, actionlint, qc/ layout)..."
+# 6. QC Tools Check (scrcpy ephemeral, gitleaks/actionlint/qc dirs, device_prep — soft warnings only)
+echo -e "\n[*] Checking QC Tools (scrcpy, gitleaks, actionlint, device_prep, qc/ layout)..."
 
 if command -v scrcpy >/dev/null 2>&1; then
     SCRCPY_VER=$(scrcpy --version 2>&1 | head -n 1)
@@ -104,6 +104,13 @@ if command -v actionlint >/dev/null 2>&1; then
     echo -e "    ${GREEN}[PASS] actionlint available: ${ACTIONLINT_VER}${NC}"
 else
     echo -e "    ${YELLOW}[WARN] actionlint not found — workflow lint will run in CI only${NC}"
+    WARNINGS=$((WARNINGS+1))
+fi
+
+if [ -f "scripts/device_prep.sh" ]; then
+    echo -e "    ${GREEN}[PASS] scripts/device_prep.sh present (Q17 pm grant + Q18 run-as)${NC}"
+else
+    echo -e "    ${YELLOW}[WARN] scripts/device_prep.sh missing — device inspections after pm clear/install -r will hit Allow/GET STARTED overlays${NC}"
     WARNINGS=$((WARNINGS+1))
 fi
 

@@ -354,12 +354,26 @@ fun DashboardScreen(
         when (windowSizeGroup) {
             WindowSizeGroup.COMPACT -> {
                 // Compact (Phones): 1-Column Layout
-                Row(
+                Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
                 ) {
-                    LazyColumn(
+                    // Fixed banner always visible at top on phones (outside LazyColumn)
+                    AdaptiveBannerAdCard(
+                        cardColor = cardColor,
+                        borderDivider = borderDivider,
+                        textPrimary = textPrimary,
+                        textSecondary = textSecondary,
+                        primaryAccent = primaryAccent
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    ) {
+                        LazyColumn(
                         state = listState,
                         modifier = Modifier
                             .weight(1f)
@@ -480,17 +494,6 @@ fun DashboardScreen(
                             )
                         }
 
-                        // Adaptive Banner Ad below Equalizer
-                        item {
-                            AdaptiveBannerAdCard(
-                                cardColor = cardColor,
-                                borderDivider = borderDivider,
-                                textPrimary = textPrimary,
-                                textSecondary = textSecondary,
-                                primaryAccent = primaryAccent
-                            )
-                        }
-
                         // Preset Manager (own card)
                         item {
                             PresetManagerCard(
@@ -525,6 +528,7 @@ fun DashboardScreen(
                                 context = context
                             )
                         }
+                    }
                     }
                 }
             }
@@ -2087,18 +2091,74 @@ fun AdaptiveBannerAdCard(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, borderDivider)
     ) {
-        AndroidView(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 12.dp),
-            factory = { ctx ->
-                val frameLayout = android.widget.FrameLayout(ctx).apply {
-                    layoutParams = android.view.ViewGroup.LayoutParams(
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Surface(
+                    color = AppColors.PrimaryAccentDark.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(
+                        text = " SPONSORED AD ",
+                        color = AppColors.PrimaryAccentDark,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                 }
-                try {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Adaptive Equalizer Boost",
+                    color = textSecondary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            AndroidView(
+                modifier = Modifier.fillMaxWidth(),
+                factory = { ctx ->
+                    val frameLayout = android.widget.FrameLayout(ctx).apply {
+                        layoutParams = android.view.ViewGroup.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    }
+                    val fallbackLayout = android.widget.LinearLayout(ctx).apply {
+                        orientation = android.widget.LinearLayout.HORIZONTAL
+                        gravity = android.view.Gravity.CENTER
+                        setPadding(12, 10, 12, 10)
+                        tag = "banner_fallback"
+                        val badge = android.widget.TextView(ctx).apply {
+                            text = " SPONSORED AD "
+                            textSize = 10f
+                            setTextColor(android.graphics.Color.parseColor("#D0BCFF"))
+                            setTypeface(null, android.graphics.Typeface.BOLD)
+                            setBackgroundColor(android.graphics.Color.parseColor("#362F4A"))
+                            setPadding(8, 4, 8, 4)
+                        }
+                        val title = android.widget.TextView(ctx).apply {
+                            text = "Adaptive Equalizer Boost & Audio Tuning"
+                            textSize = 12f
+                            setTextColor(android.graphics.Color.parseColor("#E6E1E5"))
+                            setTypeface(null, android.graphics.Typeface.BOLD)
+                            setPadding(12, 0, 0, 0)
+                        }
+                        addView(badge)
+                        addView(title)
+                    }
+                    frameLayout.addView(fallbackLayout)
+                    try {
                     val adViewClass = Class.forName("com.google.android.gms.ads.AdView")
                     val adSizeClass = Class.forName("com.google.android.gms.ads.AdSize")
                     val adRequestClass = Class.forName("com.google.android.gms.ads.AdRequest")
@@ -2146,36 +2206,30 @@ fun AdaptiveBannerAdCard(
 
                     adViewClass.getMethod("loadAd", adRequestClass).invoke(adView, adReq)
 
+                    try {
+                        val adListenerClass = Class.forName("com.google.android.gms.ads.AdListener")
+                        val proxy = java.lang.reflect.Proxy.newProxyInstance(
+                            adListenerClass.classLoader,
+                            arrayOf(adListenerClass),
+                            java.lang.reflect.InvocationHandler { _, method, _ ->
+                                if (method.name == "onAdLoaded") {
+                                    try { frameLayout.removeView(fallbackLayout) } catch (_: Throwable) {}
+                                }
+                                null
+                            }
+                        )
+                        adViewClass.getMethod("setAdListener", adListenerClass).invoke(adView, proxy)
+                    } catch (_: Throwable) {
+                    }
+                    adViewClass.getMethod("loadAd", adRequestClass).invoke(adView, adReq)
                     frameLayout.addView(adView)
                 } catch (e: Throwable) {
-                    val fallbackLayout = android.widget.LinearLayout(ctx).apply {
-                        orientation = android.widget.LinearLayout.HORIZONTAL
-                        gravity = android.view.Gravity.CENTER
-                        setPadding(12, 10, 12, 10)
-
-                        val badge = android.widget.TextView(ctx).apply {
-                            text = " SPONSORED AD "
-                            textSize = 10f
-                            setTextColor(android.graphics.Color.parseColor("#D0BCFF"))
-                            setTypeface(null, android.graphics.Typeface.BOLD)
-                            setBackgroundColor(android.graphics.Color.parseColor("#362F4A"))
-                            setPadding(8, 4, 8, 4)
-                        }
-                        val title = android.widget.TextView(ctx).apply {
-                            text = "Adaptive Equalizer Boost & Audio Tuning"
-                            textSize = 12f
-                            setTextColor(android.graphics.Color.parseColor("#E6E1E5"))
-                            setTypeface(null, android.graphics.Typeface.BOLD)
-                            setPadding(12, 0, 0, 0)
-                        }
-                        addView(badge)
-                        addView(title)
-                    }
-                    frameLayout.addView(fallbackLayout)
+                    android.util.Log.w("AdaptiveBannerAdCard", "AdView init failed, showing fallback: ${e.message}")
                 }
                 frameLayout
-            }
-        )
+                }
+            )
+        }
     }
 }
 

@@ -152,6 +152,19 @@ When creating or modifying Jetpack Compose screens, agents must ensure visual in
 * **Event Handling:** Assert that user clicks (e.g., equalizer toggles, gain sliders) trigger expected ViewModel callbacks and update the UI accordingly.
 * **Equalizer 5-Band `+/-` (always tunable, Q1):** Must test `EqualizerComponent` `IconButton 48dp` `+`/`-` `performClick` → `Text +1dB` + `_eqBands` Flow + `equalizer?.setBandLevel` (booster OFF and ON, `Flat`→`Custom` and `Custom` presets, both `hm5xr8gueiz5x4c6` + `A1013A5320TH000257`). EQ is always tunable — `enabled = level <15 / >-15` (not `isBoostEnabled`), see `MainActivity.kt:3088` + `AudioEffectManager.kt:464`.
 
+#### 📱 D. Device Prep for Manual QA (Redmi hm5xr8gueiz5x4c6 + ADVAN A1013A5320TH000257)
+
+* **Objective:** Prevent `Allow notifications` + `Onboarding GET STARTED` overlays from blocking `uiautomator dump`/`screencap`/`input swipe` after `pm clear`/`install -r`.
+* **Execution Task (before any dump/screencap/swipe/click after clear/reinstall):**
+  ```bash
+  bash scripts/device_prep.sh hm5xr8gueiz5x4c6 .build-outputs/app-playstore-debug.apk
+  bash scripts/device_prep.sh A1013A5320TH000257 .build-outputs/app-playstore-debug.apk
+  # Q17 silent pm grant POST_NOTIFICATIONS + Q18 run-as has_seen_onboarding=true (fallback tap GET STARTED if run-as fails)
+  # Verifies: dumpsys window mCurrentFocus mFocusedApp mAwake true, has_seen_onboarding true
+  ```
+* **Manual alternative:** `adb -s hm5xr8gueiz5x4c6 shell pm grant com.milkys.soundbooster android.permission.POST_NOTIFICATIONS && adb shell "run-as ... has_seen_onboarding true"` then `force-stop + am start` + `uiautomator dump` should show `SPONSORED AD` `Adaptive Equalizer Boost` without `Allow`/`GET STARTED`.
+* **CI (JVM) alternative:** `testDebugUnitTest`/`verifyRoborazziDebug` headless — set fake `PreferencesRepository` `hasSeenOnboarding=true`, no system dialog.
+
 ### 3.3 QA/QC Folder Convention (`qc/` canon)
 * **Master plan:** `qc_plan.md` (workspace root) is source of truth for device matrix, gates, and changelogs.
 * **Evidence root:** `qc/` — `qc/reports/{lint,tests,roborazzi,gitleaks}`, `qc/artifacts/{apks,screenshots/manual}`, `qc/traces/{heapsnapshots,perf}`, `qc/fixtures/{presets,locales}`, `qc/checklists/{smoke.md,accessibility.md}`, `qc/changelogs/`.

@@ -25,6 +25,7 @@ These guidelines govern how **Google Jules** must analyze, edit, build, verify, 
 ## 🧪 3. Mandatory Build & Test Verification
 
 Before submitting a Pull Request, Jules **MUST**:
+0. **Device prep (before any dump/screencap/swipe/click after pm clear/install -r):** `bash scripts/device_prep.sh hm5xr8gueiz5x4c6 .build-outputs/app-playstore-debug.apk` + `bash scripts/device_prep.sh A1013A5320TH000257 .build-outputs/app-playstore-debug.apk` — Q17 silent `pm grant POST_NOTIFICATIONS` + Q18 `run-as has_seen_onboarding=true` (fallback tap `GET STARTED` if `run-as` fails) — prevents `Allow`/`GET STARTED` from blocking `uiautomator dump`/`screencap`/`input swipe` (see `AGENTS.md:§3.2 D`).
 1. Run `./scripts/setup_jules_env.sh` to ensure the environment dependencies are synced.
 2. Run `./gradlew testDebugUnitTest` to ensure all unit tests pass without failure (reports → `qc/reports/tests/`) — must include `EqualizerComponent +/-` `performClick` → `Text +1dB` + `_eqBands` Flow (booster OFF/ON, Flat→Custom, both devices).
 3. Run `./gradlew lintDebug` — must show 0 errors (report → `qc/reports/lint/`).

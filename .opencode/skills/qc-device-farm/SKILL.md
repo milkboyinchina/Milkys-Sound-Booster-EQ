@@ -11,7 +11,8 @@ adb -s <serial> shell wm size; wm density; getprop ro.build.version.release
 
 ## Helpers
 
-- `scripts/qc_redmi_matrix.sh` — 6-combo spot-check (default-1.0x, small-2.0x, largest-0.85x, largest-1.3x, default-1.3x, small-0.85x) → `qc/artifacts/screenshots/manual/redmi-*.png` (gitignored) + restore `352/1.0`. Manual via Settings UI is primary (MIUI quirks).
+- `scripts/device_prep.sh <serial> [apk]` — Q17 `pm grant POST_NOTIFICATIONS` silent + Q18 `run-as has_seen_onboarding=true` (fallback tap `GET STARTED`) — **must run before any dump/screencap/swipe/click after pm clear/install -r** (prevents `Allow`/`GET STARTED` blocking `uiautomator dump`/`screencap`), see `AGENTS.md:§3.2 D`.
+- `scripts/qc_redmi_matrix.sh` — 6-combo spot-check (default-1.0x, small-2.0x, largest-0.85x, largest-1.3x, default-1.3x, small-0.85x) → `qc/artifacts/screenshots/manual/redmi-*.png` (gitignored) + restore `352/1.0`. Manual via Settings UI is primary (MIUI quirks). Call `device_prep.sh` first.
 - `scrcpy -s <serial> --window-title "Redmi-API36" &` + `ADVAN-API34` — side-by-side live QA; ephemeral `--record /tmp/qc-*.mp4` or `qc/artifacts/recordings/*.mp4` (gitignored, never CI).
 
 ## Matrix table generation
