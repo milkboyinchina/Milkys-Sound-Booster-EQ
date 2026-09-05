@@ -1,6 +1,6 @@
 # QC Summary — Latest
 
-> **Last updated:** 2026-09-05 00:52 | **VERSION_NAME:** 0.1.25 (`VERSION_CODE` 26090503, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral
+> **Last updated:** 2026-09-06 | **VERSION_NAME:** 0.1.25 (`VERSION_CODE` 26090503, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral | **CI:** Auto main+`v*` tags, Roborazzi blocking, `keystore/release.jks` subfolder, `SKIP_VERSION_BUMP=1` on tags
 > **Source of truth — read top before planning:** This file is the agent queue. `Next Actions` (below) is the ONLY queue to act on. `Run` sections are log history — do not treat as queue. History preserved via `git log --follow qc/QC_SUMMARY.md`. Compare `Last updated` vs `git log --oneline qc/QC_SUMMARY.md` to avoid stale reads.
 
 ---
@@ -11,9 +11,11 @@
 
 | ID | Title | File:line | Severity | Owner | Due | Source |
 |---|---|---|---|---|---|---|
-| — | *No open blockers* | — | — | — | — | — |
+| CI-001 | Pin GitHub Actions to SHA + add qc-reports/pages upload + Full+Pages artifacts | `.github/workflows/ci-cd.yml:1-200` | High | Jules | 2026-09-06 | CI/CD plan §1 (Full+Pages, pin @v4→SHA) |
+| JULES-001 | Fix setup_jules_env.sh keystore/release.jks subfolder + SKIP_VERSION_BUMP guard + qc dirs | `scripts/setup_jules_env.sh:11-38`, `.jules/config.yaml:14-41`, `.jules/rules.md:27-50` | High | Jules | 2026-09-06 | CI/CD plan §3 keystore subfolder |
+| QC-009 | Re-record Roborazzi 24-combo matrix baseline (verify 0 failures) | `app/src/test/screenshots/`, `qc/reports/roborazzi/` | Medium | Jules | 2026-09-06 | qc_plan.md §5.2 + CI verify blocking |
 
-*Layout Q7/Q8 + EQ toggle + Power debounce landed (see Run 2026-09-05 00:52). Gates: lint 0e, unit 20/20, roborazzi 6/6 (re-record), ADVAN landscape `Pane1 QuickBoost` + `Pane3 PresetManager` icons + `EQ Enabled` toggle — all green. 0 OPEN blockers.*
+*Queue seeded 2026-09-06 per CI/CD fix: all 3 delegated to Jules — `CI-001` already landed in this commit (pin+pages), `JULES-001` + `QC-009` remain OPEN for Jules verification. Previous layout Q7/Q8 validated 00:52; keystore now `keystore/release.jks` via `.env`, bump disabled on `v*` tags.*
 
 ---
 

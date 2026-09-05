@@ -16,8 +16,10 @@ if [ ! -f ".env" ] && [ -f ".env.example" ]; then
     cp .env.example .env
 fi
 
-# Automatically bump VERSION_CODE and VERSION_NAME in .env for every build
-if [ -f "${SCRIPT_DIR}/bump_version.py" ]; then
+# Automatically bump VERSION_CODE and VERSION_NAME in .env for every build (skip on tag source of truth)
+if [ "${SKIP_VERSION_BUMP:-0}" = "1" ]; then
+    echo "[*] SKIP_VERSION_BUMP=1 — skipping bump_version.py (tag is source of truth)"
+elif [ -f "${SCRIPT_DIR}/bump_version.py" ]; then
     python3 "${SCRIPT_DIR}/bump_version.py"
 fi
 

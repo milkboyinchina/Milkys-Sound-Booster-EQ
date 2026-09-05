@@ -43,6 +43,11 @@ captures/
 *.p12
 release.keystore
 
+# Keystore subfolder (via .env KEYSTORE_PATH=keystore/release.jks) — never commit real keystore
+/keystore/
+/keystore/*.jks
+/keystore/**/*.jks
+
 # Track QC references but ignore generated outputs (recordings are ephemeral scrcpy MP4s, never tracked)
 !qc/changelogs/*.md
 !qc/fixtures/**/*
