@@ -21,3 +21,8 @@
 - Lifecycle: Create `plan.md` (>2 files or DSP logic) → Rename to `report.md` on completion → Create `error.md` on failure/cancellation.
 - **Before ANY QC task:** Read `qc/QC_SUMMARY.md:1-30` top — `Next Actions` (queue, ONLY OPEN) + `Bug Status` (skip FIXED) + `Last updated` vs `git log --oneline qc/QC_SUMMARY.md`. Treat `Run` sections as log, not queue. Loop prevention: never act on FIXED/history rows.
 - **Before ANY device dump/screencap/swipe/click after pm clear/install -r (hm5xr8gueiz5x4c6 + A1013A5320TH000257):** `bash scripts/device_prep.sh hm5xr8gueiz5x4c6 .build-outputs/app-playstore-debug.apk` — Q17 `pm grant POST_NOTIFICATIONS` silent + Q18 `run-as has_seen_onboarding=true` (fallback tap `GET STARTED`) — prevents `Allow`/`GET STARTED` blocking `uiautomator dump`/`screencap` (see `AGENTS.md:§3.2 D`).
+
+## ❓ Global Question Labeling (Q# — Mandatory per A16)
+
+* **Per-message reset (Q1-A):** Every assistant turn that asks questions MUST label them `Q1`, `Q2`, `Q3` in order starting at `1` for that message. Do not carry numbers across turns.
+* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms stay as `Q1`/`Q2` without `Q1-A` sub-labels.

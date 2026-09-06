@@ -55,3 +55,10 @@ Before submitting a Pull Request, Jules **MUST**:
 3. **Scope**: Good for `quick` (lint 48dp/contentDescription, strings, AppColors) + `standard` (Roberazzi re-record, unit quench) — keep `hard-fix` (audio DSP 1500 mB, foreground service) human.
 4. **Recommendation queue** (`qc/QC_SUMMARY.md:Next Actions`, all 3 queued): `1) pin actions to SHA + qc-reports/pages 2) setup_jules_env subfolder+bump 3) re-record 24-combo matrix`.
 5. **Protected**: Never edit `keystore/*`, `*.jks`, `.env`, `qc/changelogs/*` — respect `.jules/config.yaml:protected_paths`.
+
+---
+
+## ❓ 6. Global Question Labeling (Q# — Mandatory per A16)
+
+* **Per-message reset (Q1-A):** Every assistant turn that asks questions MUST label them `Q1`, `Q2`, `Q3` in order starting at `1` for that message. Do not carry numbers across turns.
+* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms stay as `Q1`/`Q2` without `Q1-A` sub-labels.
