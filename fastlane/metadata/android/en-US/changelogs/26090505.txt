@@ -1,0 +1,5 @@
+<en-US>
+Initial production 0.1.27 (26090505) — 200% booster, 5-band EQ, Tile & Overlay, 13 locales, Ads disabled by default (test AdMob safe), banner top + 2 native per row, Settings Keep On/Turn Off.
+
+Requires closed testing done. Privacy: http://milkboy.my.id/term/general-app-privacy
+</en-US>

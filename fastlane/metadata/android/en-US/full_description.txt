@@ -1,0 +1,14 @@
+Milkys Sound Booster & EQ — High-fidelity global audio booster & 5-band equalizer for Android.
+
+Amplify speaker, earphone & Bluetooth output beyond system limits up to 200% (+15dB) safely with LoudnessEnhancer + AudioTrack. Fine-tune 5 bands (60Hz Bass, 230Hz Low-Mid, 910Hz Mid, 3.6kHz High-Mid, 14kHz Treble) from -15dB to +15dB with presets Flat, Classical, Jazz, Pop, Rock, Custom.
+
+• Instant 3-sec sound test next to power dial
+• Hearing & speaker damage warning banner (7-day dismiss)
+• 13 locales: EN, ID, MS, HI, PT, FR, IT, DE, ZH-CN, ZH-TW, JA, KO + System Default (per-app language)
+• Quick Settings Tile (1-tap booster toggle)
+• Floating overlay bubble (TYPE_APPLICATION_OVERLAY) over any app
+• Material 3 light/dark themes, 48dp touch targets
+
+Ads support voluntary development (Settings → Ads → Keep On / Turn Off, GDPR UMP). Disable anytime. Privacy: http://milkboy.my.id/term/general-app-privacy
+
+Safe use: start +10% to +30%, avoid prolonged >100%. Requires MODIFY_AUDIO_SETTINGS. GPLv3 open source: https://github.com/milkys/sound-booster-eq
