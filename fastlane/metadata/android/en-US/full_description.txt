@@ -9,6 +9,6 @@ Amplify speaker, earphone & Bluetooth output beyond system limits up to 200% (+1
 • Floating overlay bubble (TYPE_APPLICATION_OVERLAY) over any app
 • Material 3 light/dark themes, 48dp touch targets
 
-Ads support voluntary development (Settings → Ads → Keep On / Turn Off, GDPR UMP). Disable anytime. Privacy: http://milkboy.my.id/term/general-app-privacy
+Ads support voluntary development (Settings → Ads → Keep On / Turn Off, GDPR UMP). Disable anytime. Privacy: https://milkboy.my.id/term/general-app-privacy
 
 Safe use: start +10% to +30%, avoid prolonged >100%. Requires MODIFY_AUDIO_SETTINGS. GPLv3 open source: https://github.com/milkys/sound-booster-eq
