@@ -284,16 +284,18 @@ When executing tasks or routing work via slash commands, reference these model t
 | `/standard <task>` | `@standard-dev` (`flash`) | Compose UI screens, unit tests, bug fixes, build analysis. |
 | `/hard-fix <task>` | `@complex-architect` (`pro`) | Audio DSP engine refactoring, architecture overhauls, memory leak debugging. |
 
-### Global Question Labeling (Q# — Mandatory per A16)
+### Global Question Labeling (Q# — Mandatory per A16 Hybrid Q1-C)
 
 * **Per-message reset (Q1-A):** Every assistant turn that asks questions MUST label them `Q1`, `Q2`, `Q3` in order starting at `1` for that message. Do not carry numbers across turns.
-* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms stay as `Q1`/`Q2` without `Q1-A` sub-labels.
+* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms may be asked directly in plain text `Confirm ...? Yes` without `Q#` prefix (binary exception, Proposal) — otherwise stay as `Q1`/`Q2` without sub-labels.
+* **Never walls (Proposal):** Never write open-ended walls of text when a structured `Q1-A/B/C` choice block is possible — always prefer `Q#-A/B/C` for tradeoffs. Allows deterministic reply `Q1-B, Q2-A` or `Yes`.
 * **Example:**
   ```
   Q1: Should we keep COMPACT portrait lock or switch to UNSPECIFIED for Android 16?
     Q1-A: Keep PORTRAIT for COMPACT <600dp
     Q1-B: Switch all to UNSPECIFIED (recommended)
   Q2: Confirm PRIVACY_POLICY_URL https vs http?
+  Confirm bump to 1.0.0? Yes (binary plain text allowed)
   ```
 
 ---
