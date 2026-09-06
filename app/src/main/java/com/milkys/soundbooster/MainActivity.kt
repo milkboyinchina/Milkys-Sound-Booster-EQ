@@ -332,16 +332,10 @@ fun DashboardScreen(
     DisposableEffect(windowSizeGroup) {
         val activity = context as? android.app.Activity
         if (activity != null) {
-            when (windowSizeGroup) {
-                WindowSizeGroup.COMPACT -> {
-                    // Small size class (phones): disable landscape view (lock to portrait)
-                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                }
-                WindowSizeGroup.MEDIUM, WindowSizeGroup.EXPANDED -> {
-                    // Medium & Expanded size classes (small tablets/foldables & large tablets): follow system screen orientation
-                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                }
-            }
+            // Play Console W3: Remove orientation restriction for Android 16 large-screen support
+            // All window sizes now follow system orientation (UNSPECIFIED) — COMPACT previously locked to PORTRAIT now also UNSPECIFIED
+            // Tested: COMPACT LazyColumn 1 row middle+end handles landscape via verticalScroll + heightIn
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
         onDispose {}
     }

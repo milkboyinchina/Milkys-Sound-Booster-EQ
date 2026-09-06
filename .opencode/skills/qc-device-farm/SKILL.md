@@ -29,3 +29,8 @@ Keep 2 physical + 3 emulators gap-fill (Pixel3a API24 320dp, Pixel8 API30/33, Fo
 - Screenshots: `qc/artifacts/screenshots/manual/<device>-<step>.png` (gitignored, ephemeral)
 - Reports: `qc/reports/tests/`, `qc/reports/lint/`, `qc/reports/roborazzi/`
 - Summary: `qc/QC_SUMMARY.md` (add `Run` log, update `Bug Status`)
+
+## ❓ Global Question Labeling (Q# — Mandatory per A16)
+
+* **Per-message reset (Q1-A):** Every assistant turn that asks questions MUST label them `Q1`, `Q2`, `Q3` in order starting at `1` for that message. Do not carry numbers across turns.
+* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms stay as `Q1`/`Q2` without `Q1-A` sub-labels.
