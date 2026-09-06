@@ -40,6 +40,8 @@
   "question_labeling": {
     "per_message_reset": "Q1-A",
     "multi_choice_only": "Q2-B",
-    "rule": "Every assistant turn that asks questions MUST label them Q1, Q2, Q3. Only multi-choice get Q1-A, Q1-B sub-labels. Single yes/no stays Q1/Q2."
+    "hybrid": "Q1-C",
+    "rule": "Every assistant turn MUST label Q1, Q2, Q3 per message reset. Only multi-choice get Q1-A, Q1-B. Binary may be plain Confirm ...? Yes without Q#. Never walls — prefer Q#-A/B/C blocks. Allows Q1-B, Q2-A or Yes.",
+    "never_walls": true
   }
 }

@@ -27,7 +27,8 @@
 - Task logging: `.ai-agent-task/` is gitignored ephemeral; do NOT use `.plan/` (Jules only) — use `qc/` canon (see `AGENTS.md:§3.3`).
 - Reports gitignored: `qc/reports/`, `qc/artifacts/`, `qc/traces/`; tracked: `qc/changelogs/*.md`, `qc/fixtures/*`, `qc/checklists/*.md`, `qc/QC_SUMMARY.md`.
 
-## ❓ Global Question Labeling (Q# — Mandatory per A16)
+## ❓ Global Question Labeling (Q# — Mandatory per A16 Hybrid Q1-C)
 
 * **Per-message reset (Q1-A):** Every assistant turn that asks questions MUST label them `Q1`, `Q2`, `Q3` in order starting at `1` for that message. Do not carry numbers across turns.
-* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms stay as `Q1`/`Q2` without `Q1-A` sub-labels.
+* **Multi-choice only (Q2-B):** Only questions with multiple choice answers get sub-labels `Q1-A`, `Q1-B`, `Q1-C` under that `Q#`. Single yes/no confirms may be asked directly in plain text `Confirm ...? Yes` without `Q#` prefix (binary exception, Proposal) — otherwise stay as `Q1`/`Q2` without sub-labels.
+* **Never walls (Proposal):** Never write open-ended walls of text when a structured `Q1-A/B/C` choice block is possible — always prefer `Q#-A/B/C` for tradeoffs. Allows deterministic reply `Q1-B, Q2-A` or `Yes`.
