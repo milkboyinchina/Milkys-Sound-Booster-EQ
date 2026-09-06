@@ -65,7 +65,7 @@ object AudioEffectManager {
     private val _isFloatingEnabled = MutableStateFlow(false)
     val isFloatingEnabled: StateFlow<Boolean> = _isFloatingEnabled
 
-    private val _isAdsEnabled = MutableStateFlow(true)
+    private val _isAdsEnabled = MutableStateFlow(false)
     val isAdsEnabled: StateFlow<Boolean> = _isAdsEnabled
 
     private val _adConsentStatus = MutableStateFlow("UNKNOWN") // "UNKNOWN", "GRANTED", "DENIED"
@@ -143,7 +143,7 @@ object AudioEffectManager {
         val preset = prefs.getString(KEY_PRESET, "Flat") ?: "Flat"
         val bandsStr = prefs.getString(KEY_BANDS, "0,0,0,0,0") ?: "0,0,0,0,0"
         val floating = prefs.getBoolean(KEY_FLOATING, false)
-        val adsEnabled = prefs.getBoolean(KEY_ADS_ENABLED, true)
+        val adsEnabled = prefs.getBoolean(KEY_ADS_ENABLED, false)
         val consentStatus = prefs.getString(KEY_AD_CONSENT_STATUS, "UNKNOWN") ?: "UNKNOWN"
         val personalizedConsent = prefs.getBoolean(KEY_PERSONALIZED_ADS_CONSENT, true)
         val sliderStepped = prefs.getBoolean(KEY_SLIDER_STEPPED, true)
