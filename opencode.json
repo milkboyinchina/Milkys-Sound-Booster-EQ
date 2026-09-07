@@ -15,17 +15,17 @@
   "delegates": {
     "quick": {
       "agent": "@quick-task",
-      "model": "flash_lite",
+      "model": "opencode-zen/muse-spark-1.3-free",
       "description": "Git ops, reads, greps, minor edits, status checks"
     },
     "standard": {
       "agent": "@standard-dev",
-      "model": "flash",
+      "model": "opencode-go/muse-spark-1.3-contributor",
       "description": "Compose UI screens, unit tests, bug fixes, build analysis"
     },
     "hard-fix": {
       "agent": "@complex-architect",
-      "model": "pro",
+      "model": "opencode-go/muse-spark-1.3-contributor",
       "description": "Audio DSP engine refactoring, architecture overhauls, memory leak debugging"
     }
   },

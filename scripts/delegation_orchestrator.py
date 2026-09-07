@@ -2,7 +2,7 @@
 """
 Delegation Orchestrator Utility for Antigravity
 Evaluates prompt complexity, handles /quick, /standard, /hard-fix shortcuts,
-and formats subagent payloads across Low (flash_lite), Medium (flash), and High (pro) model tiers.
+and formats subagent payloads across Low (muse-spark-1.3 free via opencode zen), Medium/High (muse-spark-1.3 contributor via opencode go) model tiers.
 """
 
 import sys
@@ -10,9 +10,9 @@ import argparse
 import json
 import re
 
-LOW_MODEL = "flash_lite"
-MEDIUM_MODEL = "flash"
-HIGH_MODEL = "pro"
+LOW_MODEL = "opencode-zen/muse-spark-1.3-free"
+MEDIUM_MODEL = "opencode-go/muse-spark-1.3-contributor"
+HIGH_MODEL = "opencode-go/muse-spark-1.3-contributor"
 
 def classify_prompt(prompt_text):
     text = prompt_text.strip()
