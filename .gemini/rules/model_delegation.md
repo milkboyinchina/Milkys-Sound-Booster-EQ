@@ -10,9 +10,9 @@ When the user starts a prompt with a slash shortcut, **bypass evaluation overhea
 
 | Shortcut | Trigger Subagent Profile | Target Model Tier | Primary Use Case |
 |---|---|---|---|
-| `/quick <task>` | `@quick-task` | `flash_lite` (Low) | Git operations (`git status`, `git commit`, `git push`), file reads, quick greps, minor formatting, status checks. |
-| `/standard <task>` | `@standard-dev` | `flash` (Medium) | Standard feature implementation, UI updates, unit test creation, build log analysis. |
-| `/hard-fix-sonnet <task>` or `/hard-fix <task>` | `@complex-architect` | **Claude Sonnet (`pro`)** | Multi-file architectural refactoring, deep debugging, complex algorithm design, security audits. |
+| `/quick <task>` | `@quick-task` | `muse-spark-1.3 free via opencode zen` (Low) | Git operations (`git status`, `git commit`, `git push`), file reads, quick greps, minor formatting, status checks. |
+| `/standard <task>` | `@standard-dev` | `muse-spark-1.3 contributor via opencode go` (Medium) | Standard feature implementation, UI updates, unit test creation, build log analysis. |
+| `/hard-fix-sonnet <task>` or `/hard-fix <task>` | `@complex-architect` | **muse-spark-1.3 contributor via opencode go** (High-effort) | Multi-file architectural refactoring, deep debugging, complex algorithm design, security audits. |
 
 ---
 
@@ -20,21 +20,21 @@ When the user starts a prompt with a slash shortcut, **bypass evaluation overhea
 
 Evaluate incoming prompt requirements against the following complexity thresholds:
 
-### Tier 1: Low Model (`flash_lite`)
+### Tier 1: Low Model (`muse-spark-1.3 free via opencode zen`)
 * **Triggers**:
   - All Git terminal operations (`git status`, `git add`, `git commit`, `git push`, `git pull`, `git diff`, `git log`, `git checkout`).
   - File reading, directory listing, single-file minor text edits.
   - Pattern searching (`grep_search`), dependency checks, version checks.
   - Script execution (`build.sh`, helper utilities).
 
-### Tier 2: Medium Model (`flash`)
+### Tier 2: Medium Model (`muse-spark-1.3 contributor via opencode go`)
 * **Triggers**:
   - Writing or updating unit tests and widget previews.
   - Single-screen Compose UI tweaks and minor component updates.
   - Inspecting and resolving standard runtime exception logs.
   - Refactoring small helper classes or state flows.
 
-### Tier 3: High Model (`pro`)
+### Tier 3: High Model (`muse-spark-1.3 contributor via opencode go`, high-effort)
 * **Triggers**:
   - Cross-module or multi-file architectural redesign.
   - Complex bug investigations involving background services, audio engines, or IPC.
@@ -52,16 +52,16 @@ Use the following parameters when invoking subagents via `invoke_subagent`:
     {
       "TypeName": "self",
       "Role": "Quick Task Runner (@quick-task)",
-      "Model": "flash_lite",
+      "Model": "opencode-zen/muse-spark-1.3-free",
       "Prompt": "<task description>"
     }
   ]
 }
 ```
 
-* **`@quick-task`**: `Model`: `"flash_lite"`, `Role`: `"Quick Task Runner"`
-* **`@standard-dev`**: `Model`: `"flash"`, `Role`: `"Standard Developer"`
-* **`@complex-architect`**: `Model`: `"pro"`, `Role`: `"Complex Architect"`
+* **`@quick-task`**: `Model`: `"opencode-zen/muse-spark-1.3-free"`, `Role`: `"Quick Task Runner"`
+* **`@standard-dev`**: `Model`: `"opencode-go/muse-spark-1.3-contributor"`, `Role`: `"Standard Developer"`
+* **`@complex-architect`**: `Model`: `"opencode-go/muse-spark-1.3-contributor"`, `Role`: `"Complex Architect"`
 
 ---
 

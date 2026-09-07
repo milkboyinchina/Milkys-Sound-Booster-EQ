@@ -30,9 +30,9 @@ A high-fidelity global audio booster and 5-band graphic equalizer designed for A
 
 This workspace uses **Subagent Model Delegation** and **Workspace Rules** (`.gemini/rules/model_delegation.md`) to optimize token usage and execution speed:
 
-- **`/quick <task>`**: Instantly delegates to **`@quick-task`** on **Low (`flash_lite`)** for Git operations (`git commit`, `git push`), file reads, quick greps, and minor edits.
-- **`/standard <task>`**: Instantly delegates to **`@standard-dev`** on **Medium (`flash`)** for feature updates, UI tweaks, and unit tests.
-- **`/hard-fix <task>`** or **`/hard-fix-sonnet <task>`**: Instantly delegates to **`@complex-architect`** on **High (`pro`)** for architectural refactoring, multi-file debugging, and security/performance overhauls.
+- **`/quick <task>`**: Instantly delegates to **`@quick-task`** on **Low (`muse-spark-1.3 free via opencode zen`)** for Git operations (`git commit`, `git push`), file reads, quick greps, and minor edits.
+- **`/standard <task>`**: Instantly delegates to **`@standard-dev`** on **Medium (`muse-spark-1.3 contributor via opencode go`)** for feature updates, UI tweaks, and unit tests.
+- **`/hard-fix <task>`** or **`/hard-fix-sonnet <task>`**: Instantly delegates to **`@complex-architect`** on **High (`muse-spark-1.3 contributor via opencode go`)** for architectural refactoring, multi-file debugging, and security/performance overhauls.
 
 To enable model delegation rules in any current or future project workspace, run:
 ```bash

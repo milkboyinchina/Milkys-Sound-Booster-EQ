@@ -1,20 +1,20 @@
 # Rules: Delegation & Logging
 
 ## ⚡ Shortcuts & Delegation
-- `/quick <task>` → `@quick-task` (`flash_lite`): Git ops, reads, greps, minor edits, status checks.
-- `/standard <task>` → `@standard-dev` (`flash`): Features, Compose/UI tweaks, unit tests, build log checks.
-- `/hard-fix-sonnet <task>` or `/hard-fix <task>` → `@complex-architect` (`pro` / Sonnet 4.6): Multi-file refactor, audio DSP, services.
+- `/quick <task>` → `@quick-task` (`muse-spark-1.3 free via opencode zen`): Git ops, reads, greps, minor edits, status checks.
+- `/standard <task>` → `@standard-dev` (`muse-spark-1.3 contributor via opencode go`): Features, Compose/UI tweaks, unit tests, build log checks.
+- `/hard-fix-sonnet <task>` or `/hard-fix <task>` → `@complex-architect` (`muse-spark-1.3 contributor via opencode go`, high-effort): Multi-file refactor, audio DSP, services.
   - Workflow: Read `qc/QC_SUMMARY.md:1-30` (queue vs log) → Check `qc_plan.md` + `qc/checklists/*` → Execute → Run `./gradlew testDebugUnitTest` (`qc/reports/tests/`), `./gradlew lintDebug` (`qc/reports/lint/`), `./gradlew verifyRoborazziDebug` (`qc/reports/roborazzi/`), then update `qc/QC_SUMMARY.md` + `qc/changelogs/` if release. Mirrored in `.opencode/skills/qa-automation/SKILL.md:1` (keep `.gemini/` for compat).
 
 ## 🎯 Auto Classifier (Default)
-- **T1 (`flash_lite`)**: Git, file reads/greps, minor edits, script runs.
-- **T2 (`flash`)**: Unit tests, UI tweaks, small refactors, bug log fixes.
-- **T3 (`pro`)**: Architecture redesign, audio DSP/Service bugs, security/memory leak audits.
+- **T1 (`muse-spark-1.3 free via opencode zen`)**: Git, file reads/greps, minor edits, script runs.
+- **T2 (`muse-spark-1.3 contributor via opencode go`)**: Unit tests, UI tweaks, small refactors, bug log fixes.
+- **T3 (`muse-spark-1.3 contributor via opencode go`, high-effort)**: Architecture redesign, audio DSP/Service bugs, security/memory leak audits.
 
 ## 🤖 Subagent Specs
-- `@quick-task`: `Model: "flash_lite"`, `Role: "Quick Task Runner"`
-- `@standard-dev`: `Model: "flash"`, `Role: "Standard Developer"`
-- `@complex-architect`: `Model: "pro"`, `Role: "Complex Architect"`
+- `@quick-task`: `Model: "opencode-zen/muse-spark-1.3-free"`, `Role: "Quick Task Runner"`
+- `@standard-dev`: `Model: "opencode-go/muse-spark-1.3-contributor"`, `Role: "Standard Developer"`
+- `@complex-architect`: `Model: "opencode-go/muse-spark-1.3-contributor"`, `Role: "Complex Architect"`
 
 ## 📄 Task Logging (`.ai-agent-task/`) + QC Summary
 - Format: `YYMMDD-HHMMSS-<type>.md` (`plan` | `report` | `error`). Do NOT touch `.plan/` (Jules only).

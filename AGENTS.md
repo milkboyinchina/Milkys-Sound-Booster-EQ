@@ -280,9 +280,9 @@ When executing tasks or routing work via slash commands, reference these model t
 
 | Shortcut | Target Agent / Model Tier | Primary Tasks |
 |---|---|---|
-| `/quick <task>` | `@quick-task` (`flash_lite`) | Git operations (`git commit`, `push`), minor file edits, greps, status checks. |
-| `/standard <task>` | `@standard-dev` (`flash`) | Compose UI screens, unit tests, bug fixes, build analysis. |
-| `/hard-fix <task>` | `@complex-architect` (`pro`) | Audio DSP engine refactoring, architecture overhauls, memory leak debugging. |
+| `/quick <task>` | `@quick-task` (`muse-spark-1.3 free via opencode zen`) | Git operations (`git commit`, `push`), minor file edits, greps, status checks. |
+| `/standard <task>` | `@standard-dev` (`muse-spark-1.3 contributor via opencode go`) | Compose UI screens, unit tests, bug fixes, build analysis. |
+| `/hard-fix <task>` | `@complex-architect` (`muse-spark-1.3 contributor via opencode go`, high-effort) | Audio DSP engine refactoring, architecture overhauls, memory leak debugging. |
 
 ### Global Question Labeling (Q# — Mandatory per A16 Hybrid Q1-C)
 

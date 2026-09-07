@@ -6,9 +6,9 @@
 
 | Shortcut | Agent | Model | Use |
 |---|---|---|---|
-| `/quick <task>` | `@quick-task` | `flash_lite` | Git ops, reads, greps, minor edits, status checks |
-| `/standard <task>` | `@standard-dev` | `flash` | Compose UI, unit tests, bug fixes, build analysis |
-| `/hard-fix <task>` | `@complex-architect` | `pro` | Audio DSP, architecture, memory leak, security |
+| `/quick <task>` | `@quick-task` | `muse-spark-1.3 free via opencode zen` | Git ops, reads, greps, minor edits, status checks |
+| `/standard <task>` | `@standard-dev` | `muse-spark-1.3 contributor via opencode go` | Compose UI, unit tests, bug fixes, build analysis |
+| `/hard-fix <task>` | `@complex-architect` | `muse-spark-1.3 contributor via opencode go` | Audio DSP, architecture, memory leak, security |
 
 ## Workflow (7-step qc/reports — EQ always tunable)
 
