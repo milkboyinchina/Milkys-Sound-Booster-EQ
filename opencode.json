@@ -43,5 +43,6 @@
     "hybrid": "Q1-C",
     "rule": "Every assistant turn MUST label Q1, Q2, Q3 per message reset. Only multi-choice get Q1-A, Q1-B. Binary may be plain Confirm ...? Yes without Q#. Never walls — prefer Q#-A/B/C blocks. Allows Q1-B, Q2-A or Yes.",
     "never_walls": true
-  }
+  },
+  "instructions": "Reply style: TL;DR first (max 3 lines). Keep status replies under ~300 words; details go in tables, files, or qc/ reports, not walls. Structure: ## Summary / ## Changes (file:line) / ## Verify / ## Next. Use markdown tables over prose, fenced code with language (bash/kotlin), absolute paths with :line. Never paste full gradle/logcat diffs in chat — point to qc/reports/ or qc/artifacts/. One idea per bullet. Follow Q# labeling for questions."
 }

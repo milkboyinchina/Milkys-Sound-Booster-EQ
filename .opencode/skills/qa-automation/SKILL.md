@@ -26,6 +26,7 @@
 - Before ANY QC task, read `qc/QC_SUMMARY.md:1-30` queue vs log split (never act on FIXED/history rows).
 - Task logging: `.ai-agent-task/` is gitignored ephemeral; do NOT use `.plan/` (Jules only) — use `qc/` canon (see `AGENTS.md:§3.3`).
 - Reports gitignored: `qc/reports/`, `qc/artifacts/`, `qc/traces/`; tracked: `qc/changelogs/*.md`, `qc/fixtures/*`, `qc/checklists/*.md`, `qc/QC_SUMMARY.md`.
+- Reply style: see `opencode.json instructions` — TL;DR first, ~300-word cap, `## Summary / Changes / Verify / Next` template, tables over walls, fenced code, `path:line` refs, logs to `qc/` not chat.
 
 ## ❓ Global Question Labeling (Q# — Mandatory per A16 Hybrid Q1-C)
 
