@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -200,15 +201,11 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
     }
 
     private fun startForegroundService() {
-        // Android 13+ requires POST_NOTIFICATIONS for foreground notification — guard to avoid ForegroundServiceDidNotStartInTimeException
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (!nm.areNotificationsEnabled()) {
-                // Cannot show notification — stop service gracefully
-                stopSelf()
-                return
-            }
-        }
+        // ForegroundServiceDidNotStartInTimeException fix: startForeground() MUST be
+        // called on every startForegroundService() path. When POST_NOTIFICATIONS is
+        // denied (Android 13+), the system suppresses the notification visuals but the
+        // FGS contract is still satisfied — returning early here (old B-004 guard)
+        // crashed the app. Only nm.notify() refreshes are permission-gated.
         try {
             val notification = buildNotification()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -465,7 +462,7 @@ fun getPresetAbbreviation(presetName: String): String {
     }
 }
 
-fun getTopFavoritePresets(favorites: Set<String>): List<String> {
+fun getTopFavoritePresets(favorites: List<String>): List<String> {
     val defaults = listOf("Flat", "Bass Booster", "Rock", "Pop")
     val result = mutableListOf<String>()
     for (fav in favorites) {
@@ -574,7 +571,7 @@ fun FloatingDashboard(
     isBoosted: Boolean,
     boostProgress: Int,
     currentPreset: String,
-    favoritePresets: Set<String> = emptySet(),
+    favoritePresets: List<String> = emptyList(),
     onToggleBoost: (Boolean) -> Unit,
     onBoostChange: (Int) -> Unit,
     onPresetSelect: (String) -> Unit = {},
@@ -672,7 +669,7 @@ fun FloatingDashboard(
 
             Divider(color = Color(0xFF49454F), thickness = 1.dp)
 
-            // Header / Power Switch Toggle
+            // Header / Power Toggle Button (Q2-A: ⏻ — bold when enabled, greyed when disabled)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -684,17 +681,24 @@ fun FloatingDashboard(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold
                 )
-                Switch(
-                    checked = isBoosted,
-                    onCheckedChange = onToggleBoost,
-                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFFD0BCFF),
-                        checkedTrackColor = Color(0xFF381E72),
-                        uncheckedThumbColor = Color(0xFFCAC4D0),
-                        uncheckedTrackColor = Color(0xFF49454F)
+                IconButton(
+                    onClick = { onToggleBoost(!isBoosted) },
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                        .size(48.dp)
+                        .background(
+                            if (isBoosted) Color(0xFFD0BCFF) else Color(0xFF36343B),
+                            CircleShape
+                        )
+                        .testTag("overlay_power_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew,
+                        contentDescription = if (isBoosted) "Disable booster" else "Enable booster",
+                        tint = if (isBoosted) Color(0xFF381E72) else Color(0xFFCAC4D0).copy(alpha = 0.4f),
+                        modifier = Modifier.size(24.dp)
                     )
-                )
+                }
             }
 
             // Boost Amplification Controls [-] / [+]
@@ -807,9 +811,10 @@ fun FloatingDashboard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    topFavorites.forEach { presetName ->
+                    topFavorites.forEachIndexed { slotIndex, presetName ->
                         val isSelected = currentPreset.equals(presetName, ignoreCase = true)
                         val abbr = getPresetAbbreviation(presetName)
+                        val slotNumber = slotIndex + 1
                         
                         Box(
                             modifier = Modifier
@@ -827,6 +832,12 @@ fun FloatingDashboard(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
+                                Text(
+                                    text = "#$slotNumber",
+                                    color = if (isSelected) Color(0xFF381E72).copy(alpha = 0.7f) else Color(0xFFCAC4D0).copy(alpha = 0.6f),
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Text(
                                     text = abbr,
                                     color = if (isSelected) Color(0xFF381E72) else Color(0xFFE6E1E5),

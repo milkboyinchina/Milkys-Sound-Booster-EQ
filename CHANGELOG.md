@@ -9,6 +9,17 @@ Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scri
 ## [Unreleased]
 ### Added
 - Planned Phase 3 — Optional Kover coverage (soft report-only, deferred from v1 gates).
+- Onboarding page 0: Notification Bar Controls explainer (media-control purpose, never ads, Settings toggle note) with Allow Notifications / Skip; system permission now user-triggered, advances on grant or deny (Q1-A).
+- Favorite slots #1–#4: ordered favorites with `#N ★` labels in Preset Manager and `#N` labels on overlay favorite boxes; untoggle compacts, retoggle fills lowest free slot (Q3-A).
+- Overlay ⏻ power button (bold filled when enabled, greyed when disabled) replacing the Master Power switch (Q2-A).
+
+### Changed
+- EQ band columns top-anchored: `+` sits 5.dp under dB readout, track housing fitted so buttons no longer overlap the 80.dp bar (4a/4c/4d).
+- Removed embedded Preset Manager section from Equalizer card (dedicated PresetManagerCard is the single owner; signatures + 3 layout call sites trimmed).
+- DataStore: ordered favorites persist as `favorite_presets_ordered` string; legacy unordered set migrates sorted-alpha into slots, dual-written for rollback compat.
+
+### Fixed
+- Crash loop `ForegroundServiceDidNotStartInTimeException` when overlay + booster ON with notifications denied: service now always calls `startForeground()` (denied just suppresses visuals); `onCreate` breaker skips silent auto-start, resets boost, and toasts toward Settings; pure `shouldAutoStartService()` + 4 unit tests.
 
 ### Changed
 - Deferred `Color(0xFF...)` remaining bespoke warning colors — low risk, tracked in `qc/QC_SUMMARY.md`.

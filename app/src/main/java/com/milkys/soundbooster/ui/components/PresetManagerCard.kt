@@ -65,7 +65,7 @@ fun PresetManagerCard(
     currentPreset: String,
     defaultPreset: String,
     customPresets: Map<String, IntArray>,
-    favoritePresets: Set<String>,
+    favoritePresets: List<String>,
     eqBands: IntArray,
     cardColor: Color,
     borderDivider: Color,
@@ -240,6 +240,7 @@ fun PresetManagerCard(
                     val isBuiltIn = builtInList.contains(preset)
                     val isSelected = matchedPresetName == preset || currentPreset == preset
                     val isFav = favoritePresets.contains(preset)
+                    val favSlot = favoritePresets.indexOf(preset) + 1 // 1-based #1-#4, 0 when not favorite
                     val isCheckedForDelete = selectedForDelete.contains(preset)
                     Surface(
                         onClick = {
@@ -262,8 +263,13 @@ fun PresetManagerCard(
                             if (isDeleteMode) {
                                 Checkbox(checked = isCheckedForDelete, onCheckedChange = { checked -> if (!isBuiltIn) selectedForDelete = if (checked) selectedForDelete + preset else selectedForDelete - preset }, enabled = !isBuiltIn && isEnabled, colors = CheckboxDefaults.colors(checkedColor = AppColors.Error, disabledUncheckedColor = AppColors.BorderDark.copy(alpha = 0.3f)))
                             } else {
-                                androidx.compose.material3.IconButton(onClick = { val ok = onToggleFavorite(preset); if (!ok) Toast.makeText(context, context.getString(R.string.preset_favorite_limit_reached), Toast.LENGTH_SHORT).show() }, enabled = isEnabled, modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).size(48.dp)) {
-                                    Icon(imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder, contentDescription = stringResource(R.string.content_desc_favorite_preset), tint = if (isFav) AppColors.WarningTitle else textSecondary.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (isFav) {
+                                        Text(text = "#$favSlot", color = AppColors.WarningTitle, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                    androidx.compose.material3.IconButton(onClick = { val ok = onToggleFavorite(preset); if (!ok) Toast.makeText(context, context.getString(R.string.preset_favorite_limit_reached), Toast.LENGTH_SHORT).show() }, enabled = isEnabled, modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).size(48.dp)) {
+                                        Icon(imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder, contentDescription = stringResource(R.string.content_desc_favorite_preset), tint = if (isFav) AppColors.WarningTitle else textSecondary.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
+                                    }
                                 }
                             }
                         }
