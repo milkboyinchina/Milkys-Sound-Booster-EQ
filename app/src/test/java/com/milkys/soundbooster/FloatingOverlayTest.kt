@@ -1,6 +1,7 @@
 package com.milkys.soundbooster
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
 import org.junit.Assert.assertEquals
@@ -32,15 +33,15 @@ class FloatingOverlayTest {
     @Test
     fun `verify top 4 favorite presets selection logic`() {
         // Empty favorites fallback
-        val emptyFavs = getTopFavoritePresets(emptySet())
+        val emptyFavs = getTopFavoritePresets(emptyList())
         assertEquals(listOf("Flat", "Bass Booster", "Rock", "Pop"), emptyFavs)
 
-        // Custom favorites prioritized
-        val customFavs = getTopFavoritePresets(setOf("Rock", "CustomBass"))
+        // Custom favorites prioritized (slot order preserved)
+        val customFavs = getTopFavoritePresets(listOf("Rock", "CustomBass"))
         assertEquals(listOf("Rock", "CustomBass", "Flat", "Bass Booster"), customFavs)
 
         // Truncate to max 4 favorites
-        val manyFavs = getTopFavoritePresets(setOf("Preset1", "Preset2", "Preset3", "Preset4", "Preset5"))
+        val manyFavs = getTopFavoritePresets(listOf("Preset1", "Preset2", "Preset3", "Preset4", "Preset5"))
         assertEquals(4, manyFavs.size)
         assertEquals(listOf("Preset1", "Preset2", "Preset3", "Preset4"), manyFavs)
     }
@@ -66,7 +67,7 @@ class FloatingOverlayTest {
                 isBoosted = true,
                 boostProgress = 40,
                 currentPreset = "Rock",
-                favoritePresets = setOf("Rock", "Bass Booster"),
+                favoritePresets = listOf("Rock", "Bass Booster"),
                 onToggleBoost = {},
                 onBoostChange = {},
                 onPresetSelect = {},
@@ -77,10 +78,14 @@ class FloatingOverlayTest {
         }
         composeTestRule.onNodeWithText("Booster Overlay").assertIsDisplayed()
         composeTestRule.onNodeWithText("Master Power State").assertIsDisplayed()
+        // Q2-A: ⏻ power button (bold when boosted)
+        composeTestRule.onNodeWithContentDescription("Disable booster").assertIsDisplayed()
         composeTestRule.onNodeWithText("Boost Amplification").assertIsDisplayed()
         composeTestRule.onNodeWithText("+40%").assertIsDisplayed()
         composeTestRule.onNodeWithText("FAVORITE PRESETS").assertIsDisplayed()
         composeTestRule.onNodeWithText("RK").assertIsDisplayed()
+        // Q3-A: slot numbers on overlay favorite boxes
+        composeTestRule.onNodeWithText("#1").assertIsDisplayed()
     }
 
     @Test

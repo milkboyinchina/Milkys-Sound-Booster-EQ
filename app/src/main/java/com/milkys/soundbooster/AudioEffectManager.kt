@@ -40,9 +40,15 @@ object AudioEffectManager {
     private const val KEY_CUSTOM_PRESETS = "custom_presets_json"
     private const val KEY_DEFAULT_PRESET = "default_preset_name"
     private const val KEY_FAVORITE_PRESETS = "favorite_presets_set"
+    private const val KEY_FAVORITE_PRESETS_ORDERED = "favorite_presets_ordered"
     private const val KEY_AD_CONSENT_STATUS = "ad_consent_status"
     private const val KEY_PERSONALIZED_ADS_CONSENT = "personalized_ads_consent"
     private const val KEY_EQ_ENABLED = "eq_enabled"
+
+    /** Max favorite slots (#1-#4) shown in Preset Manager + overlay. */
+    const val MAX_FAVORITES = 4
+    /** Unit-separator for ordered favorites persistence (preset names may contain commas). */
+    private const val FAV_SEPARATOR = "\u001F"
 
     val BUILT_IN_PRESETS = mapOf(
         "Flat" to intArrayOf(0, 0, 0, 0, 0),
@@ -104,8 +110,8 @@ object AudioEffectManager {
     private val _customPresets = MutableStateFlow<Map<String, IntArray>>(emptyMap())
     val customPresets: StateFlow<Map<String, IntArray>> = _customPresets
 
-    private val _favoritePresets = MutableStateFlow<Set<String>>(emptySet())
-    val favoritePresets: StateFlow<Set<String>> = _favoritePresets
+    private val _favoritePresets = MutableStateFlow<List<String>>(emptyList())
+    val favoritePresets: StateFlow<List<String>> = _favoritePresets
 
     // 5 standard equalizer bands: 60Hz, 230Hz, 910Hz, 4kHz, 14kHz
     private val _eqBands = MutableStateFlow(intArrayOf(0, 0, 0, 0, 0)) // levels in dB (-15 to +15)
@@ -155,6 +161,7 @@ object AudioEffectManager {
         val appLanguage = prefs.getString(KEY_APP_LANGUAGE, "system") ?: "system"
         val defaultPreset = prefs.getString(KEY_DEFAULT_PRESET, "Flat") ?: "Flat"
         val customPresetsJson = prefs.getString(KEY_CUSTOM_PRESETS, "") ?: ""
+        val favoritePresetsOrdered = prefs.getString(KEY_FAVORITE_PRESETS_ORDERED, null)
         val favoritePresetsSet = prefs.getStringSet(KEY_FAVORITE_PRESETS, emptySet()) ?: emptySet()
         val eqEnabled = prefs.getBoolean(KEY_EQ_ENABLED, false)
 
@@ -195,7 +202,15 @@ object AudioEffectManager {
             }
         }
         _customPresets.value = parsedCustom
-        _favoritePresets.value = favoritePresetsSet
+        // Ordered favorite slots #1-4: ordered string is source of truth; legacy
+        // unordered set migrates sorted-alphabetically into slots (Q3-A).
+        _favoritePresets.value = favoritePresetsOrdered
+            ?.split(FAV_SEPARATOR)
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?.distinct()
+            ?.take(MAX_FAVORITES)
+            ?: favoritePresetsSet.sorted().take(MAX_FAVORITES)
 
         val activePreset = if (preset.isNotEmpty()) preset else defaultPreset
         _eqPreset.value = activePreset
@@ -572,16 +587,18 @@ object AudioEffectManager {
     }
 
     fun toggleFavorite(name: String): Boolean {
-        val current = _favoritePresets.value.toMutableSet()
+        val current = _favoritePresets.value.toMutableList()
         if (current.contains(name)) {
             current.remove(name)
             _favoritePresets.value = current
             saveFavoritesToPrefs()
             return true
         } else {
-            if (current.size >= 4) {
+            if (current.size >= MAX_FAVORITES) {
                 return false // Reached max 4 favorites limit
             }
+            // Append = fills lowest empty slot (#size+1); list stays compact so
+            // untoggle + retoggle always lands on the first free slot #1-4.
             current.add(name)
             _favoritePresets.value = current
             saveFavoritesToPrefs()
@@ -589,8 +606,17 @@ object AudioEffectManager {
         }
     }
 
+    /** 1-based favorite slot (#1-#4) for display, 0 when not a favorite. */
+    fun favoriteSlot(name: String): Int {
+        val idx = _favoritePresets.value.indexOf(name)
+        return if (idx >= 0) idx + 1 else 0
+    }
+
     private fun saveFavoritesToPrefs() {
-        persistStringSet(KEY_FAVORITE_PRESETS, _favoritePresets.value, PreferencesRepository.KEY_FAVORITE_PRESETS)
+        val ordered = _favoritePresets.value.joinToString(FAV_SEPARATOR)
+        persistString(KEY_FAVORITE_PRESETS_ORDERED, ordered, PreferencesRepository.KEY_FAVORITE_PRESETS_ORDERED)
+        // Legacy unordered set kept for rollback compat.
+        persistStringSet(KEY_FAVORITE_PRESETS, _favoritePresets.value.toSet(), PreferencesRepository.KEY_FAVORITE_PRESETS)
     }
 
     fun getMatchedPresetName(bands: IntArray = _eqBands.value): String? {
@@ -659,7 +685,7 @@ object AudioEffectManager {
     fun deleteCustomPresets(names: Set<String>) {
         val newMap = _customPresets.value.toMutableMap()
         var modified = false
-        val favs = _favoritePresets.value.toMutableSet()
+        val favs = _favoritePresets.value.toMutableList()
         var favsModified = false
 
         for (name in names) {

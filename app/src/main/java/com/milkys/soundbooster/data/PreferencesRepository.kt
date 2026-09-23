@@ -44,6 +44,7 @@ object PreferencesRepository {
     val KEY_CUSTOM_PRESETS = stringPreferencesKey("custom_presets_json")
     val KEY_DEFAULT_PRESET = stringPreferencesKey("default_preset_name")
     val KEY_FAVORITE_PRESETS = stringSetPreferencesKey("favorite_presets_set")
+    val KEY_FAVORITE_PRESETS_ORDERED = stringPreferencesKey("favorite_presets_ordered")
     val KEY_AD_CONSENT_STATUS = stringPreferencesKey("ad_consent_status")
     val KEY_PERSONALIZED_ADS_CONSENT = booleanPreferencesKey("personalized_ads_consent")
     val KEY_EQ_ENABLED = booleanPreferencesKey("eq_enabled")
@@ -149,6 +150,7 @@ object PreferencesRepository {
                             "custom_presets_json" -> ds[KEY_CUSTOM_PRESETS] = v
                             "default_preset_name" -> ds[KEY_DEFAULT_PRESET] = v
                             "ad_consent_status" -> ds[KEY_AD_CONSENT_STATUS] = v
+                            "favorite_presets_ordered" -> ds[KEY_FAVORITE_PRESETS_ORDERED] = v
                         }
                         is Set<*> -> if (k == "favorite_presets_set") {
                             @Suppress("UNCHECKED_CAST")

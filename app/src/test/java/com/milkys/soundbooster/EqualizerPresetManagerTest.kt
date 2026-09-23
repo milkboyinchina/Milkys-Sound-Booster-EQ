@@ -121,6 +121,29 @@ class EqualizerPresetManagerTest {
     }
 
     @Test
+    fun testFavoriteSlotsOrderedFillLowest() {
+        // Toggle order defines slots #1-#4
+        assertTrue(AudioEffectManager.toggleFavorite("Rock"))
+        assertTrue(AudioEffectManager.toggleFavorite("Pop"))
+        assertTrue(AudioEffectManager.toggleFavorite("Jazz"))
+        assertEquals(listOf("Rock", "Pop", "Jazz"), AudioEffectManager.favoritePresets.value)
+        assertEquals(1, AudioEffectManager.favoriteSlot("Rock"))
+        assertEquals(2, AudioEffectManager.favoriteSlot("Pop"))
+        assertEquals(3, AudioEffectManager.favoriteSlot("Jazz"))
+        assertEquals(0, AudioEffectManager.favoriteSlot("Flat"))
+
+        // Untoggling compacts the list; retoggle fills the lowest empty slot
+        assertTrue(AudioEffectManager.toggleFavorite("Rock"))
+        assertEquals(listOf("Pop", "Jazz"), AudioEffectManager.favoritePresets.value)
+        assertEquals(1, AudioEffectManager.favoriteSlot("Pop"))
+        assertEquals(2, AudioEffectManager.favoriteSlot("Jazz"))
+
+        assertTrue(AudioEffectManager.toggleFavorite("Flat"))
+        assertEquals(listOf("Pop", "Jazz", "Flat"), AudioEffectManager.favoritePresets.value)
+        assertEquals(3, AudioEffectManager.favoriteSlot("Flat"))
+    }
+
+    @Test
     fun testExportAndImportPreset() {
         val bands = intArrayOf(4, 3, 2, 1, 0)
         AudioEffectManager.saveCustomPresetWithResult("MyPreset", bands)
