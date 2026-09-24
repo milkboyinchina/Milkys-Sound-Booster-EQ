@@ -66,6 +66,15 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_app_id" />
+
+        <!-- DEBUG-only command bridge (single action, exported=false, gated by BuildConfig.DEBUG in code) -->
+        <receiver
+            android:name=".ui.DebugCommandReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.milkys.soundbooster.DEBUG" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
