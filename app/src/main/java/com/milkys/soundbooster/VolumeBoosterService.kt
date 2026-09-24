@@ -20,6 +20,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,6 +54,7 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.milkys.soundbooster.ui.DebugLogBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -94,7 +96,8 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
         super.onCreate()
         savedStateRegistryController.performRestore(null)
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
-        
+
+        DebugLogBridge.v(DebugLogBridge.TAG_SVC, "onCreate action routing to init()")
         AudioEffectManager.init(this)
         createNotificationChannel()
         
@@ -398,7 +401,20 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                             boostProgress = boostProgress,
                             currentPreset = currentPreset,
                             favoritePresets = favoritePresets,
-                            onToggleBoost = { AudioEffectManager.setBoostEnabled(it) },
+                            onToggleBoost = {
+                                AudioEffectManager.setBoostEnabled(it)
+                                DebugLogBridge.v(DebugLogBridge.TAG_SVC, "overlay onToggleBoost $it")
+                                // Q2-A wiring: match dashboard POWER service lifecycle
+                                try {
+                                    if (it) {
+                                        val i = Intent(this@VolumeBoosterService, VolumeBoosterService::class.java).apply { action = ACTION_START }
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) startForegroundService(i) else startService(i)
+                                    } else if (!AudioEffectManager.isFloatingEnabled.value) {
+                                        val i = Intent(this@VolumeBoosterService, VolumeBoosterService::class.java).apply { action = ACTION_STOP }
+                                        startService(i)
+                                    }
+                                } catch (e: Throwable) { DebugLogBridge.v(DebugLogBridge.TAG_SVC, "overlay service toggle failed: ${e.message}") }
+                            },
                             onBoostChange = { AudioEffectManager.setBoostProgress(it) },
                             onPresetSelect = { AudioEffectManager.applyPreset(it) },
                             onOpenApp = {
@@ -506,18 +522,13 @@ fun FloatingBubble(
             .scale(modifierScale)
             .defaultMinSize(minWidth = 56.dp, minHeight = 56.dp)
             .size(60.dp)
+            .clickable { onClick() }
             .pointerInput(Unit) {
                 var totalDragDistance = 0f
                 detectDragGestures(
                     onDragStart = { totalDragDistance = 0f },
-                    onDragEnd = {
-                        if (totalDragDistance < 15f) {
-                            onClick()
-                        } else {
-                            onDragEnd()
-                        }
-                    },
-                    onDragCancel = { onDragEnd() },
+                    onDragEnd = { if (totalDragDistance >= 15f) onDragEnd() },
+                    onDragCancel = { if (totalDragDistance >= 15f) onDragEnd() },
                     onDrag = { change, dragAmount ->
                         change.consume()
                         totalDragDistance += kotlin.math.hypot(dragAmount.x, dragAmount.y)
@@ -682,7 +693,10 @@ fun FloatingDashboard(
                     fontWeight = FontWeight.SemiBold
                 )
                 IconButton(
-                    onClick = { onToggleBoost(!isBoosted) },
+                    onClick = {
+                        DebugLogBridge.v(DebugLogBridge.TAG_SVC, "overlay power tap isBoosted=$isBoosted -> ${!isBoosted}")
+                        onToggleBoost(!isBoosted)
+                    },
                     modifier = Modifier
                         .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                         .size(48.dp)

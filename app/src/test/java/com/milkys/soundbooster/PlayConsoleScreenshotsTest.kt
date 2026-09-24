@@ -28,6 +28,7 @@ class PlayConsoleScreenshotsTest {
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        AudioEffectManager.resetInitForTest()
         AudioEffectManager.init(context)
     }
 

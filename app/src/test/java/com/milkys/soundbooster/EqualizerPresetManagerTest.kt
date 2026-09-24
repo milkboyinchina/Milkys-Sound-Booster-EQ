@@ -21,6 +21,7 @@ class EqualizerPresetManagerTest {
         // Clear shared preferences before each test
         val prefs = context.getSharedPreferences("volume_booster_prefs", Context.MODE_PRIVATE)
         prefs.edit().clear().commit()
+        AudioEffectManager.resetInitForTest()
         AudioEffectManager.init(context)
     }
 
