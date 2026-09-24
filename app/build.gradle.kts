@@ -90,6 +90,8 @@ android {
     buildConfigField("String", "APP_LOGO_XHDPI_PATH", "\"$envAppLogoXhdpi\"")
     buildConfigField("String", "APP_LOGO_XXHDPI_PATH", "\"$envAppLogoXxhdpi\"")
     buildConfigField("String", "APP_LOGO_XXXHDPI_PATH", "\"$envAppLogoXxxhdpi\"")
+    val gitSha = try { providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().trim() } catch (_: Throwable) { "dev" }
+    buildConfigField("String", "GIT_SHA", "\"$gitSha\"")
 
     buildConfigField("String", "APP_ICON_DIR", "\"$envAppIconDir\"")
     buildConfigField("String", "APP_ICON_FOREGROUND_PATH", "\"$envAppIconForegroundPath\"")

@@ -25,7 +25,8 @@ class GreetingScreenshotTest {
   @Before
   fun setUp() {
     val context = ApplicationProvider.getApplicationContext<Context>()
-    AudioEffectManager.init(context)
+    AudioEffectManager.resetInitForTest()
+        AudioEffectManager.init(context)
   }
 
   @Test

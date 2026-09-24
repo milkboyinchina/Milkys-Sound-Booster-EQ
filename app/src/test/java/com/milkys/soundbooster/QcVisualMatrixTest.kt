@@ -32,6 +32,7 @@ class QcVisualMatrixTest {
   @Before
   fun setUp() {
     val ctx = ApplicationProvider.getApplicationContext<Context>()
+    AudioEffectManager.resetInitForTest()
     AudioEffectManager.init(ctx)
   }
 

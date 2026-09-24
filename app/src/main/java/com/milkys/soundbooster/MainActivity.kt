@@ -70,6 +70,7 @@ import com.milkys.soundbooster.ui.theme.AppColors
 import com.milkys.soundbooster.ui.theme.MyApplicationTheme
 import com.milkys.soundbooster.ui.components.HearingWarningCard
 import com.milkys.soundbooster.ui.components.PresetManagerCard
+import com.milkys.soundbooster.ui.DebugLogBridge
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -230,6 +231,10 @@ fun DashboardScreen(
 
     // Checking overlay permission dynamically when app returns from background
     var hasOverlayPermission by remember { mutableStateOf(true) }
+    // DEBUG bridge: trace every isEnabled emission reaching composition (bounce divergence check)
+    LaunchedEffect(isEnabled) {
+        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "composition isEnabled=$isEnabled")
+    }
     LaunchedEffect(isFloatingEnabled) {
         hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Settings.canDrawOverlays(context)
@@ -444,12 +449,14 @@ fun DashboardScreen(
                                 onSoundTest = { playSoundTest3Sec() },
                                 onTogglePower = {
                                     val now = System.currentTimeMillis()
+                                    DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onTogglePower click isEnabled=$isEnabled delta=${now - lastPowerToggleTime}ms")
                                     if (now - lastPowerToggleTime < 500) {
                                         android.util.Log.w("DashboardScreen", "Power toggle debounced ${now - lastPowerToggleTime}ms")
                                     } else {
                                         lastPowerToggleTime = now
                                         val nextState = !isEnabled
                                         AudioEffectManager.setBoostEnabled(nextState)
+                                        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onTogglePower nextState=$nextState flow=${AudioEffectManager.isBoostEnabled.value}")
                                         if (nextState) {
                                             try { onStartService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStartService failed: ${e.message}"); AudioEffectManager.setBoostEnabled(false) }
                                         } else {
@@ -489,7 +496,16 @@ fun DashboardScreen(
                         item {
                             VisualEqualizerCard(
                                 isEnabled = isEqEnabled,
-                                onToggleEq = { AudioEffectManager.setEqEnabled(it) },
+                                boosterOn = isEnabled,
+                                onToggleEq = {
+                                    // Q1-A validation: EQ needs POWER ON — toast + block, never auto-start.
+                                    if (it && !isEnabled) {
+                                        Toast.makeText(context, context.getString(R.string.eq_requires_power), Toast.LENGTH_SHORT).show()
+                                        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "EQ ON blocked: booster OFF")
+                                    } else {
+                                        AudioEffectManager.setEqEnabled(it)
+                                    }
+                                },
                                 eqBands = eqBands,
                                 customPresets = customPresets,
                                 cardColor = cardColor,
@@ -615,12 +631,14 @@ fun DashboardScreen(
                                 onSoundTest = { playSoundTest3Sec() },
                                 onTogglePower = {
                                     val now = System.currentTimeMillis()
+                                    DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onTogglePower click isEnabled=$isEnabled delta=${now - lastPowerToggleTime}ms")
                                     if (now - lastPowerToggleTime < 500) {
                                         android.util.Log.w("DashboardScreen", "Power toggle debounced ${now - lastPowerToggleTime}ms")
                                     } else {
                                         lastPowerToggleTime = now
                                         val nextState = !isEnabled
                                         AudioEffectManager.setBoostEnabled(nextState)
+                                        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onTogglePower nextState=$nextState flow=${AudioEffectManager.isBoostEnabled.value}")
                                         if (nextState) {
                                             try { onStartService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStartService failed: ${e.message}"); AudioEffectManager.setBoostEnabled(false) }
                                         } else {
@@ -663,7 +681,16 @@ fun DashboardScreen(
 
                             VisualEqualizerCard(
                                 isEnabled = isEqEnabled,
-                                onToggleEq = { AudioEffectManager.setEqEnabled(it) },
+                                boosterOn = isEnabled,
+                                onToggleEq = {
+                                    // Q1-A validation: EQ needs POWER ON — toast + block, never auto-start.
+                                    if (it && !isEnabled) {
+                                        Toast.makeText(context, context.getString(R.string.eq_requires_power), Toast.LENGTH_SHORT).show()
+                                        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "EQ ON blocked: booster OFF")
+                                    } else {
+                                        AudioEffectManager.setEqEnabled(it)
+                                    }
+                                },
                                 eqBands = eqBands,
                                 customPresets = customPresets,
                                 cardColor = cardColor,
@@ -773,12 +800,14 @@ fun DashboardScreen(
                                 onSoundTest = { playSoundTest3Sec() },
                                 onTogglePower = {
                                     val now = System.currentTimeMillis()
+                                    DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onTogglePower click isEnabled=$isEnabled delta=${now - lastPowerToggleTime}ms")
                                     if (now - lastPowerToggleTime < 500) {
                                         android.util.Log.w("DashboardScreen", "Power toggle debounced ${now - lastPowerToggleTime}ms")
                                     } else {
                                         lastPowerToggleTime = now
                                         val nextState = !isEnabled
                                         AudioEffectManager.setBoostEnabled(nextState)
+                                        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onTogglePower nextState=$nextState flow=${AudioEffectManager.isBoostEnabled.value}")
                                         if (nextState) {
                                             try { onStartService() } catch (e: Exception) { android.util.Log.w("DashboardScreen", "onStartService failed: ${e.message}"); AudioEffectManager.setBoostEnabled(false) }
                                         } else {
@@ -807,7 +836,16 @@ fun DashboardScreen(
                         ) {
                             VisualEqualizerCard(
                                 isEnabled = isEqEnabled,
-                                onToggleEq = { AudioEffectManager.setEqEnabled(it) },
+                                boosterOn = isEnabled,
+                                onToggleEq = {
+                                    // Q1-A validation: EQ needs POWER ON — toast + block, never auto-start.
+                                    if (it && !isEnabled) {
+                                        Toast.makeText(context, context.getString(R.string.eq_requires_power), Toast.LENGTH_SHORT).show()
+                                        DebugLogBridge.v(DebugLogBridge.TAG_DASH, "EQ ON blocked: booster OFF")
+                                    } else {
+                                        AudioEffectManager.setEqEnabled(it)
+                                    }
+                                },
                                 eqBands = eqBands,
                                 customPresets = customPresets,
                                 cardColor = cardColor,
@@ -2916,7 +2954,7 @@ fun AppHeaderRow(
             )
             Column {
                 Text(
-                    text = "MILKYS APP",
+                    text = if (BuildConfig.DEBUG) "MILKYS APP • DEBUG ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})" else "MILKYS APP",
                     color = textPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -2925,7 +2963,7 @@ fun AppHeaderRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Audio Booster & EQ",
+                    text = "Audio Booster & EQ" + if (BuildConfig.DEBUG) " • " + try { BuildConfig.GIT_SHA.take(7) } catch (_: Throwable) { "dev" } else "",
                     color = textSecondary,
                     fontSize = 11.sp,
                     maxLines = 1,
@@ -3218,14 +3256,14 @@ fun QuickBoostPresetsCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val presets = listOf(
-                    "MUTE" to 0,
-                    "30%" to 30,
-                    "60%" to 60,
-                    "100%" to 100,
+                    "+0%" to 0,
+                    "+30%" to 30,
+                    "+60%" to 60,
+                    "+100%" to 100,
                     "MAX" to 100
                 )
                 presets.forEach { (label, value) ->
-                    val isSelected = isEnabled && boostProgress == value && (label != "MUTE" || boostProgress == 0)
+                    val isSelected = isEnabled && boostProgress == value && (label != "+0%" || boostProgress == 0)
                     FilterChip(
                         selected = isSelected,
                         onClick = { onSelectPreset(value) },
@@ -3265,7 +3303,8 @@ fun VisualEqualizerCard(
     textSecondary: Color,
     primaryAccent: Color,
     onBandChange: (Int, Int) -> Unit,
-    onToggleEq: (Boolean) -> Unit = {}
+    onToggleEq: (Boolean) -> Unit = {},
+    boosterOn: Boolean = true
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -3276,6 +3315,7 @@ fun VisualEqualizerCard(
         EqualizerComponent(
             isEnabled = isEnabled,
             onToggleEq = onToggleEq,
+            boosterOn = boosterOn,
             eqBands = eqBands,
             customPresets = customPresets,
             cardColor = cardColor,
@@ -3299,7 +3339,8 @@ fun EqualizerComponent(
     textSecondary: Color,
     primaryAccent: Color,
     onBandChange: (Int, Int) -> Unit,
-    onToggleEq: (Boolean) -> Unit = {}
+    onToggleEq: (Boolean) -> Unit = {},
+    boosterOn: Boolean = true
 ) {
     // Dynamic title text determination
     val matchedPresetName = remember(eqBands, customPresets) {
@@ -3363,9 +3404,12 @@ fun EqualizerComponent(
                 }
             }
         }
-        // EQ On/Off Toggle
+        // EQ On/Off Toggle (Q1-A: disabled + toast when booster OFF — Switch alone
+        // swallows taps when disabled, so the Row carries the toast tap target)
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(enabled = !boosterOn) { onToggleEq(true) },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -3373,6 +3417,7 @@ fun EqualizerComponent(
             androidx.compose.material3.Switch(
                 checked = isEnabled,
                 onCheckedChange = onToggleEq,
+                enabled = boosterOn,
                 modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
                 colors = androidx.compose.material3.SwitchDefaults.colors(checkedThumbColor = AppColors.PrimaryAccentDark, checkedTrackColor = AppColors.DeepPurple, uncheckedThumbColor = AppColors.DarkTextSecondary, uncheckedTrackColor = AppColors.BorderDark)
             )

@@ -308,3 +308,12 @@ For deeper feature specifications, review:
 * 📁 `howto/file_function_mapping.md`: Mapping of files to application capabilities.
 * 📋 `qc_plan.md`: QA & QC master plan (qc/ canon, device matrix, gates, changelogs).
 * 📝 `CHANGELOG.md` + `qc/changelogs/`: Release notes per version/tag.
+
+---
+
+## 🔒 8. Git History Rule — Always Commit
+
+- **Every verified change batch is committed.** After a task batch passes its gates (`testDebugUnitTest`, `lintDebug`, `verifyRoborazziDebug` and device proof where applicable), commit before starting the next batch. Do not leave verified work uncommitted.
+- **Local-only.** Commit to the local branch history; push only on explicit user `push` request (never auto-push).
+- **Message format:** Conventional Commits (`fix:`, `feat:`, `docs:`, `chore:`, `test:`) with a short scope (e.g. `fix(crash):`, `feat(eq):`, `docs(agents):`). Keep the title ≤72 chars; body may list verification (e.g. `Tests 37/37, lint 0`).
+- **Why:** The user wants full history preserved across sessions; commits are the history.

@@ -67,6 +67,7 @@
     <string name="content_desc_set_default_preset" translatable="false">Set current preset as default</string>
     <string name="content_desc_export_preset" translatable="false">Export selected preset to JSON</string>
     <string name="content_desc_delete_preset" translatable="false">Delete custom preset</string>
+    <string name="eq_requires_power" translatable="false">Turn POWER ON to enable EQ</string>
 
     <!-- Preset Manager & Equalizer Feature -->
     <string name="preset_manager_title" translatable="false">Preset Manager</string>

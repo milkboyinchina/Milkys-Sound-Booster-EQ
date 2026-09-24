@@ -96,10 +96,22 @@ run_gradle_build() {
     if ${GRADLE_CMD} ${BUILD_TASK} 2>&1 | tee -a "${LOG_FILE}"; then
         echo "    [+] Gradle build for [${target_name}] succeeded!" | tee -a "${LOG_FILE}"
         mkdir -p "${BUILD_OUTPUT_DIR}/${target_name}"
+        # Debug APKs get a short git SHA suffix (last 4 alphanumerals) so
+        # files like milkys-debugid all look the same are distinguishable.
+        SHORT_SHA4=""
+        if echo "${BUILD_TASK}" | grep -qi "Debug"; then
+            GIT_SHA_FULL=$(git rev-parse --short=7 HEAD 2>/dev/null || echo "dev")
+            SHORT_SHA4=$(echo "$GIT_SHA_FULL" | tr -cd 'a-zA-Z0-9' | tail -c 4)
+            [ -z "$SHORT_SHA4" ] && SHORT_SHA4="dev"
+        fi
         if [ -d "app/build/outputs/apk/debug" ]; then
             cp app/build/outputs/apk/debug/*.apk "${BUILD_OUTPUT_DIR}/${target_name}/" 2>/dev/null || true
             cp app/build/outputs/apk/debug/*.apk "${BUILD_OUTPUT_DIR}/" 2>/dev/null || true
             cp app/build/outputs/apk/debug/app-debug.apk "${BUILD_OUTPUT_DIR}/app-${target_name}-debug.apk" 2>/dev/null || true
+            if [ -n "$SHORT_SHA4" ]; then
+                cp app/build/outputs/apk/debug/app-debug.apk "${BUILD_OUTPUT_DIR}/app-${target_name}-debug-${SHORT_SHA4}.apk" 2>/dev/null || true
+                echo "    [+] Debug SHA suffix: ${SHORT_SHA4} -> app-${target_name}-debug-${SHORT_SHA4}.apk" | tee -a "${LOG_FILE}"
+            fi
         elif [ -d "app/build/outputs/apk" ]; then
             cp -r app/build/outputs/apk/* "${BUILD_OUTPUT_DIR}/${target_name}/" 2>/dev/null || true
             find app/build/outputs/apk -name "*.apk" -exec cp {} "${BUILD_OUTPUT_DIR}/" \; 2>/dev/null || true

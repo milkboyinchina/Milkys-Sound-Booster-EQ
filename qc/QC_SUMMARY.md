@@ -19,6 +19,10 @@
 
 ---
 
+## Run 2026-09-24 — POWER bounce culprit + fix (Redmi 25040RP0AG, r4 debug)
+
+Culprit: `release()` nulled persist context → OFF→ON write silently dropped → service `onCreate` `init()` re-read stale disk `false` and clobbered live flow (bridge trace `qc/traces/log-bounce-fix-verify.log:43.394`). Fix: `persistContext` never cleared + first-init-only seeding (`AudioEffectManager.kt`) + `BoosterToggleBounceTest` (3 cases). Verify: 34/34 tests, lint 0, Roborazzi PASS, tap3 sticks `+20%` (`25040RP0AG-r4-bounce-fixed.png`), cold restart clean. Uncommitted — pending review.
+
 ## Run 2026-09-06 — Banner fix + device_prep (Redmi hm5xr8gueiz5x4c6 COMPACT 491dp)
 
 ### Test Runs (what was executed)

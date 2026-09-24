@@ -11,6 +11,7 @@ import android.os.Build
 import android.provider.Settings
 import android.media.AudioAttributes
 import android.util.Log
+import com.milkys.soundbooster.ui.DebugLogBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -60,6 +61,18 @@ object AudioEffectManager {
     )
 
     private var context: Context? = null
+    // Application context used ONLY for persistence — never cleared by release()
+    // (release() frees audio handles; nulling the persist context silently dropped
+    // writes and let the next service onCreate init() clobber live flows: POWER bounce).
+    private var persistContext: Context? = null
+    // First init seeds flows from disk; re-init (service onCreate) must never
+    // overwrite live in-memory state with possibly-stale prefs.
+    @Volatile private var initialized = false
+
+    @androidx.annotation.VisibleForTesting
+    fun resetInitForTest() {
+        initialized = false
+    }
     
     // State flows for UI observation
     private val _isBoostEnabled = MutableStateFlow(false)
@@ -139,12 +152,16 @@ object AudioEffectManager {
     private const val TAG = "AudioEffectManager"
 
     fun init(ctx: Context) {
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "init() called", Exception("init-trace"))
         val appContext = ctx.applicationContext
         context = appContext
-        
+        persistContext = appContext
+
         // Load preferences
         val prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val enabled = prefs.getBoolean(KEY_ENABLED, false)
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "init() read KEY_ENABLED=$enabled currentFlow=${_isBoostEnabled.value} firstInit=${!initialized}")
+        if (!initialized) {
         val boost = prefs.getInt(KEY_BOOST, 20) // Default 20% boost
         val preset = prefs.getString(KEY_PRESET, "Flat") ?: "Flat"
         val bandsStr = prefs.getString(KEY_BANDS, "0,0,0,0,0") ?: "0,0,0,0,0"
@@ -222,9 +239,13 @@ object AudioEffectManager {
             val presetBands = getPresetBands(activePreset) ?: intArrayOf(0, 0, 0, 0, 0)
             _eqBands.value = presetBands
         }
+        initialized = true
+        } // end first-init seeding — live flows are source of truth afterwards
 
-        // Initialize actual audio effects if enabled — ensure silence track before effects binding
-        if (enabled) {
+        // Initialize actual audio effects if enabled — ensure silence track before effects binding.
+        // Honor the live flow too: a service restart must not drop a just-enabled booster
+        // whose persist raced the shutdown.
+        if (enabled || _isBoostEnabled.value) {
             startSilencePlayback()
             // initEffects will run after track is initialized (called again from startSilencePlayback if needed)
             initEffects()
@@ -235,37 +256,38 @@ object AudioEffectManager {
         audioScope.launch { try { PreferencesRepository.migrateFromSharedPrefs(appContext) } catch (e: Exception) { Log.w(TAG, "DataStore migration failed: ${e.message}") } }
     }
 
-    private fun getPrefs() = context?.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private fun getPrefs() = persistContext?.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     // DataStore helpers — dual-write to SharedPreferences (sync compat) + DataStore (async, IO)
     private fun persistBoolean(key: String, value: Boolean, dsKey: androidx.datastore.preferences.core.Preferences.Key<Boolean>) {
         getPrefs()?.edit()?.putBoolean(key, value)?.apply()
-        val ctx = context ?: return
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "persistBoolean $key=$value readback=${getPrefs()?.getBoolean(key, !value)}")
+        val ctx = persistContext ?: return
         audioScope.launch { try { PreferencesRepository.putBoolean(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putBoolean failed: ${e.message}") } }
     }
     private fun persistInt(key: String, value: Int, dsKey: androidx.datastore.preferences.core.Preferences.Key<Int>) {
         getPrefs()?.edit()?.putInt(key, value)?.apply()
-        val ctx = context ?: return
+        val ctx = persistContext ?: return
         audioScope.launch { try { PreferencesRepository.putInt(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putInt failed: ${e.message}") } }
     }
     private fun persistLong(key: String, value: Long, dsKey: androidx.datastore.preferences.core.Preferences.Key<Long>) {
         getPrefs()?.edit()?.putLong(key, value)?.apply()
-        val ctx = context ?: return
+        val ctx = persistContext ?: return
         audioScope.launch { try { PreferencesRepository.putLong(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putLong failed: ${e.message}") } }
     }
     private fun persistString(key: String, value: String, dsKey: androidx.datastore.preferences.core.Preferences.Key<String>) {
         getPrefs()?.edit()?.putString(key, value)?.apply()
-        val ctx = context ?: return
+        val ctx = persistContext ?: return
         audioScope.launch { try { PreferencesRepository.putString(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putString failed: ${e.message}") } }
     }
     private fun persistStringSet(key: String, value: Set<String>, dsKey: androidx.datastore.preferences.core.Preferences.Key<Set<String>>) {
         getPrefs()?.edit()?.putStringSet(key, value)?.apply()
-        val ctx = context ?: return
+        val ctx = persistContext ?: return
         audioScope.launch { try { PreferencesRepository.putStringSet(ctx, dsKey, value) } catch (e: Exception) { Log.w(TAG, "DataStore putStringSet failed: ${e.message}") } }
     }
 
     fun checkBatterySaverState() {
-        val ctx = context ?: return
+        val ctx = persistContext ?: return
         val powerManager = ctx.getSystemService(Context.POWER_SERVICE) as? PowerManager ?: return
         _isBatterySaverOn.value = powerManager.isPowerSaveMode
         
@@ -356,6 +378,7 @@ object AudioEffectManager {
 
     @Synchronized
     fun setBoostEnabled(enabled: Boolean) {
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "setBoostEnabled($enabled) called, current=${_isBoostEnabled.value}", Exception("boost-trace"))
         if (enabled == _isBoostEnabled.value) {
             // Already in desired state, but ensure effects are in correct state (handle race on rapid toggle)
             if (enabled) {
@@ -413,6 +436,11 @@ object AudioEffectManager {
             }
             releaseEffects()
             stopSilencePlayback()
+            // Q1-A coupling: booster OFF always turns EQ OFF (EQ has no session alone).
+            if (_isEqEnabled.value) {
+                DebugLogBridge.v(DebugLogBridge.TAG_AEM, "booster OFF -> EQ OFF coupling")
+                setEqEnabled(false)
+            }
         }
     }
 
@@ -463,6 +491,12 @@ object AudioEffectManager {
     }
 
     fun setEqEnabled(enabled: Boolean) {
+        // Q1-A validation: EQ requires the booster session — enabling while the
+        // booster is OFF is rejected (flow stays false, UI toasts + greys the Switch).
+        if (enabled && !_isBoostEnabled.value) {
+            DebugLogBridge.v(DebugLogBridge.TAG_AEM, "setEqEnabled(true) rejected: booster OFF")
+            return
+        }
         _isEqEnabled.value = enabled
         persistBoolean(KEY_EQ_ENABLED, enabled, PreferencesRepository.KEY_EQ_ENABLED)
         if (enabled) {
@@ -535,6 +569,7 @@ object AudioEffectManager {
     }
 
     fun setBandLevel(bandIndex: Int, dBLevel: Int) {
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "setBandLevel band=$bandIndex dB=$dBLevel thread=${Thread.currentThread().name}")
         val bands = _eqBands.value.clone()
         if (bandIndex in bands.indices) {
             bands[bandIndex] = dBLevel
@@ -565,6 +600,7 @@ object AudioEffectManager {
 
     fun applyPreset(presetName: String) {
         val levels = getPresetBands(presetName) ?: return
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "applyPreset $presetName bands=${levels.joinToString()} eqNull=${equalizer == null} thread=${Thread.currentThread().name}")
         _eqPreset.value = presetName
         _eqBands.value = levels.clone()
         persistString(KEY_BANDS, levels.joinToString(","), PreferencesRepository.KEY_BANDS)
@@ -922,6 +958,8 @@ object AudioEffectManager {
             Log.w(TAG, "audioScope cancel failed: ${e.message}")
         }
         audioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        context = null
+        // NOTE: persistContext is intentionally NOT cleared — it is the application
+        // context (no leak) and persistence must survive audio release, otherwise the
+        // next service onCreate init() reads stale prefs and clobbers live flows.
     }
 }
