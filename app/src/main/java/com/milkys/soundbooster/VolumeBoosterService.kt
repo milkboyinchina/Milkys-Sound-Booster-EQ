@@ -646,22 +646,7 @@ fun FloatingDashboard(
                         )
                     }
 
-                    // Disable Floating Overlay ('>')
-                    IconButton(
-                        onClick = onDisableOverlay,
-                        modifier = Modifier
-                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
-                            .size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ChevronRight,
-                            contentDescription = "Disable Overlay (>)",
-                            tint = Color(0xFFCAC4D0),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    // Collapse Menu Action
+                    // Minimize (⇲) — collapses to bubble
                     IconButton(
                         onClick = onClose,
                         modifier = Modifier
@@ -669,10 +654,25 @@ fun FloatingDashboard(
                             .size(48.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Collapse menu",
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Minimize overlay (⇲)",
                             tint = Color(0xFFCAC4D0),
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    // Disable Floating Overlay (X) — turns off overlay entirely
+                    IconButton(
+                        onClick = onDisableOverlay,
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                            .size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Disable Overlay (X)",
+                            tint = Color(0xFFCAC4D0),
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -807,6 +807,47 @@ fun FloatingDashboard(
                         )
                     }
                 }
+            }
+
+            // EQ Enabled row (Q3-A overlay, mirrors dashboard EQ coupling)
+            val isEqEnabled by AudioEffectManager.isEqEnabled.collectAsStateWithLifecycle()
+            val eqPreset by AudioEffectManager.eqPreset.collectAsStateWithLifecycle()
+            val eqCtx = androidx.compose.ui.platform.LocalContext.current
+            val eqRowModifier = if (!isBoosted) Modifier.clickable {
+                android.widget.Toast.makeText(eqCtx, "Turn POWER ON to enable EQ", android.widget.Toast.LENGTH_SHORT).show()
+            } else Modifier
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(eqRowModifier),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "EQ Enabled",
+                        color = if (isEqEnabled) Color(0xFFE6E1E5) else Color(0xFFCAC4D0).copy(alpha = if (isBoosted) 1f else 0.5f),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "EQ : $eqPreset",
+                        color = Color(0xFFD0BCFF).copy(alpha = if (isBoosted) 0.9f else 0.4f),
+                        fontSize = 11.sp
+                    )
+                }
+                androidx.compose.material3.Switch(
+                    checked = isEqEnabled,
+                    onCheckedChange = {
+                        if (it && !isBoosted) {
+                            android.widget.Toast.makeText(eqCtx, "Turn POWER ON to enable EQ", android.widget.Toast.LENGTH_SHORT).show()
+                        } else {
+                            AudioEffectManager.setEqEnabled(it)
+                        }
+                    },
+                    enabled = isBoosted,
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                )
             }
 
             // 4 Favorite Presets Grid / Row
