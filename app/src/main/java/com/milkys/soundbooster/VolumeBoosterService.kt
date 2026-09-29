@@ -348,6 +348,7 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                 val boostProgress by AudioEffectManager.boostProgress.collectAsStateWithLifecycle()
                 val currentPreset by AudioEffectManager.eqPreset.collectAsStateWithLifecycle()
                 val favoritePresets by AudioEffectManager.favoritePresets.collectAsStateWithLifecycle()
+                val isDarkTheme by AudioEffectManager.isDarkTheme.collectAsStateWithLifecycle()
 
                 Box(
                     modifier = Modifier.padding(8.dp)
@@ -358,6 +359,7 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                             isBoosted = isBoosted,
                             boostProgress = boostProgress,
                             currentPreset = currentPreset,
+                            isDarkTheme = isDarkTheme,
                             onClick = { isExpanded = true },
                             onDrag = { dx, dy ->
                                 overlayParams?.let { p ->
@@ -400,6 +402,7 @@ class VolumeBoosterService : Service(), LifecycleOwner, ViewModelStoreOwner, Sav
                             isBoosted = isBoosted,
                             boostProgress = boostProgress,
                             currentPreset = currentPreset,
+                            isDarkTheme = isDarkTheme,
                             favoritePresets = favoritePresets,
                             onToggleBoost = {
                                 AudioEffectManager.setBoostEnabled(it)
@@ -499,23 +502,19 @@ fun FloatingBubble(
     isBoosted: Boolean,
     boostProgress: Int,
     currentPreset: String,
+    isDarkTheme: Boolean = true,
     onClick: () -> Unit,
     onDrag: (Float, Float) -> Unit,
     onDragEnd: () -> Unit = {}
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 0.95f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "scale"
-    )
-
-    val modifierScale = if (isBoosted && boostProgress > 20) scale else 1.0f
+    // Q3-A: fixed size — the pulse animation was distracting; boosted state is
+    // carried by background/ring/foreground colors only.
+    val modifierScale = 1.0f
     val presetAbbr = getPresetAbbreviation(currentPreset)
+    // Light-mode bubble: light surface, dark glyphs (dark build unchanged)
+    val bubBg = if (isBoosted) { if (isDarkTheme) Color(0xFF381E72) else Color(0xFF6750A4) } else { if (isDarkTheme) Color(0xFF2B2930) else Color(0xFFEDE8F4) }
+    val bubRing = if (isBoosted) { if (isDarkTheme) Color(0xFFD0BCFF) else Color.White } else { if (isDarkTheme) Color(0xFF49454F) else Color(0xFFE7E0EC) }
+    val bubFg = if (isBoosted) { if (isDarkTheme) Color(0xFFD0BCFF) else Color.White } else { if (isDarkTheme) Color(0xFFCAC4D0) else Color(0xFF49454F) }
 
     Box(
         modifier = Modifier
@@ -537,7 +536,7 @@ fun FloatingBubble(
                 )
             }
             .background(
-                color = if (isBoosted) Color(0xFF381E72) else Color(0xFF2B2930),
+                color = bubBg,
                 shape = CircleShape
             )
             .clip(CircleShape),
@@ -552,7 +551,7 @@ fun FloatingBubble(
             color = Color.Transparent,
             border = androidx.compose.foundation.BorderStroke(
                 width = 2.dp,
-                color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFF49454F)
+                color = bubRing
             )
         ) {
             Column(
@@ -563,12 +562,12 @@ fun FloatingBubble(
                 Icon(
                     imageVector = if (isBoosted) Icons.Default.VolumeUp else Icons.Default.VolumeMute,
                     contentDescription = "Floating sound booster menu",
-                    tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
+                    tint = bubFg,
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
                     text = if (isBoosted) "+$boostProgress%" else presetAbbr,
-                    color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
+                    color = bubFg,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -582,6 +581,7 @@ fun FloatingDashboard(
     isBoosted: Boolean,
     boostProgress: Int,
     currentPreset: String,
+    isDarkTheme: Boolean = true,
     favoritePresets: List<String> = emptyList(),
     onToggleBoost: (Boolean) -> Unit,
     onBoostChange: (Int) -> Unit,
@@ -591,6 +591,15 @@ fun FloatingDashboard(
     onDisableOverlay: () -> Unit
 ) {
     val topFavorites = remember(favoritePresets) { getTopFavoritePresets(favoritePresets) }
+    // Light-mode panel tokens (dark build unchanged)
+    val ovBg = if (isDarkTheme) Color(0xFF2B2930) else Color.White
+    val ovTextP = if (isDarkTheme) Color(0xFFE6E1E5) else Color(0xFF1D1B20)
+    val ovTextS = if (isDarkTheme) Color(0xFFCAC4D0) else Color(0xFF49454F)
+    val ovAccent = if (isDarkTheme) Color(0xFFD0BCFF) else Color(0xFF6750A4)
+    val ovSurface = if (isDarkTheme) Color(0xFF36343B) else Color(0xFFEDE8F4)
+    val ovTrack = if (isDarkTheme) Color(0xFF49454F) else Color(0xFFE7E0EC)
+    val ovSelFg = if (isDarkTheme) Color(0xFF381E72) else Color.White
+    val powIcon = if (isBoosted) { if (isDarkTheme) Color(0xFF381E72) else Color.White } else ovTextS.copy(alpha = 0.4f)
 
     Card(
         modifier = Modifier
@@ -598,7 +607,7 @@ fun FloatingDashboard(
             .wrapContentHeight(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF2B2930)
+            containerColor = ovBg
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
@@ -619,12 +628,12 @@ fun FloatingDashboard(
                     Icon(
                         imageVector = Icons.Default.FlashOn,
                         contentDescription = "Active Booster",
-                        tint = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0),
+                        tint = if (isBoosted) ovAccent else ovTextS,
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
                         text = "Booster Overlay",
-                        color = Color(0xFFE6E1E5),
+                        color = ovTextP,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -641,7 +650,7 @@ fun FloatingDashboard(
                         Icon(
                             imageVector = Icons.Default.Launch,
                             contentDescription = "Open main app",
-                            tint = Color(0xFFD0BCFF),
+                            tint = ovAccent,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -656,7 +665,7 @@ fun FloatingDashboard(
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = "Minimize overlay (⇲)",
-                            tint = Color(0xFFCAC4D0),
+                            tint = ovTextS,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -671,14 +680,14 @@ fun FloatingDashboard(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Disable Overlay (X)",
-                            tint = Color(0xFFCAC4D0),
+                            tint = ovTextS,
                             modifier = Modifier.size(20.dp)
                         )
                     }
                 }
             }
 
-            Divider(color = Color(0xFF49454F), thickness = 1.dp)
+            Divider(color = ovTrack, thickness = 1.dp)
 
             // Header / Power Toggle Button (Q2-A: ⏻ — bold when enabled, greyed when disabled)
             Row(
@@ -688,7 +697,7 @@ fun FloatingDashboard(
             ) {
                 Text(
                     text = "Master Power State",
-                    color = Color(0xFFCAC4D0),
+                    color = ovTextS,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -701,7 +710,7 @@ fun FloatingDashboard(
                         .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                         .size(48.dp)
                         .background(
-                            if (isBoosted) Color(0xFFD0BCFF) else Color(0xFF36343B),
+                            if (isBoosted) ovAccent else ovSurface,
                             CircleShape
                         )
                         .testTag("overlay_power_button")
@@ -709,7 +718,7 @@ fun FloatingDashboard(
                     Icon(
                         imageVector = Icons.Default.PowerSettingsNew,
                         contentDescription = if (isBoosted) "Disable booster" else "Enable booster",
-                        tint = if (isBoosted) Color(0xFF381E72) else Color(0xFFCAC4D0).copy(alpha = 0.4f),
+                        tint = powIcon,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -728,12 +737,12 @@ fun FloatingDashboard(
                 ) {
                     Text(
                         text = "Boost Amplification",
-                        color = if (isBoosted) Color(0xFFE6E1E5) else Color(0xFFCAC4D0).copy(alpha = 0.6f),
+                        color = if (isBoosted) ovTextP else ovTextS.copy(alpha = 0.6f),
                         fontSize = 12.sp
                     )
                     Text(
                         text = "+$boostProgress%",
-                        color = if (isBoosted) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.5f),
+                        color = if (isBoosted) ovAccent else ovTextS.copy(alpha = 0.5f),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -755,12 +764,12 @@ fun FloatingDashboard(
                         modifier = Modifier
                             .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                             .size(48.dp)
-                            .background(if (isBoosted) Color(0xFF49454F) else Color(0xFF36343B), CircleShape)
+                            .background(if (isBoosted) ovTrack else ovSurface, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Remove,
                             contentDescription = "Decrease boost",
-                            tint = if (isBoosted && boostProgress > 0) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.3f),
+                            tint = if (isBoosted && boostProgress > 0) ovAccent else ovTextS.copy(alpha = 0.3f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -780,9 +789,9 @@ fun FloatingDashboard(
                         enabled = isBoosted,
                         modifier = Modifier.weight(1f),
                         colors = SliderDefaults.colors(
-                            thumbColor = Color(0xFFD0BCFF),
-                            activeTrackColor = Color(0xFFD0BCFF),
-                            inactiveTrackColor = Color(0xFF49454F)
+                            thumbColor = ovAccent,
+                            activeTrackColor = ovAccent,
+                            inactiveTrackColor = ovTrack
                         )
                     )
 
@@ -797,12 +806,12 @@ fun FloatingDashboard(
                         modifier = Modifier
                             .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                             .size(48.dp)
-                            .background(if (isBoosted) Color(0xFF49454F) else Color(0xFF36343B), CircleShape)
+                            .background(if (isBoosted) ovTrack else ovSurface, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Increase boost",
-                            tint = if (isBoosted && boostProgress < 100) Color(0xFFD0BCFF) else Color(0xFFCAC4D0).copy(alpha = 0.3f),
+                            tint = if (isBoosted && boostProgress < 100) ovAccent else ovTextS.copy(alpha = 0.3f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -826,13 +835,13 @@ fun FloatingDashboard(
                 Column {
                     Text(
                         text = "EQ Enabled",
-                        color = if (isEqEnabled) Color(0xFFE6E1E5) else Color(0xFFCAC4D0).copy(alpha = if (isBoosted) 1f else 0.5f),
+                        color = if (isEqEnabled) ovTextP else ovTextS.copy(alpha = if (isBoosted) 1f else 0.5f),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = "EQ : $eqPreset",
-                        color = Color(0xFFD0BCFF).copy(alpha = if (isBoosted) 0.9f else 0.4f),
+                        color = ovAccent.copy(alpha = if (isBoosted) 0.9f else 0.4f),
                         fontSize = 11.sp
                     )
                 }
@@ -857,7 +866,7 @@ fun FloatingDashboard(
             ) {
                 Text(
                     text = "FAVORITE PRESETS",
-                    color = Color(0xFFCAC4D0),
+                    color = ovTextS,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -877,7 +886,7 @@ fun FloatingDashboard(
                                 .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(
-                                    color = if (isSelected) Color(0xFFD0BCFF) else Color(0xFF36343B)
+                                    color = if (isSelected) ovAccent else ovSurface
                                 )
                                 .clickable { onPresetSelect(presetName) }
                                 .padding(vertical = 8.dp),
@@ -889,19 +898,19 @@ fun FloatingDashboard(
                             ) {
                                 Text(
                                     text = "#$slotNumber",
-                                    color = if (isSelected) Color(0xFF381E72).copy(alpha = 0.7f) else Color(0xFFCAC4D0).copy(alpha = 0.6f),
+                                    color = if (isSelected) ovSelFg.copy(alpha = 0.7f) else ovTextS.copy(alpha = 0.6f),
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
                                     text = abbr,
-                                    color = if (isSelected) Color(0xFF381E72) else Color(0xFFE6E1E5),
+                                    color = if (isSelected) ovSelFg else ovTextP,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.ExtraBold
                                 )
                                 Text(
                                     text = presetName,
-                                    color = if (isSelected) Color(0xFF381E72) else Color(0xFFCAC4D0),
+                                    color = if (isSelected) ovSelFg else ovTextS,
                                     fontSize = 9.sp,
                                     maxLines = 1,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal

@@ -32,4 +32,14 @@ class ServiceStartLogicTest {
         assertFalse(shouldAutoStartService(boostEnabled = false, floatingEnabled = true, notificationsEnabled = false))
         assertFalse(shouldAutoStartService(boostEnabled = true, floatingEnabled = true, notificationsEnabled = false))
     }
+
+    @Test
+    fun `booster off keeps service alive while overlay enabled`() {
+        assertFalse(shouldStopServiceOnBoosterOff(floatingEnabled = true))
+    }
+
+    @Test
+    fun `booster off stops service when overlay disabled`() {
+        assertTrue(shouldStopServiceOnBoosterOff(floatingEnabled = false))
+    }
 }

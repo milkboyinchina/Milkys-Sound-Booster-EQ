@@ -81,7 +81,8 @@ fun PresetManagerCard(
     onExportPreset: (String) -> String,
     onExportAllPresets: () -> String,
     onImportPreset: (String) -> String?,
-    showText: Boolean = true
+    showText: Boolean = true,
+    isDarkTheme: Boolean = true
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -97,6 +98,10 @@ fun PresetManagerCard(
     var importJsonInput by remember { mutableStateOf("") }
 
     var isDeleteMode by remember { mutableStateOf(false) }
+    // Q4-A: explicit disabled fills so icons/text survive light mode when EQ is off
+    // (Material3 Button disabled defaults wash white-on-white otherwise).
+    val actionDisabledFill = if (isDarkTheme) AppColors.BorderDark else AppColors.BorderLight
+    val actionDisabledContent = if (isDarkTheme) AppColors.DarkTextSecondary else AppColors.LightTextSecondary
     var selectedForDelete by remember { mutableStateOf(setOf<String>()) }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -170,14 +175,14 @@ fun PresetManagerCard(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.WarningContainer),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (isDarkTheme) AppColors.WarningContainer else AppColors.PrimaryAccentLight, disabledContainerColor = actionDisabledFill, disabledContentColor = actionDisabledContent),
                     modifier = Modifier.weight(1f).defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_save_preset), tint = Color.White, modifier = Modifier.size(15.dp))
+                        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_save_preset), tint = if (isEnabled) Color.White else actionDisabledContent, modifier = Modifier.size(15.dp))
                         if (showText) {
                             Spacer(modifier = Modifier.width(3.dp))
-                            Text(stringResource(R.string.action_save), fontSize = 11.sp, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(stringResource(R.string.action_save), fontSize = 11.sp, color = if (isEnabled) Color.White else actionDisabledContent, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
@@ -191,14 +196,14 @@ fun PresetManagerCard(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.CardAlt2),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (isDarkTheme) AppColors.CardAlt2 else AppColors.LightSurfaceVariant, disabledContainerColor = actionDisabledFill, disabledContentColor = actionDisabledContent),
                     modifier = Modifier.weight(1f).defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.Download, contentDescription = stringResource(R.string.content_desc_import_preset), tint = primaryAccent, modifier = Modifier.size(15.dp))
+                        Icon(imageVector = Icons.Default.Download, contentDescription = stringResource(R.string.content_desc_import_preset), tint = if (isEnabled) primaryAccent else actionDisabledContent, modifier = Modifier.size(15.dp))
                         if (showText) {
                             Spacer(modifier = Modifier.width(3.dp))
-                            Text(stringResource(R.string.action_import), fontSize = 11.sp, color = primaryAccent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(stringResource(R.string.action_import), fontSize = 11.sp, color = if (isEnabled) primaryAccent else actionDisabledContent, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
@@ -214,14 +219,14 @@ fun PresetManagerCard(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.CardAlt2),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (isDarkTheme) AppColors.CardAlt2 else AppColors.LightSurfaceVariant, disabledContainerColor = actionDisabledFill, disabledContentColor = actionDisabledContent),
                     modifier = Modifier.weight(1f).defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.Upload, contentDescription = stringResource(R.string.content_desc_export_presets), tint = primaryAccent, modifier = Modifier.size(15.dp))
+                        Icon(imageVector = Icons.Default.Upload, contentDescription = stringResource(R.string.content_desc_export_presets), tint = if (isEnabled) primaryAccent else actionDisabledContent, modifier = Modifier.size(15.dp))
                         if (showText) {
                             Spacer(modifier = Modifier.width(3.dp))
-                            Text(stringResource(R.string.action_export), fontSize = 11.sp, color = primaryAccent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(stringResource(R.string.action_export), fontSize = 11.sp, color = if (isEnabled) primaryAccent else actionDisabledContent, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
@@ -233,14 +238,14 @@ fun PresetManagerCard(
                     enabled = isEnabled,
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = if (isDeleteMode) AppColors.Error else AppColors.CardAlt2),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (isDeleteMode) AppColors.Error else if (isDarkTheme) AppColors.CardAlt2 else AppColors.LightSurfaceVariant, disabledContainerColor = actionDisabledFill, disabledContentColor = actionDisabledContent),
                     modifier = Modifier.weight(1f).defaultMinSize(minHeight = 48.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.content_desc_delete_mode), tint = if (isDeleteMode) Color.White else AppColors.ErrorLight, modifier = Modifier.size(15.dp))
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.content_desc_delete_mode), tint = if (!isEnabled) actionDisabledContent else if (isDeleteMode) Color.White else if (isDarkTheme) AppColors.ErrorLight else AppColors.Error, modifier = Modifier.size(15.dp))
                         if (showText) {
                             Spacer(modifier = Modifier.width(3.dp))
-                            Text(text = if (isDeleteMode) "Cancel" else "Delete", fontSize = 11.sp, color = if (isDeleteMode) Color.White else AppColors.ErrorLight, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(text = if (isDeleteMode) "Cancel" else "Delete", fontSize = 11.sp, color = if (!isEnabled) actionDisabledContent else if (isDeleteMode) Color.White else if (isDarkTheme) AppColors.ErrorLight else AppColors.Error, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
@@ -269,18 +274,18 @@ fun PresetManagerCard(
                         },
                         enabled = isEnabled,
                         shape = RoundedCornerShape(16.dp),
-                        color = when { isSelected -> primaryAccent.copy(alpha = 0.2f) else -> AppColors.SurfaceVariant },
-                        border = BorderStroke(width = if (isSelected) 1.5.dp else 1.dp, color = if (isSelected) primaryAccent else AppColors.DarkCardAlt),
+                        color = when { isSelected -> primaryAccent.copy(alpha = 0.2f) else -> if (isDarkTheme) AppColors.SurfaceVariant else AppColors.LightSurfaceVariant },
+                        border = BorderStroke(width = if (isSelected) 1.5.dp else 1.dp, color = if (isSelected) primaryAccent else borderDivider),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                             Text(text = preset, color = if (isSelected) primaryAccent else textPrimary, fontSize = 13.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f).padding(end = 8.dp))
                             if (isDeleteMode) {
-                                Checkbox(checked = isCheckedForDelete, onCheckedChange = { checked -> if (!isBuiltIn) selectedForDelete = if (checked) selectedForDelete + preset else selectedForDelete - preset }, enabled = !isBuiltIn && isEnabled, colors = CheckboxDefaults.colors(checkedColor = AppColors.Error, disabledUncheckedColor = AppColors.BorderDark.copy(alpha = 0.3f)))
+                                Checkbox(checked = isCheckedForDelete, onCheckedChange = { checked -> if (!isBuiltIn) selectedForDelete = if (checked) selectedForDelete + preset else selectedForDelete - preset }, enabled = !isBuiltIn && isEnabled, colors = CheckboxDefaults.colors(checkedColor = AppColors.Error, disabledUncheckedColor = borderDivider.copy(alpha = 0.3f)))
                             } else {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isFav) {
-                                        Text(text = "#$favSlot", color = AppColors.WarningTitle, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                        Text(text = "#$favSlot", color = if (isDarkTheme) AppColors.WarningTitle else AppColors.WarningTitleLight, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                     }
                                     // Q1-A: star stays tappable even when EQ is off so every tap
                                     // gives feedback — limit toast when full, power toast when EQ off
@@ -292,7 +297,7 @@ fun PresetManagerCard(
                                             if (!ok) Toast.makeText(context, context.getString(R.string.preset_favorite_limit_reached), Toast.LENGTH_SHORT).show()
                                         }
                                     }, modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).size(48.dp)) {
-                                        Icon(imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder, contentDescription = stringResource(R.string.content_desc_favorite_preset), tint = if (isFav) AppColors.WarningTitle else textSecondary.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
+                                        Icon(imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder, contentDescription = stringResource(R.string.content_desc_favorite_preset), tint = if (isFav) (if (isDarkTheme) AppColors.WarningTitle else AppColors.WarningTitleLight) else textSecondary.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
                                     }
                                 }
                             }
@@ -314,7 +319,7 @@ fun PresetManagerCard(
         AlertDialog(onDismissRequest = { showSaveDialog = false }, title = { Text(stringResource(R.string.dialog_save_preset_title)) }, text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.dialog_save_preset_desc), fontSize = 13.sp)
-                OutlinedTextField(value = newPresetName, onValueChange = { if (it.length <= 10) newPresetName = it }, label = { Text(stringResource(R.string.dialog_preset_name_hint)) }, supportingText = { Text(text = "${newPresetName.length}/10", color = if (newPresetName.length >= 10) AppColors.SuccessLightAlt else textSecondary, fontSize = 11.sp) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = newPresetName, onValueChange = { if (it.length <= 10) newPresetName = it }, label = { Text(stringResource(R.string.dialog_preset_name_hint)) }, supportingText = { Text(text = "${newPresetName.length}/10", color = if (newPresetName.length >= 10) (if (isDarkTheme) AppColors.SuccessLightAlt else AppColors.SuccessDark) else textSecondary, fontSize = 11.sp) }, singleLine = true, modifier = Modifier.fillMaxWidth())
                 Text(text = "Bands: ${eqBands.joinToString { if (it > 0) "+$it" else "$it" }} dB", fontSize = 12.sp, color = textSecondary)
             }
         }, confirmButton = { TextButton(onClick = { val resultMsg = AudioEffectManager.saveCustomPresetWithResult(newPresetName, eqBands); if (resultMsg == null) { Toast.makeText(context, "Saved custom preset '$newPresetName'", Toast.LENGTH_SHORT).show(); showSaveDialog = false } else { Toast.makeText(context, resultMsg, Toast.LENGTH_LONG).show() } }) { Text(stringResource(R.string.label_save_preset), fontWeight = FontWeight.Bold) } }, dismissButton = { TextButton(onClick = { showSaveDialog = false }) { Text(stringResource(R.string.action_cancel)) } })
