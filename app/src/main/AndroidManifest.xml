@@ -67,10 +67,10 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_app_id" />
 
-        <!-- DEBUG-only command bridge (single action, exported=false, gated by BuildConfig.DEBUG in code) -->
+        <!-- DEBUG-only command bridge (single action, exported=true so adb shell can deliver; gated by BuildConfig.DEBUG in code, no-op in release) -->
         <receiver
             android:name=".ui.DebugCommandReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.milkys.soundbooster.DEBUG" />
             </intent-filter>

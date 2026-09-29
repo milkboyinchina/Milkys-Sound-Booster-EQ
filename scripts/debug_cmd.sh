@@ -19,6 +19,9 @@ case "$CMD" in
   set_eq) EXTRA=(--ez enabled "${EXTRA[0]:-true}") ;;
   set_band) EXTRA=(--ei band "${EXTRA[0]:-0}" --ei level "${EXTRA[1]:-0}") ;;
 esac
-adb -s "$SERIAL" shell am broadcast -a com.milkys.soundbooster.DEBUG --es cmd "$CMD" "${EXTRA[@]}" >/dev/null
+# Manifest receivers can't get implicit broadcasts on Android 8+ (system drops
+# action-only intents) — always address the receiver explicitly with -n.
+RECEIVER="com.milkys.soundbooster/.ui.DebugCommandReceiver"
+adb -s "$SERIAL" shell am broadcast -n "$RECEIVER" -a com.milkys.soundbooster.DEBUG --es cmd "$CMD" "${EXTRA[@]}" >/dev/null
 sleep 0.6
 adb -s "$SERIAL" shell logcat -d 2>/dev/null | grep -a "V DebugCommand" | tail -n 4
