@@ -129,15 +129,30 @@ fun PresetManagerCard(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = stringResource(R.string.preset_manager_title),
-                color = textPrimary,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.preset_manager_title),
+                    color = textPrimary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f).padding(end = 8.dp)
+                )
+                // Q1-A: live slot usage — favorites feed the overlay panel (capped),
+                // labeled explicitly so x/4 needs no guessing
+                Text(
+                    text = "Favorites ${favoritePresets.size}/${AudioEffectManager.MAX_FAVORITES}",
+                    color = textSecondary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1
+                )
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -267,7 +282,16 @@ fun PresetManagerCard(
                                     if (isFav) {
                                         Text(text = "#$favSlot", color = AppColors.WarningTitle, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                     }
-                                    androidx.compose.material3.IconButton(onClick = { val ok = onToggleFavorite(preset); if (!ok) Toast.makeText(context, context.getString(R.string.preset_favorite_limit_reached), Toast.LENGTH_SHORT).show() }, enabled = isEnabled, modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).size(48.dp)) {
+                                    // Q1-A: star stays tappable even when EQ is off so every tap
+                                    // gives feedback — limit toast when full, power toast when EQ off
+                                    androidx.compose.material3.IconButton(onClick = {
+                                        if (!isEnabled) {
+                                            Toast.makeText(context, context.getString(R.string.eq_requires_power), Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            val ok = onToggleFavorite(preset)
+                                            if (!ok) Toast.makeText(context, context.getString(R.string.preset_favorite_limit_reached), Toast.LENGTH_SHORT).show()
+                                        }
+                                    }, modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).size(48.dp)) {
                                         Icon(imageVector = if (isFav) Icons.Default.Star else Icons.Default.StarBorder, contentDescription = stringResource(R.string.content_desc_favorite_preset), tint = if (isFav) AppColors.WarningTitle else textSecondary.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
                                     }
                                 }

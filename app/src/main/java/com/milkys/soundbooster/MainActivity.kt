@@ -101,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         // Crash-loop breaker: with POST_NOTIFICATIONS denied, skip the silent auto-start
         // and drop persisted boost so a denied-notif state can never wedge the app into
         // an FGS start loop; the user re-enables explicitly (manual toggles always start).
+        // Rotation guard: config-change recreation (savedInstanceState != null) keeps the
+        // live singleton flows + running service — never auto-start or breaker-reset here,
+        // otherwise every L→P→L rotation kills an active booster in the foreground.
+        if (savedInstanceState == null) {
         val notificationsEnabled = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nm.areNotificationsEnabled()
@@ -121,6 +125,9 @@ class MainActivity : AppCompatActivity() {
                 "Notifications are off — booster paused. Enable in Settings → Notification Bar Controls.",
                 Toast.LENGTH_LONG
             ).show()
+        }
+        } else {
+            DebugLogBridge.v(DebugLogBridge.TAG_DASH, "onCreate recreation — keeping live booster/EQ state")
         }
 
         // Initialize Google Mobile Ads SDK via reflection if included in the build
