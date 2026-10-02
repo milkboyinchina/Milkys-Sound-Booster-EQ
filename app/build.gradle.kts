@@ -113,7 +113,11 @@ android {
   signingConfigs {
     create("release") {
       val keystorePath = getEnvVar("KEYSTORE_PATH", "${rootDir}/my-upload-key.jks")
-      val keystoreFile = file(keystorePath)
+      // .env paths are repo-root-relative, but file() resolves against the app
+      // module dir — anchor relative paths at rootDir so keystore/release.jks
+      // actually resolves instead of silently falling back to debug signing.
+      val keystoreFile = if (keystorePath.startsWith("/")) file(keystorePath) else file("${rootDir}/${keystorePath.removePrefix("./")}")
+      project.logger.lifecycle("Release signing keystore: $keystoreFile (exists=${keystoreFile.exists()})")
       if (keystoreFile.exists()) {
         storeFile = keystoreFile
         storePassword = getEnvVar("STORE_PASSWORD", "android")
