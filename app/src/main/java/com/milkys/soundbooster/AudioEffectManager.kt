@@ -174,7 +174,13 @@ object AudioEffectManager {
         val hasSeenOnboarding = prefs.getBoolean(KEY_HAS_SEEN_ONBOARDING, false)
         val warningDisabled = prefs.getBoolean(KEY_HEARING_WARNING_DISABLED, false)
         val warningHiddenUntil = prefs.getLong(KEY_HEARING_WARNING_HIDDEN_UNTIL, 0L)
-        val darkTheme = prefs.getBoolean(KEY_DARK_THEME, true)
+        // Q2-B: fresh installs follow the system theme; a persisted choice wins after.
+        val darkTheme = if (prefs.contains(KEY_DARK_THEME)) {
+            prefs.getBoolean(KEY_DARK_THEME, true)
+        } else {
+            val nightMask = appContext.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+            nightMask != android.content.res.Configuration.UI_MODE_NIGHT_NO
+        }
         val appLanguage = prefs.getString(KEY_APP_LANGUAGE, "system") ?: "system"
         val defaultPreset = prefs.getString(KEY_DEFAULT_PRESET, "Flat") ?: "Flat"
         val customPresetsJson = prefs.getString(KEY_CUSTOM_PRESETS, "") ?: ""
@@ -330,7 +336,10 @@ object AudioEffectManager {
                     } else null
                 }
                 equalizer?.apply {
-                    try { enabled = _isBoostEnabled.value } catch (t: Throwable) { Log.w(TAG, "enable equalizer failed: ${t.message}") }
+                    // Q1-A: honor the EQ switch — a re-init while EQ is off must not
+                    // enable the hardware (was: enabled = booster state, applying
+                    // saved bands audibly while the UI showed OFF).
+                    try { enabled = _isEqEnabled.value } catch (t: Throwable) { Log.w(TAG, "enable equalizer failed: ${t.message}") }
                     applySavedBands()
                 }
             }
@@ -361,6 +370,26 @@ object AudioEffectManager {
         return (progress * 15).coerceIn(0, 1500)
     }
 
+    /**
+     * DEBUG probe (EQ off→on volume hunt, Q1-A): live hardware handle state vs
+     * flows. Called only from the DEBUG command bridge; cheap, no-op in release.
+     */
+    fun hardwareSnapshot(): String {
+        val eq = equalizer
+        val enh = loudnessEnhancer
+        val hwBands = try {
+            if (eq == null) "handle=null"
+            else (0 until eq.numberOfBands.toInt()).joinToString(prefix = "[", postfix = "]") { i ->
+                "${eq.getBandLevel(i.toShort())}"
+            }
+        } catch (e: Throwable) {
+            "err:${e.message}"
+        }
+        val eqOn = try { eq?.enabled } catch (e: Throwable) { "err" }
+        val enhOn = try { enh?.enabled } catch (e: Throwable) { "err" }
+        return "hwEqOn=$eqOn hwEnhOn=$enhOn hwBandsMb=$hwBands trackNull=${audioTrack == null} playing=$isPlayingSilence"
+    }
+
     private fun applySavedBands() {
         val eq = equalizer ?: return
         val bands = _eqBands.value
@@ -383,12 +412,13 @@ object AudioEffectManager {
             // Already in desired state, but ensure effects are in correct state (handle race on rapid toggle)
             if (enabled) {
                 try { loudnessEnhancer?.enabled = true } catch (e: Throwable) { Log.w(TAG, "setBoostEnabled noop enable enhancer: ${e.message}") }
-                try { equalizer?.enabled = true } catch (e: Throwable) { Log.w(TAG, "setBoostEnabled noop enable eq: ${e.message}") }
+                // Q1-A: never force the EQ hardware on here — honor the EQ switch.
+                try { if (_isEqEnabled.value) equalizer?.enabled = true } catch (e: Throwable) { Log.w(TAG, "setBoostEnabled noop enable eq: ${e.message}") }
                 if (audioTrack == null || !isPlayingSilence) {
                     startSilencePlayback()
                     initEffects()
                     try { loudnessEnhancer?.enabled = true } catch (e: Throwable) { Log.w(TAG, "retry enable enhancer: ${e.message}") }
-                    try { equalizer?.enabled = true } catch (e: Throwable) { Log.w(TAG, "retry enable eq: ${e.message}") }
+                    try { if (_isEqEnabled.value) equalizer?.enabled = true } catch (e: Throwable) { Log.w(TAG, "retry enable eq: ${e.message}") }
                 }
             }
             return
@@ -413,7 +443,7 @@ object AudioEffectManager {
                 try { loudnessEnhancer?.enabled = true } catch (inner: Throwable) { Log.w(TAG, "retry enable enhancer 2: ${inner.message}") }
             }
             try {
-                equalizer?.enabled = true
+                equalizer?.enabled = _isEqEnabled.value
             } catch (e: Throwable) {
                 Log.w(TAG, "enable equalizer failed: ${e.message}")
             }
@@ -500,19 +530,20 @@ object AudioEffectManager {
         _isEqEnabled.value = enabled
         persistBoolean(KEY_EQ_ENABLED, enabled, PreferencesRepository.KEY_EQ_ENABLED)
         if (enabled) {
-            // Apply current bands when enabling
+            // Apply current bands when enabling — synchronously (Q1-A/Q2-A).
+            // The old audioScope.launch queue landed 10-30s late, so rapid
+            // on/off toggles stacked stale writes that resurrected old state
+            // after the user's last tap. Binder calls here are ~ms.
             equalizer?.let { eq ->
-                audioScope.launch {
-                    try {
-                        val range = try { eq.getBandLevelRange() } catch (e: Throwable) { null }
-                        val bands = _eqBands.value
-                        for (i in bands.indices) {
-                            val mB = (bands[i] * 100).coerceIn(range?.get(0)?.toInt() ?: -1500, range?.get(1)?.toInt() ?: 1500)
-                            eq.setBandLevel(i.toShort(), mB.toShort())
-                        }
-                        eq.enabled = true
-                    } catch (e: Throwable) { android.util.Log.w(TAG, "setEqEnabled true failed: ${e.message}") }
-                }
+                try {
+                    val range = try { eq.getBandLevelRange() } catch (e: Throwable) { null }
+                    val bands = _eqBands.value
+                    for (i in bands.indices) {
+                        val mB = (bands[i] * 100).coerceIn(range?.get(0)?.toInt() ?: -1500, range?.get(1)?.toInt() ?: 1500)
+                        eq.setBandLevel(i.toShort(), mB.toShort())
+                    }
+                    eq.enabled = true
+                } catch (e: Throwable) { android.util.Log.w(TAG, "setEqEnabled true failed: ${e.message}") }
             }
         } else {
             try { equalizer?.enabled = false } catch (e: Throwable) { android.util.Log.w(TAG, "setEqEnabled false failed: ${e.message}") }
@@ -579,16 +610,14 @@ object AudioEffectManager {
             persistString(KEY_BANDS, bands.joinToString(","), PreferencesRepository.KEY_BANDS)
             persistString(KEY_PRESET, "Custom", PreferencesRepository.KEY_PRESET)
 
-            // Always update UI (already done via _eqBands), defer hardware to IO with range clamp
-            audioScope.launch {
-                try {
-                    val eq = equalizer ?: return@launch
-                    val range = try { eq.getBandLevelRange() } catch (e: Throwable) { null }
-                    val mB = (dBLevel * 100).coerceIn(range?.get(0)?.toInt() ?: -1500, range?.get(1)?.toInt() ?: 1500)
-                    eq.setBandLevel(bandIndex.toShort(), mB.toShort())
-                } catch (e: Throwable) {
-                    Log.w(TAG, "setBandLevel failed band $bandIndex level $dBLevel: ${e.message}")
-                }
+            // Hardware write is synchronous (Q1-A/Q2-A) — see setEqEnabled.
+            try {
+                val eq = equalizer ?: return
+                val range = try { eq.getBandLevelRange() } catch (e: Throwable) { null }
+                val mB = (dBLevel * 100).coerceIn(range?.get(0)?.toInt() ?: -1500, range?.get(1)?.toInt() ?: 1500)
+                eq.setBandLevel(bandIndex.toShort(), mB.toShort())
+            } catch (e: Throwable) {
+                Log.w(TAG, "setBandLevel failed band $bandIndex level $dBLevel: ${e.message}")
             }
         }
     }
@@ -608,16 +637,15 @@ object AudioEffectManager {
 
         val eq = equalizer
         if (eq != null) {
-            audioScope.launch {
-                try {
-                    val range = try { eq.getBandLevelRange() } catch (e: Throwable) { null }
-                    for (i in levels.indices) {
-                        val mB = (levels[i] * 100).coerceIn(range?.get(0)?.toInt() ?: -1500, range?.get(1)?.toInt() ?: 1500)
-                        eq.setBandLevel(i.toShort(), mB.toShort())
-                    }
-                } catch (e: Throwable) {
-                    Log.w(TAG, "applyPreset failed preset $presetName: ${e.message}")
+            // Synchronous hardware write (Q1-A/Q2-A) — see setEqEnabled.
+            try {
+                val range = try { eq.getBandLevelRange() } catch (e: Throwable) { null }
+                for (i in levels.indices) {
+                    val mB = (levels[i] * 100).coerceIn(range?.get(0)?.toInt() ?: -1500, range?.get(1)?.toInt() ?: 1500)
+                    eq.setBandLevel(i.toShort(), mB.toShort())
                 }
+            } catch (e: Throwable) {
+                Log.w(TAG, "applyPreset failed preset $presetName: ${e.message}")
             }
         }
     }

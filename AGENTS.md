@@ -306,6 +306,7 @@ For deeper feature specifications, review:
 * 🛠️ `howto/setup_develop_build.md`: Comprehensive setup and build guide.
 * 📱 `howto/general_information.md`: Architecture overview and system design.
 * 📁 `howto/file_function_mapping.md`: Mapping of files to application capabilities.
+* 🐞 `howto/debug_bridge.md`: Debug command bridge reference (tap-free `adb` control + hardware state reads).
 * 📋 `qc_plan.md`: QA & QC master plan (qc/ canon, device matrix, gates, changelogs).
 * 📝 `CHANGELOG.md` + `qc/changelogs/`: Release notes per version/tag.
 

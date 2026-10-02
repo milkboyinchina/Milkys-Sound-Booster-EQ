@@ -3102,7 +3102,7 @@ fun AppHeaderRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Audio Booster & EQ" + if (BuildConfig.DEBUG) " • " + try { BuildConfig.GIT_SHA.take(7) } catch (_: Throwable) { "dev" } else "",
+                    text = "Audio Booster & EQ" + if (BuildConfig.DEBUG) " • " + try { BuildConfig.GIT_SHA.take(7) } catch (_: Throwable) { "dev" } + "." + try { BuildConfig.BUILD_MOMENT } catch (_: Throwable) { "000000" } else "",
                     color = textSecondary,
                     fontSize = 11.sp,
                     maxLines = 1,

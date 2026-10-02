@@ -40,6 +40,7 @@ object AppColors {
     val WarningIcon = Color(0xFFFFB4AB)
     val WarningBorder = Color(0xFFFFC107)
     val WarningTitle = Color(0xFFFFD54F)
+    val WarningTitleLight = Color(0xFF7A5900)
     val WarningContainerDark = Color(0xFF382300)
     val WarningContainerLight = Color(0xFF31111D)
     val WarningBorderLight = Color(0xFF93000A)
@@ -59,7 +60,9 @@ object AppColors {
 
     // Extended surfaces
     val SurfaceVariant = Color(0xFF25232A)
+    val LightSurfaceVariant = Color(0xFFEDE8F4)
     val DisabledCard = Color(0xFF1F1D24)
+    val LightDisabledCard = Color(0xFFE3D9F2)
     val BackgroundAlt = Color(0xFF1E1C28)
     val CardAlt2 = Color(0xFF332D41)
     val Orange = Color(0xFFFF9800)
