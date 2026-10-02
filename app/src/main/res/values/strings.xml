@@ -94,6 +94,9 @@
     <string name="content_desc_open_app" translatable="false">Open main app</string>
     <string name="overlay_control_title" translatable="false">Overlay Control</string>
     <string name="overlay_control_desc" translatable="false">Enable floating widget over other apps</string>
+    <string name="appearance_title" translatable="false">APPEARANCE</string>
+    <string name="dark_mode_title" translatable="false">Dark Mode</string>
+    <string name="dark_mode_desc" translatable="false">Dark dashboard, settings and overlay</string>
     <string name="content_desc_hearing_warning" translatable="false">Hearing Loss Safety Warning</string>
     <string name="content_desc_hide_warning" translatable="false">Hide warning for 7 days</string>
     <string name="action_save" translatable="false">Save</string>

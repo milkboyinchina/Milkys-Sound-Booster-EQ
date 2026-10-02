@@ -92,6 +92,11 @@ android {
     buildConfigField("String", "APP_LOGO_XXXHDPI_PATH", "\"$envAppLogoXxxhdpi\"")
     val gitSha = try { providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().trim() } catch (_: Throwable) { "dev" }
     buildConfigField("String", "GIT_SHA", "\"$gitSha\"")
+    // Build moment (HHMMSS of the HEAD commit, NOT wall clock): distinguishes
+    // same-sha rebuilds in the DEBUG header while keeping Roborazzi refs
+    // deterministic per commit (wall clock broke verify on every rebuild).
+    val buildMoment = try { providers.exec { commandLine("git", "log", "-1", "--format=%cd", "--date=format:%H%M%S") }.standardOutput.asText.get().trim().ifEmpty { "000000" } } catch (_: Throwable) { "000000" }
+    buildConfigField("String", "BUILD_MOMENT", "\"$buildMoment\"")
 
     buildConfigField("String", "APP_ICON_DIR", "\"$envAppIconDir\"")
     buildConfigField("String", "APP_ICON_FOREGROUND_PATH", "\"$envAppIconForegroundPath\"")

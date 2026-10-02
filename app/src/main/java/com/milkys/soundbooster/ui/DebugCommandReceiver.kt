@@ -91,7 +91,8 @@ class DebugCommandReceiver : BroadcastReceiver() {
             append("bands=${AudioEffectManager.eqBands.value.joinToString()} ")
             append("preset=${AudioEffectManager.eqPreset.value} ")
             append("favorites=${AudioEffectManager.favoritePresets.value} ")
-            append("isFloating=${AudioEffectManager.isFloatingEnabled.value}")
+            append("isFloating=${AudioEffectManager.isFloatingEnabled.value} ")
+            append(AudioEffectManager.hardwareSnapshot())
         }
         Log.v(TAG, s)
     }

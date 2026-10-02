@@ -19,6 +19,7 @@ Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scri
 - DataStore: ordered favorites persist as `favorite_presets_ordered` string; legacy unordered set migrates sorted-alpha into slots, dual-written for rollback compat.
 
 ### Fixed
+- EQ off→on volume drop + toggle compounding: `applyPreset`/`setEqEnabled(true)`/`setBandLevel` wrote hardware via a fire-and-forget `audioScope` queue landing 10–30s late (OFF was always sync), so rapid toggles stacked stale writes and `initEffects()` enabled EQ hardware from booster state while the switch showed OFF. All EQ hardware writes are now synchronous on the caller thread; `initEffects` + booster paths honor `_isEqEnabled`; bridge `dump_state` carries hardware readback (`AudioEffectManager.hardwareSnapshot()`).
 - POWER on/off bounce (ON flashed then OFF, 2nd retry stuck): `release()` no longer nulls the persist context (writes were silently dropped) and `init()` seeds flows from disk only on first init — service-restart re-init never clobbers live state; `BoosterToggleBounceTest` pins both invariants.
 - Crash loop `ForegroundServiceDidNotStartInTimeException` when overlay + booster ON with notifications denied: service now always calls `startForeground()` (denied just suppresses visuals); `onCreate` breaker skips silent auto-start, resets boost, and toasts toward Settings; pure `shouldAutoStartService()` + 4 unit tests.
 
