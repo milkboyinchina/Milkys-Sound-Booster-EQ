@@ -22,6 +22,12 @@ esac
 # Manifest receivers can't get implicit broadcasts on Android 8+ (system drops
 # action-only intents) — always address the receiver explicitly with -n.
 RECEIVER="com.milkys.soundbooster/.ui.DebugCommandReceiver"
-adb -s "$SERIAL" shell am broadcast -n "$RECEIVER" -a com.milkys.soundbooster.DEBUG --es cmd "$CMD" "${EXTRA[@]}" >/dev/null
+# NOTE: adb shell joins args with spaces, so values containing spaces must carry
+# their own single-quotes to survive the device-side split (e.g. "Custom 1").
+quoted=()
+for a in "${EXTRA[@]}"; do
+    if [[ "$a" == *" "* ]]; then quoted+=("'$a'"); else quoted+=("$a"); fi
+done
+adb -s "$SERIAL" shell am broadcast -n "$RECEIVER" -a com.milkys.soundbooster.DEBUG --es cmd "$CMD" "${quoted[@]}" >/dev/null
 sleep 0.6
 adb -s "$SERIAL" shell logcat -d 2>/dev/null | grep -a "V DebugCommand" | tail -n 4

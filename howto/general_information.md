@@ -34,6 +34,10 @@ Welcome to the general technical and functional overview for **Milkys Sound Boos
   - **Pop**: Dynamic bass and treble boost for modern tracks.
   - **Rock**: Heavy punchy low-end with crisp high frequencies.
   - **Custom**: User-adjusted band configuration saved automatically.
+- **Gain-staging note (verified on-device):** boosting all bands positive can
+  sound *quieter* than Flat/EQ-off, because the effect chain lowers overall
+  gain to prevent clipping. Prefer selective boosts (e.g. V-shape) over
+  all-positive presets for perceived loudness.
 
 ### 4. Instant 3-Second Sound Test Button
 - Integrated direct sound test generator next to the master dial.
