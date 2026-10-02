@@ -45,7 +45,7 @@
     <string name="disable_hearing_warning_desc">Completely hide the hearing and speaker damage warning banner on main dashboard.</string>
     <string name="settings_ads_title" translatable="false">Ads</string>
     <string name="settings_ads_desc_on" translatable="false">Ads are enabled — thank you for supporting development.</string>
-    <string name="settings_ads_desc_off" translatable="false">Ads are disabled.</string>
+    <string name="settings_ads_desc_off" translatable="false">Free app, real costs — ads keep development going.</string>
     <string name="dialog_ads_confirm_title" translatable="false">Support Development</string>
     <string name="dialog_ads_confirm_message" translatable="false">Ads support developer — please kindly leave ads on to support voluntary development and server costs.</string>
     <string name="action_keep_on" translatable="false">Keep On</string>
