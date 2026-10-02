@@ -208,6 +208,7 @@ dependencies {
   implementation(libs.androidx.datastore.preferences)
   if (envIncludeGoogleAds) {
     implementation(libs.play.services.ads)
+    implementation(libs.user.messaging.platform)
   }
   testImplementation(libs.androidx.compose.ui.test.junit4)
   testImplementation(libs.androidx.core)

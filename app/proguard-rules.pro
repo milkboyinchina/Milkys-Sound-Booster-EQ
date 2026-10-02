@@ -68,6 +68,10 @@
 # ------------------------------------------------------------------------------
 -keep class com.google.android.gms.ads.** { *; }
 -dontwarn com.google.android.gms.ads.**
+# UMP consent SDK is driven via reflection (F-Droid builds exclude the dep, so
+# direct calls would break that target) — keep it intact under minify.
+-keep class com.google.android.ump.** { *; }
+-dontwarn com.google.android.ump.**
 
 # ------------------------------------------------------------------------------
 # 9. KOTLIN COROUTINES & FLOW
