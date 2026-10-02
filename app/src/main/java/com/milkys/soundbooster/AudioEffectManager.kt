@@ -152,7 +152,7 @@ object AudioEffectManager {
     private const val TAG = "AudioEffectManager"
 
     fun init(ctx: Context) {
-        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "init() called", Exception("init-trace"))
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "init() called")
         val appContext = ctx.applicationContext
         context = appContext
         persistContext = appContext
@@ -407,7 +407,7 @@ object AudioEffectManager {
 
     @Synchronized
     fun setBoostEnabled(enabled: Boolean) {
-        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "setBoostEnabled($enabled) called, current=${_isBoostEnabled.value}", Exception("boost-trace"))
+        DebugLogBridge.v(DebugLogBridge.TAG_AEM, "setBoostEnabled($enabled) called, current=${_isBoostEnabled.value}")
         if (enabled == _isBoostEnabled.value) {
             // Already in desired state, but ensure effects are in correct state (handle race on rapid toggle)
             if (enabled) {

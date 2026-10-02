@@ -76,4 +76,21 @@
 -keepclassmembers class kotlinx.coroutines.** { *; }
 -keepclassmembers class * extends kotlinx.coroutines.internal.MainDispatcherFactory { *; }
 
+# ------------------------------------------------------------------------------
+# 10. RELEASE LOG HYGIENE (debug bridge/mode off)
+# ------------------------------------------------------------------------------
+# Strip verbose/debug log calls in release so the DEBUG bridge traces
+# (DebugLogBridge, boost-trace/init-trace probes) emit nothing on user builds.
+# Warnings and errors are kept for field diagnostics.
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+}
+# Direct rule: DebugLogBridge.v() only forwards to Log — provably side-effect
+# free regardless of BuildConfig constant folding, so R8 always drops the call
+# sites (and their message strings) in release.
+-assumenosideeffects class com.milkys.soundbooster.ui.DebugLogBridge {
+    public static void v(...);
+}
+
 
