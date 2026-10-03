@@ -1417,7 +1417,7 @@ fun DashboardScreen(
                                 Surface(
                                     onClick = { languageDropdownExpanded = !languageDropdownExpanded },
                                     shape = RoundedCornerShape(12.dp),
-                                    color = textPrimary,
+                                    color = borderDivider,
                                     border = BorderStroke(1.dp, borderDivider),
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -2446,7 +2446,7 @@ fun AdaptiveBannerAdCard(
 
                     val adView = adViewClass.getConstructor(Context::class.java).newInstance(ctx) as android.view.View
 
-                    adViewClass.getMethod("setAdUnitId", String::class.java).invoke(adView, "ca-app-pub-3940256099942544/6300978111")
+                    adViewClass.getMethod("setAdUnitId", String::class.java).invoke(adView, "ca-app-pub-6770897791730584/1694908312")
 
                     val displayMetrics = ctx.resources.displayMetrics
                     val adWidthPixels = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -2616,7 +2616,7 @@ fun NativeAdCard(
                     nativeAdViewClass.getMethod("setCallToActionView", android.view.View::class.java).invoke(nativeAdView, ctaButton)
 
                     val builderInstance = adLoaderBuilderClass.getConstructor(Context::class.java, String::class.java)
-                        .newInstance(ctx, "ca-app-pub-3940256099942544/2247696110")
+                        .newInstance(ctx, "ca-app-pub-6770897791730584/7039657771")
 
                     val listenerClass = Class.forName("com.google.android.gms.ads.nativead.NativeAd\$OnNativeAdLoadedListener")
                     val proxyInvocationHandler = java.lang.reflect.InvocationHandler { _, method, args ->

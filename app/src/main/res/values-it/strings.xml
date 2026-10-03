@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Milkys Sound Booster</string>
     <string name="tile_label">Milkys Sound Booster</string>
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_app_id">ca-app-pub-6770897791730584~3020521714</string>
 
     <!-- Language Selection & Settings -->
     <string name="settings_title">IMPOSTAZIONI</string>

@@ -6,7 +6,7 @@
 
 - Pengembang **tidak mengumpulkan informasi identitas pribadi (PII)**: tanpa nama, email, akun, lokasi, kontak, atau rekaman audio.
 - Peningkatan audio (boost, equalizer, preset) diproses **di perangkat Anda secara real-time**. Audio tidak pernah meninggalkan perangkat.
-- Saat iklan diaktifkan, **Google (AdMob)** dapat memproses pengenal perangkat dan diagnostik berdasarkan [Kebijakan Privasi Google](https://policies.google.com/privacy). Iklan **nonaktif secara default**.
+- Saat iklan diaktifkan, **Google (AdMob)** dapat memproses pengenal perangkat dan diagnostik berdasarkan [Kebijakan Privasi Google](https://policies.google.com/privacy). Iklan **aktif secara default** (nonaktifkan kapan saja di Setelan → Iklan).
 - Halaman ini terdiri dari dua bagian: **Bagian A** (umum, §§2–7, berlaku untuk semua aplikasi pengembang ini) dan **Bagian B** (khusus aplikasi, §8).
 
 ## 2. Cakupan
@@ -33,7 +33,7 @@ Tidak ada SDK pihak ketiga lain yang disematkan. Tidak ada login sosial, pelacak
 
 ## 5. Periklanan dan persetujuan (Google AdMob / UMP)
 
-- Iklan **nonaktif secara default**. Tidak ada yang terkait iklan ditampilkan sebelum Anda mengaktifkan **Setelan → Iklan**.
+- Iklan **aktif secara default** dan tampil setelah Anda membuka aplikasi. Nonaktifkan kapan saja di **Setelan → Iklan** (saat nonaktif, tidak ada yang terkait iklan ditampilkan).
 - Saat diaktifkan, iklan disajikan oleh Google AdMob. Google dapat menggunakan ID Iklan, aktivitas aplikasi, dan diagnostik sebagaimana dijelaskan di §4.
 - **Iklan yang dipersonalisasi** memerlukan persetujuan eksplisit tambahan Anda: **Setelan → Iklan yang Dipersonalisasi**, plus formulir persetujuan Google (UMP) yang ditampilkan bila diwajibkan hukum (mis. EEA/Inggris). Anda dapat mencabut persetujuan kapan saja dari sakelar yang sama; aplikasi kembali ke iklan non-personalisasi atau tanpa iklan sesuai pilihan Setelan → Iklan Anda.
 - Selama pengujian tertutup, materi iklan dapat tampil sebagai **iklan pengujian** resmi Google. Tidak perlu tindakan apa pun; unit iklan produksi berlaku pada rilis publik.
