@@ -6,7 +6,7 @@
 
 - The developer collects **no personally identifiable information (PII)**: no names, emails, accounts, locations, contacts, or audio recordings.
 - Audio enhancement (boost, equalizer, presets) is processed **on your device in real time**. Audio never leaves the device.
-- When ads are enabled, **Google (AdMob)** may process device identifiers and diagnostics under [Google's Privacy Policy](https://policies.google.com/privacy). Ads are **off by default**.
+- When ads are enabled, **Google (AdMob)** may process device identifiers and diagnostics under [Google's Privacy Policy](https://policies.google.com/privacy). Ads are **on by default** (disable anytime in Settings → Ads).
 - This page has two parts: **Part A** (general, §§2–7, applies to all apps by this developer) and **Part B** (app-specific, §8).
 
 ## 2. Scope
@@ -33,7 +33,7 @@ No other third-party SDKs are embedded. There are no social logins, analytics tr
 
 ## 5. Advertising and consent (Google AdMob / UMP)
 
-- Ads are **off by default**. Nothing ad-related renders until you enable **Settings → Ads**.
+- Ads are **on by default** and render once you open the app. Turn them off anytime in **Settings → Ads** (when off, nothing ad-related renders).
 - When enabled, ads are served by Google AdMob. Google may use the Advertising ID, app activity, and diagnostics as described in §4.
 - **Personalized ads** require your additional, explicit consent: **Settings → Personalized Ads**, plus the Google consent (UMP) form shown where the law requires it (e.g. EEA/UK). You may withdraw consent at any time from the same switch; the app then falls back to non-personalized ads or no ads per your Settings → Ads choice.
 - During closed testing, creatives may render as Google-designated **test ads**. No action is needed; production ad units apply at the public release.
