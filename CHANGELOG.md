@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scripts/bump_version.py` on `scripts/build.sh`). Per-tag verbose QC notes live in `qc/changelogs/`.
 
-## [Unreleased]
+## [1.0.0] - 2026-10-03 (first production release)
 ### Added
 - Planned Phase 3 — Optional Kover coverage (soft report-only, deferred from v1 gates).
 - Onboarding page 0: Notification Bar Controls explainer (media-control purpose, never ads, Settings toggle note) with Allow Notifications / Skip; system permission now user-triggered, advances on grant or deny (Q1-A).
