@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scripts/bump_version.py` on `scripts/build.sh`). Per-tag verbose QC notes live in `qc/changelogs/`.
 
+## [1.0.2] - 2026-10-08 (Play-linked AdMob rotation)
+### Changed
+- AdMob IDs rotated to Play-linked app `~3500911599` (13 locales `strings.xml`), banner `/8968860697`, native `/5813406288`; unit IDs centralized in `AdUnits` object (`MainActivity.kt`).
+- Staged production rollout target (10–20%); `app-ads.txt` verified live (`pub-6770897791730584 DIRECT`).
+
 ## [1.0.0] - 2026-10-03 (first production release)
 ### Added
 - Planned Phase 3 — Optional Kover coverage (soft report-only, deferred from v1 gates).
