@@ -5,10 +5,10 @@
 </p>
 
 <p align="center">
-  ✨ <i>Vibe coded using Google AI</i> ✨
+  ✨ <i>Vibe coded using Google Gemini</i> ✨
 </p>
 
-A high-fidelity global audio booster and 5-band graphic equalizer designed for Android. **Milkys Sound Booster & EQ** allows users to amplify speaker and headphone output up to 200%, fine-tune audio frequencies across five visual bands, run instant 3-second sound tests, toggle quick floating overlay controls, and manage AdMob integrations with customized build scripts and versioning parameters.
+A high-fidelity global audio booster and 5-band graphic equalizer designed for Android. **Milkys Sound Booster & EQ** allows users to amplify speaker and headphone output up to 200%, fine-tune audio frequencies across five visual bands, run instant 3-second sound tests, toggle quick floating overlay controls, and manage AdMob integrations with customized build scripts and versioning parameters. Testing feasibility of gemini ai models
 
 ---
 
