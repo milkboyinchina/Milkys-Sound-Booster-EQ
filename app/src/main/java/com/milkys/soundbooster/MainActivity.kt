@@ -89,6 +89,15 @@ enum class WindowSizeGroup {
     EXPANDED  // >= 840 dp (Large Tablets / Desktop)
 }
 
+/**
+ * Play-linked AdMob units — single source of truth for ad unit IDs.
+ * App ID lives in res values strings.xml `admob_app_id` -> AndroidManifest.
+ */
+object AdUnits {
+    const val BANNER_ID = "ca-app-pub-6770897791730584/8968860697"
+    const val NATIVE_ID = "ca-app-pub-6770897791730584/5813406288"
+}
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -2446,7 +2455,7 @@ fun AdaptiveBannerAdCard(
 
                     val adView = adViewClass.getConstructor(Context::class.java).newInstance(ctx) as android.view.View
 
-                    adViewClass.getMethod("setAdUnitId", String::class.java).invoke(adView, "ca-app-pub-6770897791730584/1694908312")
+                    adViewClass.getMethod("setAdUnitId", String::class.java).invoke(adView, AdUnits.BANNER_ID)
 
                     val displayMetrics = ctx.resources.displayMetrics
                     val adWidthPixels = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -2616,7 +2625,7 @@ fun NativeAdCard(
                     nativeAdViewClass.getMethod("setCallToActionView", android.view.View::class.java).invoke(nativeAdView, ctaButton)
 
                     val builderInstance = adLoaderBuilderClass.getConstructor(Context::class.java, String::class.java)
-                        .newInstance(ctx, "ca-app-pub-6770897791730584/7039657771")
+                        .newInstance(ctx, AdUnits.NATIVE_ID)
 
                     val listenerClass = Class.forName("com.google.android.gms.ads.nativead.NativeAd\$OnNativeAdLoadedListener")
                     val proxyInvocationHandler = java.lang.reflect.InvocationHandler { _, method, args ->
