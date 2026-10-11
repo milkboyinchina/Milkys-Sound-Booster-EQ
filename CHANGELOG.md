@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scripts/bump_version.py` on `scripts/build.sh`). Per-tag verbose QC notes live in `qc/changelogs/`.
 
+## [1.0.4] - 2026-10-12 (cold-start black-screen fix, API 28)
+### Fixed
+- Black screen on second launch on Android 9 and below (API ≤32) for users with a persisted per-app language (Play review: Vivo V1901K, Indonesian): unconditional `AppCompatDelegate.setApplicationLocales()` in `MainActivity.onCreate` re-triggered Activity recreation forever (377 `onCreate` loop observed on an API 28 emulator, no crash, `mCurrentFocus=null`). `AudioEffectManager.applyLanguageToApp` is now idempotent (skip when AppCompat already holds the list + re-entry guard) and the deprecated `resources.updateConfiguration()` block is removed. Full notes: `qc/changelogs/20261012-004500-v1.0.4.md`.
+- Banner ad issued two `loadAd` calls per composition (first before the `AdListener` was registered); now a single `loadAd` after listener registration.
+### Added
+- `LocaleColdStartTest` (Robolectric, SDK 28, 4 tests) pinning locale-apply idempotence: 5 identical applies trigger at most one `setApplicationLocales`.
+### Verified
+- API 28 emulator (Vivo-like AVD, R8 release `1.0.4/26101202`): Indonesian cold start renders full dashboard, 0 fatals. Unit tests 48/48, `lintDebug` 0 errors.
+
 ## [1.0.2] - 2026-10-08 (Play-linked AdMob rotation)
 ### Changed
 - AdMob IDs rotated to Play-linked app `~3500911599` (13 locales `strings.xml`), banner `/8968860697`, native `/5813406288`; unit IDs centralized in `AdUnits` object (`MainActivity.kt`).
