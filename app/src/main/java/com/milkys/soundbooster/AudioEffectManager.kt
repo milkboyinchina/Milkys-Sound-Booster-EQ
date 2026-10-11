@@ -69,9 +69,24 @@ object AudioEffectManager {
     // overwrite live in-memory state with possibly-stale prefs.
     @Volatile private var initialized = false
 
+    // Cold-start black-screen guard (API <33, Vivo Android 9 report):
+    // AppCompatDelegate.setApplicationLocales() recreates the host Activity.
+    // Called unconditionally from MainActivity.onCreate it re-fires on every
+    // recreation -> infinite onCreate loop -> permanent black screen with no
+    // crash (377 recreations observed on API 28). Skip re-applying.
+    @Volatile private var lastAppliedLanguageTag: String? = null
+    @androidx.annotation.VisibleForTesting
+    internal var setApplicationLocalesCalls = 0
+
     @androidx.annotation.VisibleForTesting
     fun resetInitForTest() {
         initialized = false
+    }
+
+    @androidx.annotation.VisibleForTesting
+    fun resetLanguageForTest() {
+        lastAppliedLanguageTag = null
+        setApplicationLocalesCalls = 0
     }
     
     // State flows for UI observation
@@ -569,25 +584,40 @@ object AudioEffectManager {
     }
 
     fun applyLanguageToApp(ctx: Context, languageTag: String) {
-        val localeList = if (languageTag.isEmpty() || languageTag == "system") {
+        val normalized = languageTag.ifEmpty { "system" }
+        // Process-local idempotence: a recreate triggered by the set() below
+        // re-enters onCreate -> applyLanguageToApp. Without this early return
+        // the loop never converges (black screen, API <33).
+        if (normalized == lastAppliedLanguageTag) return
+        val localeList = if (normalized == "system") {
             androidx.core.os.LocaleListCompat.getEmptyLocaleList()
         } else {
-            androidx.core.os.LocaleListCompat.forLanguageTags(languageTag)
+            androidx.core.os.LocaleListCompat.forLanguageTags(normalized)
         }
+        try {
+            // Skip the set() entirely when AppCompat already holds this list
+            // (cold start with persisted per-app language) — avoids even the
+            // single recreate on API <33 without AppLocalesMetadataHolderService.
+            if (androidx.appcompat.app.AppCompatDelegate.getApplicationLocales() == localeList) {
+                lastAppliedLanguageTag = normalized
+                return
+            }
+        } catch (_: Throwable) { /* fall through and apply */ }
+        // Mark BEFORE set(): the recreate it triggers must see the guard set.
+        lastAppliedLanguageTag = normalized
+        setApplicationLocalesCalls++
         androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(localeList)
 
+        // NOTE: the old resources.updateConfiguration() block was removed here.
+        // It is deprecated and mutates the base configuration, fighting
+        // AppCompat's locale wrapping on API <33 (recreate-loop contributor).
         try {
-            val locale = if (languageTag.isEmpty() || languageTag == "system") {
+            val locale = if (normalized == "system") {
                 java.util.Locale.getDefault()
             } else {
-                java.util.Locale.forLanguageTag(languageTag)
+                java.util.Locale.forLanguageTag(normalized)
             }
             java.util.Locale.setDefault(locale)
-            val resources = ctx.resources
-            val config = resources.configuration
-            config.setLocale(locale)
-            @Suppress("DEPRECATION")
-            resources.updateConfiguration(config, resources.displayMetrics)
         } catch (e: Exception) {
             e.printStackTrace()
         }
