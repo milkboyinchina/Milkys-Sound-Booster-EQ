@@ -2493,8 +2493,9 @@ fun AdaptiveBannerAdCard(
                     }
                     val adReq = adRequestBuilderClass.getMethod("build").invoke(adReqBuilder)
 
-                    adViewClass.getMethod("loadAd", adRequestClass).invoke(adView, adReq)
-
+                    // Single loadAd AFTER the listener is registered (was: double
+                    // load — once before setAdListener — doubling traffic and
+                    // risking onAdLoaded racing the fallback removal).
                     try {
                         val adListenerClass = Class.forName("com.google.android.gms.ads.AdListener")
                         val proxy = java.lang.reflect.Proxy.newProxyInstance(
