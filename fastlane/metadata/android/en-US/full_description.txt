@@ -1,14 +1,59 @@
-Milkys Sound Booster & EQ — High-fidelity global audio booster & 5-band equalizer for Android.
+( ˘▽˘)っ♫ Amplify Your Audio Experience with Milkys Sound Booster & EQ!
 
-Amplify speaker, earphone & Bluetooth output beyond system limits up to 200% (+15dB) safely with LoudnessEnhancer + AudioTrack. Fine-tune 5 bands (60Hz Bass, 230Hz Low-Mid, 910Hz Mid, 3.6kHz High-Mid, 14kHz Treble) from -15dB to +15dB with presets Flat, Classical, Jazz, Pop, Rock, Custom.
+Looking for a clean, powerful way to boost your speaker volume and fine-tune your music? Milkys Sound Booster & EQ is a high-fidelity global audio amplifier and 5-band graphic equalizer designed to elevate your device's audio performance.
 
-• Instant 3-sec sound test next to power dial
-• Hearing & speaker damage warning banner (7-day dismiss)
-• 13 locales: EN, ID, MS, HI, PT, FR, IT, DE, ZH-CN, ZH-TW, JA, KO + System Default (per-app language)
-• Quick Settings Tile (1-tap booster toggle)
-• Floating overlay bubble (TYPE_APPLICATION_OVERLAY) over any app
-• Material 3 light/dark themes, 48dp touch targets
+Whether you are listening to music, watching movies, playing games, or streaming podcasts, Milkys Sound Booster & EQ gives you control over your sound output across wired headphones, Bluetooth headsets, and internal phone speakers.
 
-Ads support voluntary development (Settings → Ads → Keep On / Turn Off, GDPR UMP). Disable anytime. Privacy: https://milkboy.my.id/term/general-app-privacy
+---
 
-Safe use: start +10% to +30%, avoid prolonged >100%. Requires MODIFY_AUDIO_SETTINGS. GPLv3 open source: https://github.com/milkys/sound-booster-eq
+( ٩(ˊᗜˋ*)و ) KEY FEATURES
+
+( ⚡ ) Global Volume Booster (up to +200% / +15dB)
+Safely amplify your system audio output up to +200% beyond default hardware limits. Enjoy louder, clearer playback for quiet videos and low-volume audio files.
+
+( 🎧 ) 5-Band Graphic Equalizer
+Take full control over frequency response with precise dB sliders across 5 dedicated bands:
+• 60Hz – Deep Bass Response
+• 230Hz – Warm Low-Mids
+• 910Hz – Clear Vocal Mids
+• 3.6kHz – Crisp High-Mids
+• 14kHz – Brilliant Treble & Highs
+
+( ♪ ) Preconfigured Audio Presets
+Switch instantly between tuned sound profiles:
+• Flat – Balanced reference audio
+• Bass Booster – Deeper low-end punch
+• Vocal Booster – Forward, clearer voices
+• Rock – Punchy bass with sharp highs
+• Pop – Dynamic low and high boost
+• Jazz – Warm bass with smooth mids
+• Custom – Save your own equalizer settings
+
+(♪♪) Instant 3-Second Sound Test
+Test your equalizer and volume adjustments immediately! Built right next to the master dial, the 3-second multi-frequency test generator lets you verify sound changes without opening another media player.
+
+( °▽° ) Multi-Language & Global Localization
+Milkys App supports 13 locales: English, Bahasa Indonesia, Bahasa Melayu, हिन्दी, Português, Français, Italiano, Deutsch, 中文 (简体), 中文 (繁體), 日本語, 한국어, plus System Default (per-app language).
+
+( ´ ▽ ` ) System Floating Overlay Bubble
+Adjust your volume boost and equalizer settings from anywhere! The quick floating window overlay lets you tune audio settings on top of YouTube, games, Spotify, or any active app.
+
+(⚡_⚡) Android Quick Settings Tile
+Turn the sound booster ON or OFF with a single tap straight from your notification bar.
+
+---
+
+( ｀ー´) RESPONSIBLE AUDIO & SAFETY
+
+Your hearing and equipment safety matter! Milkys Sound Booster & EQ includes a high-contrast safety warning banner to help protect your hearing and prevent speaker burnout. Start at lower boost levels (+10% to +30%) before increasing gain.
+
+---
+
+( `ω´ ) PRIVACY & OPEN SOURCE
+
+• On-device audio: boost and equalizer are processed locally in real time — the app does not record or transmit audio.
+• No accounts, no personal profiles.
+• Ads are on by default and can be switched off anytime in Settings. When enabled, Google (AdMob) uses the advertising ID to serve ads — see the full policy: https://milkboy.my.id/term/general-app-privacy
+• Open source: GNU General Public License v3.0 (GPLv3): https://github.com/milkys/sound-booster-eq
+
+Download Milkys Sound Booster & EQ today and experience crystal-clear, amplified sound!

@@ -1,1 +1,59 @@
-Milkys Sound Booster & EQ — Amplificateur global et égaliseur 5 bandes pour Android. Amplifiez jusqu'à 200% (+15dB), 5 bandes -15dB à +15dB. Confidentialité: https://milkboy.my.id/term/general-app-privacy
+( ˘▽˘)っ♫ Amplifiez votre expérience audio avec Milkys Sound Booster & EQ !
+
+Vous cherchez un moyen simple et puissant d'augmenter le volume de votre haut-parleur et d'affiner votre musique ? Milkys Sound Booster & EQ est un amplificateur audio global haute fidélité et un égaliseur graphique 5 bandes conçu pour rehausser les performances audio de votre appareil.
+
+Que vous écoutiez de la musique, regardiez des films, jouiez à des jeux ou écoutiez des podcasts, Milkys Sound Booster & EQ vous donne le contrôle de la sortie audio sur casques filaires, casques Bluetooth et haut-parleurs internes.
+
+---
+
+( ٩(ˊᗜˋ*)و ) FONCTIONNALITÉS CLÉS
+
+( ⚡ ) Amplificateur de volume global (jusqu'à +200% / +15dB)
+Amplifiez en toute sécurité le son du système jusqu'à +200% au-delà des limites matérielles. Profitez d'une lecture plus forte et plus claire pour les vidéos et fichiers audio discrets.
+
+( 🎧 ) Égaliseur graphique 5 bandes
+Contrôlez la réponse en fréquence avec des curseurs dB précis sur 5 bandes :
+• 60Hz – Basses profondes
+• 230Hz – Bas-médiums chaleureux
+• 910Hz – Médiums vocaux clairs
+• 3,6kHz – Hauts médiums nets
+• 14kHz – Aigus éclatants
+
+( ♪ ) Préréglages audio
+Passez instantanément entre des profils sonores réglés :
+• Flat – Son de référence équilibré
+• Bass Booster – Basses plus profondes
+• Vocal Booster – Voix plus claires et présentes
+• Rock – Basses percutantes et aigus tranchants
+• Pop – Boost dynamique des basses et aigus
+• Jazz – Basses chaleureuses et médiums doux
+• Custom – Enregistrez vos propres réglages
+
+(♪♪) Test sonore instantané de 3 secondes
+Testez immédiatement votre égaliseur et votre volume ! À côté du bouton principal, le générateur multi-fréquences de 3 secondes vous permet d'entendre les changements sans ouvrir un autre lecteur.
+
+( °▽° ) Multilingue et localisation mondiale
+Milkys App prend en charge 13 langues : English, Bahasa Indonesia, Bahasa Melayu, हिन्दी, Português, Français, Italiano, Deutsch, 中文 (简体), 中文 (繁體), 日本語, 한국어, plus Système par défaut (langue par application).
+
+( ´ ▽ ` ) Bulle flottante en superposition
+Réglez l'amplification et l'égaliseur depuis n'importe où ! La fenêtre flottante s'affiche au-dessus de YouTube, des jeux, de Spotify ou de toute autre application.
+
+(⚡_⚡) Tuile Réglages rapides Android
+Activez ou désactivez l'amplificateur d'un seul geste depuis la barre de notifications.
+
+---
+
+( ｀ー´) AUDIO RESPONSABLE ET SÉCURITÉ
+
+Votre audition et vos appareils comptent ! Milkys Sound Booster & EQ inclut une bannière d'avertissement bien visible pour protéger votre audition et éviter d'endommager les haut-parleurs. Commencez par des niveaux faibles (+10% à +30%) avant d'augmenter.
+
+---
+
+( `ω´ ) CONFIDENTIALITÉ ET OPEN SOURCE
+
+• Audio sur l'appareil : l'amplification et l'égaliseur sont traités localement en temps réel — l'app n'enregistre ni ne transmet l'audio.
+• Aucun compte, aucun profil utilisateur.
+• Les publicités sont activées par défaut et peuvent être désactivées à tout moment dans les Réglages. Lorsqu'elles sont activées, Google (AdMob) utilise l'identifiant publicitaire — politique complète : https://milkboy.my.id/term/general-app-privacy
+• Open source : GNU General Public License v3.0 (GPLv3) : https://github.com/milkys/sound-booster-eq
+
+Téléchargez Milkys Sound Booster & EQ dès aujourd'hui et profitez d'un son amplifié d'une clarté cristalline !

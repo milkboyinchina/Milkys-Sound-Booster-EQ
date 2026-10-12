@@ -1,6 +1,59 @@
-Milkys Sound Booster & EQ — Pengeras audio global & equalizer 5-band untuk Android.
+( ˘▽˘)っ♫ Tingkatkan Pengalaman Audio Anda dengan Milkys Sound Booster & EQ!
 
-Perkuat speaker, earphone & Bluetooth hingga 200% (+15dB) dengan aman. Atur 5 band (60Hz, 230Hz, 910Hz, 3.6kHz, 14kHz) -15dB hingga +15dB, preset Flat, Classical, Jazz, Pop, Rock, Custom.
+Ingin cara yang bersih dan kuat untuk meningkatkan volume speaker serta menyempurnakan musik Anda? Milkys Sound Booster & EQ adalah penguat audio global berfidelitas tinggi dan equalizer grafis 5-band yang dirancang untuk mengangkat performa audio perangkat Anda.
 
-• Uji suara 3 detik, peringatan kerusakan pendengaran, 13 bahasa, Tile Cepat, overlay mengambang, tema terang/gelap.
-Iklan mendukung pengembangan (Pengaturan → Iklan). Privasi: https://milkboy.my.id/term/general-app-privacy
+Baik Anda mendengarkan musik, menonton film, bermain game, atau streaming podcast, Milkys Sound Booster & EQ memberi Anda kendali atas keluaran suara pada headphone kabel, headset Bluetooth, dan speaker internal ponsel.
+
+---
+
+( ٩(ˊᗜˋ*)و ) FITUR UTAMA
+
+( ⚡ ) Penguat Volume Global (hingga +200% / +15dB)
+Tingkatkan audio sistem dengan aman hingga +200% melampaui batas perangkat. Nikmati pemutaran yang lebih keras dan jernih untuk video dan berkas audio bervolume rendah.
+
+( 🎧 ) Equalizer Grafis 5-Band
+Kendalikan respons frekuensi dengan slider dB presisi pada 5 band:
+• 60Hz – Bass mendalam
+• 230Hz – Low-mid hangat
+• 910Hz – Mid vokal jernih
+• 3,6kHz – High-mid tajam
+• 14kHz – Treble cemerlang
+
+( ♪ ) Preset Audio
+Beralih instan antar profil suara yang telah disetel:
+• Flat – Suara referensi seimbang
+• Bass Booster – Bass lebih dalam
+• Vocal Booster – Suara vokal lebih jelas dan menonjol
+• Rock – Bass bertenaga dengan high tajam
+• Pop – Boost bass dan high yang dinamis
+• Jazz – Bass hangat dengan mid lembut
+• Custom – Simpan pengaturan equalizer Anda sendiri
+
+(♪♪) Uji Suara 3 Detik Instan
+Uji equalizer dan volume Anda seketika! Di samping dial utama, generator uji multi-frekuensi 3 detik memungkinkan Anda mendengar perubahan tanpa membuka pemutar lain.
+
+( °▽° ) Multibahasa & Lokalisasi Global
+Milkys App mendukung 13 bahasa: English, Bahasa Indonesia, Bahasa Melayu, हिन्दी, Português, Français, Italiano, Deutsch, 中文 (简体), 中文 (繁體), 日本語, 한국어, plus Bawaan Sistem (bahasa per aplikasi).
+
+( ´ ▽ ` ) Gelembung Overlay Mengambang
+Atur penguat dan equalizer dari mana saja! Jendela mengambang dapat disetel di atas YouTube, game, Spotify, atau aplikasi aktif apa pun.
+
+(⚡_⚡) Tile Pengaturan Cepat Android
+Nyalakan atau matikan booster dengan satu ketukan dari bilah notifikasi.
+
+---
+
+( ｀ー´) AUDIO YANG BERTANGGUNG JAWAB & KESELAMATAN
+
+Pendengaran dan perangkat Anda penting! Milkys Sound Booster & EQ menyertakan spanduk peringatan kontras tinggi untuk melindungi pendengaran dan mencegah kerusakan speaker. Mulailah dari tingkat rendah (+10% hingga +30%) sebelum menaikkan.
+
+---
+
+( `ω´ ) PRIVASI & OPEN SOURCE
+
+• Audio di perangkat: boost dan equalizer diproses lokal secara real-time — aplikasi tidak merekam atau mengirim audio.
+• Tanpa akun, tanpa profil pribadi.
+• Iklan aktif secara default dan dapat dinonaktifkan kapan saja di Setelan. Saat aktif, Google (AdMob) menggunakan ID iklan — kebijakan lengkap: https://milkboy.my.id/term/general-app-privacy
+• Open source: GNU General Public License v3.0 (GPLv3): https://github.com/milkys/sound-booster-eq
+
+Unduh Milkys Sound Booster & EQ hari ini dan rasakan suara yang jernih dan diperkuat!
