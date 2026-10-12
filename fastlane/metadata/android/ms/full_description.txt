@@ -1,1 +1,59 @@
-Milkys Sound Booster & EQ — Penggalak audio global & penyamaan 5 jalur untuk Android. Perkuatkan output sehingga 200% (+15dB). Laraskan 5 jalur -15dB hingga +15dB. Privasi: https://milkboy.my.id/term/general-app-privacy
+( ˘▽˘)っ♫ Perkukuh Pengalaman Audio Anda dengan Milkys Sound Booster & EQ!
+
+Mencari cara yang bersih dan berkuasa untuk meningkatkan kelantangan pembesar suara dan menyelaraskan muzik anda? Milkys Sound Booster & EQ ialah penguat audio global berfideliti tinggi dan penyama grafik 5-jalur yang direka untuk meningkatkan prestasi audio peranti anda.
+
+Sama ada anda mendengar muzik, menonton filem, bermain permainan atau menstrim podcast, Milkys Sound Booster & EQ memberi anda kawalan output bunyi pada fon kepala berwayar, set kepala Bluetooth dan pembesar suara dalaman.
+
+---
+
+( ٩(ˊᗜˋ*)و ) CIRI UTAMA
+
+( ⚡ ) Penguat Kelantangan Global (sehingga +200% / +15dB)
+Tingkatkan audio sistem dengan selamat sehingga +200% melebihi had perkakasan lalai. Nikmati main balik yang lebih kuat dan jelas untuk video dan fail audio bervolume rendah.
+
+( 🎧 ) Penyama Grafik 5-Jalur
+Kawal respons frekuensi dengan slider dB tepat pada 5 jalur:
+• 60Hz – Bes mendalam
+• 230Hz – Bes pertengahan hangat
+• 910Hz – Pertengahan vokal jelas
+• 3.6kHz – Pertengahan tinggi tajam
+• 14kHz – Treble cemerlang
+
+( ♪ ) Pratetap Audio
+Tukar serta-merta antara profil bunyi yang dilaraskan:
+• Flat – Bunyi rujukan seimbang
+• Bass Booster – Bes lebih mendalam
+• Vocal Booster – Suara lebih jelas dan menonjol
+• Rock – Bes bertenaga dengan tinggi tajam
+• Pop – Boost bes dan tinggi dinamik
+• Jazz – Bes hangat dengan pertengahan lembut
+• Custom – Simpan tetapan penyama anda sendiri
+
+(♪♪) Ujian Bunyi 3 Saat Segera
+Uji penyama dan kelantangan anda serta-merta! Di sebelah dail utama, penjana ujian berbilang frekuensi 3 saat membolehkan anda mendengar perubahan tanpa membuka pemain lain.
+
+( °▽° ) Berbilang Bahasa & Penyetempatan Global
+Milkys App menyokong 13 bahasa: English, Bahasa Indonesia, Bahasa Melayu, हिन्दी, Português, Français, Italiano, Deutsch, 中文 (简体), 中文 (繁體), 日本語, 한국어, serta Lalai Sistem (bahasa setiap aplikasi).
+
+( ´ ▽ ` ) Gelembung Overlay Terapung
+Laraskan penguat dan penyama dari mana-mana sahaja! Tetingkap terapung boleh dilaraskan di atas YouTube, permainan, Spotify atau mana-mana aplikasi aktif.
+
+(⚡_⚡) Jubin Tetapan Pantas Android
+Hidupkan atau matikan penguat dengan satu ketikan dari bar pemberitahuan.
+
+---
+
+( ｀ー´) AUDIO BERTANGGUNGJAWAB & KESELAMATAN
+
+Pendengaran dan peranti anda penting! Milkys Sound Booster & EQ menyertakan sepanduk amaran berkontras tinggi untuk melindungi pendengaran dan mencegah kerosakan pembesar suara. Mulakan pada tahap rendah (+10% hingga +30%) sebelum menaikkan.
+
+---
+
+( `ω´ ) PRIVASI & OPEN SOURCE
+
+• Audio pada peranti: boost dan penyama diproses secara setempat dalam masa nyata — aplikasi tidak merakam atau menghantar audio.
+• Tiada akaun, tiada profil peribadi.
+• Iklan aktif secara lalai dan boleh dimatikan bila-bila masa dalam Tetapan. Apabila aktif, Google (AdMob) menggunakan ID iklan — dasar penuh: https://milkboy.my.id/term/general-app-privacy
+• Sumber terbuka: GNU General Public License v3.0 (GPLv3): https://github.com/milkys/sound-booster-eq
+
+Muat turun Milkys Sound Booster & EQ hari ini dan rasai bunyi yang jernih dan diperkukuh!

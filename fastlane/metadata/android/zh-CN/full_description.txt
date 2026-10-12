@@ -1,1 +1,59 @@
-Milkys Sound Booster & EQ — 安卓高保真全局音量增强器和5段均衡器。安全增强至200%（+15dB），5段-15dB至+15dB。隐私：https://milkboy.my.id/term/general-app-privacy
+( ˘▽˘)っ♫ 用 Milkys Sound Booster & EQ 强化你的音频体验！
+
+想要简洁而强大的方式来提升扬声器音量并精细调节音乐吗？Milkys Sound Booster & EQ 是一款高保真全局音频放大器和 5 段图形均衡器，专为提升设备音频表现而设计。
+
+无论是听音乐、看电影、玩游戏还是收听播客，Milkys Sound Booster & EQ 都能让你掌控有线耳机、蓝牙耳机和内置扬声器的声音输出。
+
+---
+
+( ٩(ˊᗜˋ*)و ) 核心功能
+
+( ⚡ ) 全局音量增强（最高 +200% / +15dB）
+在默认硬件上限之外，安全地将系统音频提升最高 +200%。让音量偏低的视频和音频文件也能响亮、清晰。
+
+( 🎧 ) 5 段图形均衡器
+用精确的 dB 滑块全面掌控 5 个频段：
+• 60Hz – 深沉低音
+• 230Hz – 温暖中低音
+• 910Hz – 清晰人声中音
+• 3.6kHz – 明亮中高音
+• 14kHz – 通透高音
+
+( ♪ ) 预设音效
+即时切换调校好的声音配置：
+• Flat – 均衡参考音
+• Bass Booster – 更深的低频冲击
+• Vocal Booster – 更清晰靠前的人声
+• Rock – 有力低音与锐利高音
+• Pop – 动态低音与高音增强
+• Jazz – 温暖低音与柔和中音
+• Custom – 保存你自己的均衡器设置
+
+(♪♪) 即时 3 秒声音测试
+立即测试均衡器与音量！主旋钮旁内置 3 秒多频测试音，无需打开其他播放器即可听到变化。
+
+( °▽° ) 多语言与全球本地化
+Milkys App 支持 13 种语言：English、Bahasa Indonesia、Bahasa Melayu、हिन्दी、Português、Français、Italiano、Deutsch、中文（简体）、中文（繁體）、日本語、한국어，以及系统默认（按应用语言）。
+
+( ´ ▽ ` ) 悬浮窗
+随时随地调整音量增强与均衡器！悬浮窗可叠加显示在 YouTube、游戏、Spotify 或任何应用之上。
+
+(⚡_⚡) Android 快捷设置磁贴
+从通知栏一键开启或关闭增强器。
+
+---
+
+( ｀ー´) 负责任地使用与安全
+
+你的听力和设备都很重要！Milkys Sound Booster & EQ 提供醒目的安全警告横幅，帮助保护听力并防止扬声器损坏。请先从较低增强（+10% 至 +30%）开始。
+
+---
+
+( `ω´ ) 隐私与开源
+
+• 设备端处理：增强与均衡器在本地实时处理 — 应用不会录制或传输音频。
+• 无需账号，无个人档案。
+• 广告默认开启，可随时在设置中关闭。开启时，Google（AdMob）使用广告 ID — 完整政策：https://milkboy.my.id/term/general-app-privacy
+• 开源：GNU General Public License v3.0（GPLv3）：https://github.com/milkys/sound-booster-eq
+
+立即下载 Milkys Sound Booster & EQ，体验清澈、强劲的音效！
