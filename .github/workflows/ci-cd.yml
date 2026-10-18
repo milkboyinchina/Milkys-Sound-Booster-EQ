@@ -197,7 +197,16 @@ jobs:
             echo "[+] Keystore decoded to $KEYSTORE_PATH"
             ls -l "$KEYSTORE_PATH" || true
           else
-            echo "[*] No KEYSTORE_BASE64 secret — fallback to debug.keystore per app/build.gradle.kts:116"
+            echo "::warning title=Debug-signed release::KEYSTORE_BASE64 is not configured; generating an ephemeral debug keystore for this build."
+            keytool -genkeypair -noprompt \
+              -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US" 2>&1 | tail -5
           fi
 
       - name: Make Scripts Executable
@@ -225,6 +234,11 @@ jobs:
           mkdir -p release-assets
           find .build-outputs -type f \( -name '*.apk' -o -name '*.aab' \) -exec cp {} release-assets/ \;
           ls -lh release-assets
+          ASSET_COUNT=$(find release-assets -type f | wc -l)
+          if [ "$ASSET_COUNT" -eq 0 ]; then
+            echo "::error title=Missing release assets::No APK/AAB files were produced by the release build."
+            exit 1
+          fi
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v7
