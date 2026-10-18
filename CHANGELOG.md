@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scripts/bump_version.py` on `scripts/build.sh`). Per-tag verbose QC notes live in `qc/changelogs/`.
 
+## [1.0.6] - 2026-10-18 (release asset packaging)
+### Fixed
+- Tag releases now stage `.build-outputs` APK/AAB files into the visible `release-assets/` directory before upload. The previous `v1.0.5` run created a release but attached no assets because hidden dot-directories are ignored by the artifact and release actions.
+
 ## [1.0.5] - 2026-10-18 (CI green, font-scale EQ, update checker)
 ### Added
 - Settings → About update checker with per-channel sources: Play Store listing, GitHub Releases API, and F-Droid package API. Shows current version/channel, checking/up-to-date/available/not-found/error states, and opens the store/release page. Play Core native in-app updates remain deferred to the flavor work.
