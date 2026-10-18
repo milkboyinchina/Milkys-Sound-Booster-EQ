@@ -51,8 +51,8 @@ val envUpdateChannel = getEnvVar("UPDATE_CHANNEL", when (envBuildTarget) {
   "github", "github-noads" -> "github"
   else -> "playstore"
 }).lowercase()
-val envDevWebsiteUrl = getEnvVar("DEVELOPER_WEBSITE_URL", "https://milkys.app")
-val envPrivacyPolicyUrl = getEnvVar("PRIVACY_POLICY_URL", "https://milkys.app/privacy")
+val envDevWebsiteUrl = getEnvVar("DEVELOPER_WEBSITE_URL", "https://milkboy.my.id")
+val envPrivacyPolicyUrl = getEnvVar("PRIVACY_POLICY_URL", "https://milkboy.my.id/term/general-app-privacy")
 
 val envAppLogoDir = getEnvVar("APP_LOGO_DIR", "assets/logo")
 val envAppLogoPath = getEnvVar("APP_LOGO_PATH", "assets/logo/app_logo.png")
