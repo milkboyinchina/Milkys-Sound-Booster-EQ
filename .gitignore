@@ -57,7 +57,9 @@ release.keystore
 # Agent task logs (ephemeral)
 .ai-agent-task/
 app/qc/
-app/screenshots/
+# Play Console reference screenshots are committed; only throwaway files are ignored.
+app/screenshots/*
+!app/screenshots/*.png
 
 # Dynamic asset directories for multi-resolution icons & logos
 /assets/logo/

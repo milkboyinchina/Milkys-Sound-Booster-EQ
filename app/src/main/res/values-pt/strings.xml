@@ -44,4 +44,23 @@
     <string name="github_repository">Repositório GitHub</string>
     <string name="privacy_terms">Política de Privacidade e Termos de Serviço</string>
     <string name="open_source_licenses">Licenças de Código Aberto</string>
+
+    <!-- Update checker -->
+    <string name="update_title">Atualizações da aplicação</string>
+    <string name="update_current_version">Versão atual: %1$s (%2$d)</string>
+    <string name="update_source">Origem das atualizações: %1$s</string>
+    <string name="update_source_play_store">Play Store</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">Verificar atualizações</string>
+    <string name="update_checking">A verificar…</string>
+    <string name="update_idle_description">Verifique %1$s para obter a versão mais recente.</string>
+    <string name="update_up_to_date">Já está na versão mais recente.</string>
+    <string name="update_available">A versão %1$s está disponível.</string>
+    <string name="update_open_source">Abrir %1$s</string>
+    <string name="update_open_play_store">Abrir Play Store</string>
+    <string name="update_play_store_description">A Play Store gere as atualizações desta versão.</string>
+    <string name="update_not_published">Ainda não foram encontrados lançamentos em %1$s.</string>
+    <string name="update_error">Não foi possível verificar as atualizações. Verifique a ligação e tente novamente.</string>
+    <string name="about_description">Potenciador de som global e equalizador de 5 bandas de alta fidelidade para Android.</string>
 </resources>

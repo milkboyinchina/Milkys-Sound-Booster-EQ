@@ -30,6 +30,8 @@ class PlayConsoleScreenshotsTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         AudioEffectManager.resetInitForTest()
         AudioEffectManager.init(context)
+        AudioEffectManager.setHasSeenOnboarding(true)
+        AudioEffectManager.setHearingWarningDisabled(true)
     }
 
     private fun getScreenshotPath(filename: String): String {
@@ -50,7 +52,8 @@ class PlayConsoleScreenshotsTest {
         composeTestRule.setContent {
             DashboardScreen(
                 onStartService = {},
-                onStopService = {}
+                onStopService = {},
+                showDebugInfo = false
             )
         }
         composeTestRule.waitForIdle()

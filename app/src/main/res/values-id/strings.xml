@@ -44,4 +44,23 @@
     <string name="github_repository">Repositori GitHub</string>
     <string name="privacy_terms">Kebijakan Privasi &amp; Ketentuan Layanan</string>
     <string name="open_source_licenses">Lisensi Sumber Terbuka</string>
+
+    <!-- Update checker -->
+    <string name="update_title">Pembaruan aplikasi</string>
+    <string name="update_current_version">Versi saat ini: %1$s (%2$d)</string>
+    <string name="update_source">Sumber pembaruan: %1$s</string>
+    <string name="update_source_play_store">Play Store</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">Periksa pembaruan</string>
+    <string name="update_checking">Memeriksa…</string>
+    <string name="update_idle_description">Periksa %1$s untuk versi terbaru.</string>
+    <string name="update_up_to_date">Anda sudah menggunakan versi terbaru.</string>
+    <string name="update_available">Versi %1$s tersedia.</string>
+    <string name="update_open_source">Buka %1$s</string>
+    <string name="update_open_play_store">Buka Play Store</string>
+    <string name="update_play_store_description">Play Store mengelola pembaruan untuk build ini.</string>
+    <string name="update_not_published">Belum ada rilis di %1$s.</string>
+    <string name="update_error">Tidak dapat memeriksa pembaruan. Periksa koneksi dan coba lagi.</string>
+    <string name="about_description">Sound booster global dan equalizer 5-band berkualitas tinggi untuk Android.</string>
 </resources>

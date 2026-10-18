@@ -22,7 +22,10 @@ if (envFile.exists()) {
 }
 
 fun getEnvVar(key: String, defaultValue: String): String {
-  return envMap[key] ?: System.getenv(key) ?: defaultValue
+  // Environment variables win over .env so scripts/build.sh can build multiple
+  // distribution targets (playstore/fdroid/github) in one invocation without
+  // baking the wrong BUILD_TARGET / INCLUDE_GOOGLE_ADS into BuildConfig.
+  return System.getenv(key)?.takeIf { it.isNotBlank() } ?: envMap[key] ?: defaultValue
 }
 
 val envAppName = getEnvVar("APP_NAME", "Milkys Sound Booster & EQ")
@@ -42,7 +45,12 @@ val envIncludeGoogleAds = if (rawIncludeAds.isNotEmpty()) {
 } else {
   envBuildTarget != "fdroid"
 }
-val envGithubRepoUrl = getEnvVar("GITHUB_REPO_URL", "https://github.com/milkys/sound-booster-eq")
+val envGithubRepoUrl = getEnvVar("GITHUB_REPO_URL", "https://github.com/milkboyinchina/Milkys-Sound-Booster-EQ")
+val envUpdateChannel = getEnvVar("UPDATE_CHANNEL", when (envBuildTarget) {
+  "fdroid" -> "fdroid"
+  "github", "github-noads" -> "github"
+  else -> "playstore"
+}).lowercase()
 val envDevWebsiteUrl = getEnvVar("DEVELOPER_WEBSITE_URL", "https://milkys.app")
 val envPrivacyPolicyUrl = getEnvVar("PRIVACY_POLICY_URL", "https://milkys.app/privacy")
 
@@ -77,6 +85,7 @@ android {
     resValue("string", "app_name", envAppName)
     buildConfigField("String", "APP_NAME", "\"$envAppName\"")
     buildConfigField("String", "BUILD_TARGET", "\"$envBuildTarget\"")
+    buildConfigField("String", "UPDATE_CHANNEL", "\"$envUpdateChannel\"")
     buildConfigField("Boolean", "INCLUDE_GOOGLE_ADS", envIncludeGoogleAds.toString())
     buildConfigField("String", "GITHUB_REPO_URL", "\"$envGithubRepoUrl\"")
     buildConfigField("String", "DEVELOPER_WEBSITE_URL", "\"$envDevWebsiteUrl\"")

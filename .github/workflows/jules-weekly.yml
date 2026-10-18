@@ -1,0 +1,58 @@
+name: Jules Weekly QC
+
+on:
+  schedule:
+    # Every Monday at 03:00 UTC.
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jules-weekly
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Weekly maintenance task
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check Jules API key
+        id: jules_key
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$JULES_API_KEY" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Jules skipped::JULES_API_KEY is not configured for this repository."
+          fi
+
+      - name: Invoke Google Jules
+        if: steps.jules_key.outputs.present == 'true'
+        uses: google-labs-code/jules-action@bff7875eaa123cac6742b7cfc51005b95ba4d566 # v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: main
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            Perform this week's maintenance pass for Milkys Sound Booster & EQ.
+
+            1. Read AGENTS.md, .jules/config.yaml, .jules/rules.md, qc/QC_SUMMARY.md, and qc_plan.md §9.
+            2. Run the full JVM gate set:
+               ./scripts/check_requirements.sh
+               ./gradlew testDebugUnitTest
+               ./gradlew lintDebug
+               ./gradlew verifyRoborazziDebug
+               ./gradlew verifyRoborazziDebug
+            3. Inspect the "Next Actions" section of qc/QC_SUMMARY.md. Pick at most one high-value item that is safe for an automated PR.
+            4. Prefer deterministic test/CI/lint fixes and accessibility or font-scale improvements. Do not attempt audio DSP architecture changes, foreground-service redesigns, or anything touching the 1500 mB safety cap.
+            5. Respect protected paths: keystore/*, *.jks, *.p12, .env, qc/changelogs/*.
+            6. Never reintroduce commit hashes or build timestamps into screenshot-visible UI. If a visual diff is intentional, re-record references under app/src/test/screenshots/ and explain it in the PR.
+            7. If an open Jules PR already covers the same work, link it and stop instead of opening a duplicate.
+            8. Open one Pull Request with a summary, verification logs, and the QC summary item reference. If no validated change is available, do not open a PR.

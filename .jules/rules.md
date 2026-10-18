@@ -48,13 +48,19 @@ Before submitting a Pull Request, Jules **MUST**:
 
 ---
 
-## 🤖 5. Jules Automation & Delegation (CI hook)
+## 🤖 5. Jules Automation & Delegation (CI hooks)
 
-1. **Trigger**: `jules-fix` runs only when `verify` or `build-and-release` fails (`ci-cd.yml:142`, guard `secrets.JULES_API_KEY != ''`), not cron.
-2. **Branch**: `starting_branch` must be `github.head_ref || fix/jules-${run_id}` — never a tag name `v*`.
-3. **Scope**: Good for `quick` (lint 48dp/contentDescription, strings, AppColors) + `standard` (Roberazzi re-record, unit quench) — keep `hard-fix` (audio DSP 1500 mB, foreground service) human.
-4. **Recommendation queue** (`qc/QC_SUMMARY.md:Next Actions`, all 3 queued): `1) pin actions to SHA + qc-reports/pages 2) setup_jules_env subfolder+bump 3) re-record 24-combo matrix`.
-5. **Protected**: Never edit `keystore/*`, `*.jks`, `.env`, `qc/changelogs/*` — respect `.jules/config.yaml:protected_paths`.
+1. **Triggers**:
+   - `.github/workflows/ci-cd.yml` → `jules-fix` on `verify` or `build-and-release` failure.
+   - `.github/workflows/jules-issue.yml` → issue labeled `jules` by the repository owner.
+   - `.github/workflows/jules-weekly.yml` → Monday 03:00 UTC cron + manual dispatch.
+2. **API key guard**: each workflow checks `JULES_API_KEY` in a step and skips the Jules action with a notice when the secret is missing. The key must never appear in logs or source.
+3. **Action pin**: `google-labs-code/jules-action` is pinned to the `v1.0.0` commit SHA. Update the SHA deliberately when upgrading.
+4. **Branch**: `starting_branch` is `github.head_ref` for PRs and `main` for push/dispatch/scheduled runs — never a tag name or a synthetic branch that does not exist.
+5. **Concurrency**: issue work is serialized per issue; CI-fix per ref; weekly maintenance is single-flight. Do not open a duplicate PR when one already covers the task.
+6. **Scope**: Good for `quick` (48dp/contentDescription, strings, AppColors) + `standard` (Roborazzi re-record, unit quench) — keep `hard-fix` (audio DSP 1500 mB, foreground service) human.
+7. **Screenshot rule**: never put commit hashes or wall-clock timestamps into screenshot-visible UI. Intentional visual changes must re-record `app/src/test/screenshots/` and explain why.
+8. **Protected**: Never edit `keystore/*`, `*.jks`, `.env`, `qc/changelogs/*` — respect `.jules/config.yaml:protected_paths`.
 
 ---
 

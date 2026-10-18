@@ -44,4 +44,23 @@
     <string name="github_repository">GitHubリポジトリ</string>
     <string name="privacy_terms">プライバシーポリシー＆利用規約</string>
     <string name="open_source_licenses">オープンソースライセンス</string>
+
+    <!-- Update checker -->
+    <string name="update_title">アプリの更新</string>
+    <string name="update_current_version">現在のバージョン: %1$s (%2$d)</string>
+    <string name="update_source">更新元: %1$s</string>
+    <string name="update_source_play_store">Play ストア</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">更新を確認</string>
+    <string name="update_checking">確認中…</string>
+    <string name="update_idle_description">%1$s で最新バージョンを確認してください。</string>
+    <string name="update_up_to_date">最新バージョンを使用しています。</string>
+    <string name="update_available">バージョン %1$s が利用可能です。</string>
+    <string name="update_open_source">%1$s を開く</string>
+    <string name="update_open_play_store">Play ストアを開く</string>
+    <string name="update_play_store_description">このビルドの更新は Play ストアが管理します。</string>
+    <string name="update_not_published">%1$s にはまだリリースがありません。</string>
+    <string name="update_error">更新を確認できませんでした。接続を確認して再試行してください。</string>
+    <string name="about_description">Android 向けの高忠実度グローバルサウンドブースターと 5 バンドイコライザー。</string>
 </resources>

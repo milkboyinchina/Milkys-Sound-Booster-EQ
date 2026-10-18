@@ -37,8 +37,9 @@ body:
       label: 📁 Target Scope & Affected Files
       description: Specify key modules, viewmodels, screens, or file paths Jules should focus on.
       placeholder: |
-        - app/src/main/java/com/milkys/soundbooster/ui/equalizer/EqualizerScreen.kt
-        - app/src/main/java/com/milkys/soundbooster/audio/AudioService.kt
+        - app/src/main/java/com/milkys/soundbooster/MainActivity.kt
+        - app/src/main/java/com/milkys/soundbooster/ui/components/PresetManagerCard.kt
+        - app/src/main/java/com/milkys/soundbooster/AudioEffectManager.kt
     validations:
       required: false
 
@@ -53,7 +54,7 @@ body:
         - label: "Section 3.2 B — Accessibility & Touch Targets (48x48dp minimum, explicit `contentDescription`, dynamic heights)"
         - label: "Section 3.3 A — PII & Secret Sanity Check (`gitleaks dir --redact` - no hardcoded personal info or local machine paths)"
         - label: "Section 3.3 B — GitHub Action Workflow Check (`actionlint .github/workflows/*.yml`)"
-        - label: "Section 5.2 — DSP Boost Ceiling Cap (Strictly <= 200% / +20dB, proper AudioEffect handle cleanup)"
+        - label: "Section 5.2 — DSP Boost Ceiling Cap (Strictly <= 200% / +15dB / 1500 mB, proper AudioEffect handle cleanup)"
 
   - type: textarea
     id: bug_details

@@ -27,6 +27,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -70,7 +71,11 @@ import com.milkys.soundbooster.ui.theme.AppColors
 import com.milkys.soundbooster.ui.theme.MyApplicationTheme
 import com.milkys.soundbooster.ui.components.HearingWarningCard
 import com.milkys.soundbooster.ui.components.PresetManagerCard
+import com.milkys.soundbooster.ui.components.UpdateCard
 import com.milkys.soundbooster.ui.DebugLogBridge
+import com.milkys.soundbooster.update.UpdateCheckerFactory
+import com.milkys.soundbooster.update.UpdateController
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -227,9 +232,18 @@ fun shouldStopServiceOnBoosterOff(floatingEnabled: Boolean): Boolean = !floating
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onStartService: () -> Unit,
-    onStopService: () -> Unit
+    onStopService: () -> Unit,
+    showDebugInfo: Boolean = BuildConfig.DEBUG
 ) {
     val context = LocalContext.current
+    val updateScope = rememberCoroutineScope()
+    val updateController = remember {
+        UpdateController(
+            checker = UpdateCheckerFactory.create(context.applicationContext),
+            scope = updateScope,
+        )
+    }
+    val updateState by updateController.state.collectAsStateWithLifecycle()
     val isEnabled by AudioEffectManager.isBoostEnabled.collectAsStateWithLifecycle()
     val isEqEnabled by AudioEffectManager.isEqEnabled.collectAsStateWithLifecycle()
     val boostProgress by AudioEffectManager.boostProgress.collectAsStateWithLifecycle()
@@ -314,6 +328,20 @@ fun DashboardScreen(
             AudioEffectManager.setFloatingEnabled(false)
             if (!AudioEffectManager.isBoostEnabled.value) {
                 onStopService()
+            }
+        }
+    }
+
+    fun openUpdateUrl(url: String, fallbackUrl: String?) {
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (e: Exception) {
+            if (!fallbackUrl.isNullOrBlank()) {
+                try {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl)))
+                } catch (_: Exception) {
+                    // No browser/store handler available.
+                }
             }
         }
     }
@@ -461,7 +489,8 @@ fun DashboardScreen(
                                 onOpenSettings = { showSettings = true },
                                 onOpenOnboarding = { showOnboardingManually = true },
                                 onSoundTest = { playSoundTest3Sec() },
-                                isSoundTesting = isSoundTesting
+                                isSoundTesting = isSoundTesting,
+                                showDebugInfo = showDebugInfo
                             )
                         }
 
@@ -645,7 +674,8 @@ fun DashboardScreen(
                         onOpenSettings = { showSettings = true },
                         onOpenOnboarding = { showOnboardingManually = true },
                         onSoundTest = { playSoundTest3Sec() },
-                        isSoundTesting = isSoundTesting
+                        isSoundTesting = isSoundTesting,
+                        showDebugInfo = showDebugInfo
                     )
 
                     if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
@@ -829,7 +859,8 @@ fun DashboardScreen(
                         onOpenSettings = { showSettings = true },
                         onOpenOnboarding = { showOnboardingManually = true },
                         onSoundTest = { playSoundTest3Sec() },
-                        isSoundTesting = isSoundTesting
+                        isSoundTesting = isSoundTesting,
+                        showDebugInfo = showDebugInfo
                     )
 
                     if (!isHearingWarningDisabled && System.currentTimeMillis() > hearingWarningHiddenUntil) {
@@ -1795,26 +1826,16 @@ fun DashboardScreen(
                         letterSpacing = 1.sp
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = cardColor),
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = "Vibe Amplifier v1.0",
-                                color = textPrimary,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "High-Fidelity global sound booster and 5-band equalizer for Android.",
-                                color = textSecondary,
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
+                    UpdateCard(
+                        state = updateState,
+                        cardColor = cardColor,
+                        borderDivider = borderDivider,
+                        textPrimary = textPrimary,
+                        textSecondary = textSecondary,
+                        primaryAccent = primaryAccent,
+                        onCheckForUpdates = { updateController.checkForUpdates() },
+                        onOpenUrl = { url, fallbackUrl -> openUpdateUrl(url, fallbackUrl) },
+                    )
                 }
             }
         }
@@ -3079,7 +3100,8 @@ fun AppHeaderRow(
     onOpenSettings: () -> Unit,
     onOpenOnboarding: () -> Unit,
     onSoundTest: () -> Unit,
-    isSoundTesting: Boolean
+    isSoundTesting: Boolean,
+    showDebugInfo: Boolean = BuildConfig.DEBUG
 ) {
     Row(
         modifier = Modifier
@@ -3103,7 +3125,7 @@ fun AppHeaderRow(
             )
             Column {
                 Text(
-                    text = if (BuildConfig.DEBUG) "MILKYS APP • DEBUG ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})" else "MILKYS APP",
+                    text = if (showDebugInfo) "MILKYS APP • DEBUG ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})" else "MILKYS APP",
                     color = textPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -3112,7 +3134,7 @@ fun AppHeaderRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Audio Booster & EQ" + if (BuildConfig.DEBUG) " • " + try { BuildConfig.GIT_SHA.take(7) } catch (_: Throwable) { "dev" } + "." + try { BuildConfig.BUILD_MOMENT } catch (_: Throwable) { "000000" } else "",
+                    text = "Audio Booster & EQ" + if (showDebugInfo) " • " + try { BuildConfig.GIT_SHA.take(7) } catch (_: Throwable) { "dev" } + "." + try { BuildConfig.BUILD_MOMENT } catch (_: Throwable) { "000000" } else "",
                     color = textSecondary,
                     fontSize = 11.sp,
                     maxLines = 1,
@@ -3537,6 +3559,7 @@ fun VisualEqualizerCard(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EqualizerComponent(
     isEnabled: Boolean,
@@ -3557,16 +3580,19 @@ fun EqualizerComponent(
         AudioEffectManager.getMatchedPresetName(eqBands)
     }
     val titleDisplay = if (matchedPresetName != null) "EQ : $matchedPresetName" else "EQ : Custom"
+    val fontScale = LocalDensity.current.fontScale
 
     Column(
         modifier = Modifier.padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header Row: Dynamic Title & Reset Action
-        Row(
+        // Header Row: Dynamic Title & Reset Action. At large font scales the
+        // reset action moves to its own row instead of squeezing the title.
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            maxItemsInEachRow = if (fontScale >= 1.5f) 1 else 2
         ) {
             Column(
                 modifier = Modifier
@@ -3586,7 +3612,7 @@ fun EqualizerComponent(
                     color = primaryAccent,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -3633,11 +3659,21 @@ fun EqualizerComponent(
             )
         }
 
-        // 5-Band Dynamic Frequency Sliders (Q4-A: top-anchored columns, 5.dp under readout, fitted track)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        // 5-Band Dynamic Frequency Sliders. Narrow/large-font layouts wrap to
+        // 3 or 2 columns so the 48dp targets and dB labels never clip.
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val bandColumns = when {
+                fontScale >= 2.0f -> 2
+                fontScale >= 1.5f -> 3
+                maxWidth < 280.dp -> 3
+                else -> 5
+            }
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                maxItemsInEachRow = bandColumns
+            ) {
             val frequencies = listOf("60Hz", "230Hz", "910Hz", "4kHz", "14kHz")
             for (i in 0 until 5) {
                 val level = eqBands.getOrElse(i) { 0 }
@@ -3672,7 +3708,6 @@ fun EqualizerComponent(
                         enabled = isEnabled,
                         modifier = Modifier
                             .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
-                            .padding(2.dp)
                             .background(
                                 if (isEnabled) AppColors.WarningContainer else if (isDarkTheme) AppColors.DarkCardAlt else AppColors.LightDisabledCard,
                                 CircleShape
@@ -3754,7 +3789,6 @@ fun EqualizerComponent(
                         enabled = isEnabled,
                         modifier = Modifier
                             .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
-                            .padding(2.dp)
                             .background(
                                 if (isEnabled) AppColors.WarningContainer else if (isDarkTheme) AppColors.DarkCardAlt else AppColors.LightDisabledCard,
                                 CircleShape
@@ -3778,6 +3812,7 @@ fun EqualizerComponent(
                         softWrap = false
                     )
                 }
+            }
             }
         }
 

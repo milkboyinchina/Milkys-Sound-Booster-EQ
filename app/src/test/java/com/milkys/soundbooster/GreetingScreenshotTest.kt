@@ -26,12 +26,18 @@ class GreetingScreenshotTest {
   fun setUp() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     AudioEffectManager.resetInitForTest()
-        AudioEffectManager.init(context)
+    AudioEffectManager.init(context)
+    AudioEffectManager.setHasSeenOnboarding(true)
+    AudioEffectManager.setHearingWarningDisabled(true)
   }
 
   @Test
   fun greeting_screenshot() {
-    composeTestRule.setContent { MyApplicationTheme { DashboardScreen(onStartService = {}, onStopService = {}) } }
+    composeTestRule.setContent {
+      MyApplicationTheme {
+        DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false)
+      }
+    }
 
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/greeting.png")
   }

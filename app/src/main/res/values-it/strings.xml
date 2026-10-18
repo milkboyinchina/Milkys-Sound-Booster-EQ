@@ -44,4 +44,23 @@
     <string name="github_repository">Repository GitHub</string>
     <string name="privacy_terms">Informativa sulla privacy e Termini di servizio</string>
     <string name="open_source_licenses">Licenze open source</string>
+
+    <!-- Update checker -->
+    <string name="update_title">Aggiornamenti app</string>
+    <string name="update_current_version">Versione attuale: %1$s (%2$d)</string>
+    <string name="update_source">Origine aggiornamenti: %1$s</string>
+    <string name="update_source_play_store">Play Store</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">Controlla aggiornamenti</string>
+    <string name="update_checking">Controllo…</string>
+    <string name="update_idle_description">Controlla %1$s per la versione più recente.</string>
+    <string name="update_up_to_date">Stai già usando la versione più recente.</string>
+    <string name="update_available">La versione %1$s è disponibile.</string>
+    <string name="update_open_source">Apri %1$s</string>
+    <string name="update_open_play_store">Apri Play Store</string>
+    <string name="update_play_store_description">Il Play Store gestisce gli aggiornamenti per questa build.</string>
+    <string name="update_not_published">Nessuna release trovata su %1$s.</string>
+    <string name="update_error">Impossibile controllare gli aggiornamenti. Controlla la connessione e riprova.</string>
+    <string name="about_description">Sound booster globale ed equalizzatore a 5 bande ad alta fedeltà per Android.</string>
 </resources>
