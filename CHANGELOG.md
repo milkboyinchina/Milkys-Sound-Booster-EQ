@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scripts/bump_version.py` on `scripts/build.sh`). Per-tag verbose QC notes live in `qc/changelogs/`.
 
+## [1.0.7] - 2026-10-18 (release pipeline fail-closed)
+### Fixed
+- `scripts/build.sh` and `scripts/build_play_console_release.sh` enable `set -o pipefail`, so Gradle failures are no longer masked by `| tee`.
+- Release workflow generates an ephemeral `debug.keystore` when `KEYSTORE_BASE64` is missing (with a warning), allowing a testable release build on a clean checkout.
+- Release staging now fails if no APK/AAB files were produced, instead of silently publishing an empty release.
+
 ## [1.0.6] - 2026-10-18 (release asset packaging)
 ### Fixed
 - Tag releases now stage `.build-outputs` APK/AAB files into the visible `release-assets/` directory before upload. The previous `v1.0.5` run created a release but attached no assets because hidden dot-directories are ignored by the artifact and release actions.
