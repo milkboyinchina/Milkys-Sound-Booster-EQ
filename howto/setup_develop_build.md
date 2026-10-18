@@ -87,8 +87,8 @@ The project uses `.env` files to configure build versioning, output directories,
    APP_ICON_XXXHDPI_PATH=app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
    # Developer, Privacy Policy, and Repository URLs
-   DEVELOPER_WEBSITE_URL=https://milkys.app
-   PRIVACY_POLICY_URL=https://milkys.app/privacy
+   DEVELOPER_WEBSITE_URL=https://milkboy.my.id
+   PRIVACY_POLICY_URL=https://milkboy.my.id/term/general-app-privacy
    GITHUB_REPO_URL=https://github.com/milkys/sound-booster-eq
    ```
 
