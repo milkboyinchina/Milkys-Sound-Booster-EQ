@@ -247,7 +247,11 @@ jobs:
   publish-pages:
     name: Publish QC Reports to Pages
     needs: [verify, build-and-release]
-    if: always() && needs.verify.result == 'success' && github.ref == 'refs/heads/main'
+    # Pages must be enabled in repository settings and ENABLE_PAGES=true set as
+    # a repository variable. Until then, QC reports remain available as the
+    # qc-reports workflow artifact, so this optional job stays skipped.
+    if: always() && needs.verify.result == 'success' && github.ref == 'refs/heads/main' && vars.ENABLE_PAGES == 'true'
+    continue-on-error: true
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
