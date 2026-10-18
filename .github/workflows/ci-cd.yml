@@ -217,11 +217,20 @@ jobs:
           bash scripts/build.sh assembleRelease
           bash scripts/build_play_console_release.sh
 
+      - name: Stage Release Assets
+        run: |
+          # actions/upload-artifact and action-gh-release ignore dot-directories
+          # by default, so copy the hidden .build-outputs tree to a visible path.
+          rm -rf release-assets
+          mkdir -p release-assets
+          find .build-outputs -type f \( -name '*.apk' -o -name '*.aab' \) -exec cp {} release-assets/ \;
+          ls -lh release-assets
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v7
         with:
           name: android-release-outputs
-          path: .build-outputs/
+          path: release-assets/
           if-no-files-found: warn
           retention-days: 14
 
@@ -237,10 +246,8 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            .build-outputs/*.apk
-            .build-outputs/*.aab
-            .build-outputs/**/*.apk
-            .build-outputs/**/*.aab
+            release-assets/*.apk
+            release-assets/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
