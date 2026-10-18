@@ -44,4 +44,23 @@
     <string name="github_repository">Repositori GitHub</string>
     <string name="privacy_terms">Dasar Privasi &amp; Syarat Perkhidmatan</string>
     <string name="open_source_licenses">Lesen Sumber Terbuka</string>
+
+    <!-- Update checker -->
+    <string name="update_title">Kemas kini aplikasi</string>
+    <string name="update_current_version">Versi semasa: %1$s (%2$d)</string>
+    <string name="update_source">Sumber kemas kini: %1$s</string>
+    <string name="update_source_play_store">Play Store</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">Semak kemas kini</string>
+    <string name="update_checking">Menyemak…</string>
+    <string name="update_idle_description">Semak %1$s untuk versi terkini.</string>
+    <string name="update_up_to_date">Anda sudah menggunakan versi terkini.</string>
+    <string name="update_available">Versi %1$s tersedia.</string>
+    <string name="update_open_source">Buka %1$s</string>
+    <string name="update_open_play_store">Buka Play Store</string>
+    <string name="update_play_store_description">Play Store menguruskan kemas kini untuk binaan ini.</string>
+    <string name="update_not_published">Tiada keluaran ditemui di %1$s lagi.</string>
+    <string name="update_error">Tidak dapat menyemak kemas kini. Sila semak sambungan anda dan cuba lagi.</string>
+    <string name="about_description">Penguat bunyi global dan penyama 5 jalur berkualiti tinggi untuk Android.</string>
 </resources>

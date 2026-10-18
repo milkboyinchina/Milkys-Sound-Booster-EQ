@@ -34,47 +34,49 @@ class QcVisualMatrixTest {
     val ctx = ApplicationProvider.getApplicationContext<Context>()
     AudioEffectManager.resetInitForTest()
     AudioEffectManager.init(ctx)
+    AudioEffectManager.setHasSeenOnboarding(true)
+    AudioEffectManager.setHearingWarningDisabled(true)
   }
 
   @Test
   @Config(qualifiers = "w320dp-h640dp-mdpi", sdk = [34])
   fun matrix_compact_320_light() {
-    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-compact-320-light.png")
+    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false) } }
+    composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/matrix-compact-320-light.png")
   }
 
   @Test
   @Config(qualifiers = "w411dp-h891dp-xxhdpi", sdk = [34])
   fun matrix_standard_411_light() {
-    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-standard-411-light.png")
+    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false) } }
+    composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/matrix-standard-411-light.png")
   }
 
   @Test
   @Config(qualifiers = "w600dp-h900dp-mdpi", sdk = [34])
   fun matrix_expanded_600_light() {
-    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-expanded-600-light.png")
+    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false) } }
+    composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/matrix-expanded-600-light.png")
   }
 
   @Test
   @Config(qualifiers = "w320dp-h640dp-mdpi", sdk = [34])
   fun matrix_compact_320_dark() {
-    composeTestRule.setContent { MyApplicationTheme(darkTheme = true, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-compact-320-dark.png")
+    composeTestRule.setContent { MyApplicationTheme(darkTheme = true, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false) } }
+    composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/matrix-compact-320-dark.png")
   }
 
   @Test
   @Config(qualifiers = "w600dp-h900dp-mdpi", sdk = [34])
   fun matrix_expanded_600_dark() {
-    composeTestRule.setContent { MyApplicationTheme(darkTheme = true, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-expanded-600-dark.png")
+    composeTestRule.setContent { MyApplicationTheme(darkTheme = true, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false) } }
+    composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/matrix-expanded-600-dark.png")
   }
 
   @Test
   @Config(qualifiers = "w411dp-h640dp-land-mdpi", sdk = [34])
   fun matrix_landscape_standard_light() {
-    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}) } }
-    composeTestRule.onRoot().captureRoboImage(filePath = "matrix-landscape-standard-light.png")
+    composeTestRule.setContent { MyApplicationTheme(darkTheme = false, dynamicColor = false) { DashboardScreen(onStartService = {}, onStopService = {}, showDebugInfo = false) } }
+    composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/matrix-landscape-standard-light.png")
   }
 }

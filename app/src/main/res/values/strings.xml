@@ -71,6 +71,7 @@
 
     <!-- Preset Manager & Equalizer Feature -->
     <string name="preset_manager_title" translatable="false">Preset Manager</string>
+    <string name="preset_favorites_count" translatable="false">Favorites %1$d/%2$d</string>
     <string name="preset_favorite_limit_reached" translatable="false">Maximum 4 favorites reached. Untag one to add another.</string>
     <string name="preset_error_max_limit" translatable="false">Maximum 7 custom presets allowed.</string>
     <string name="preset_error_name_exists" translatable="false">Preset name already exists.</string>
@@ -121,4 +122,23 @@
     <string name="dialog_import_desc" translatable="false">Paste a preset JSON payload or choose a .json file:</string>
     <string name="dialog_delete_confirm" translatable="false">Delete selected presets?</string>
     <string name="label_save_preset" translatable="false">Save Preset</string>
+
+    <!-- Update checker -->
+    <string name="update_title">App updates</string>
+    <string name="update_current_version">Current version: %1$s (%2$d)</string>
+    <string name="update_source">Update source: %1$s</string>
+    <string name="update_source_play_store">Play Store</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">Check for updates</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_idle_description">Check %1$s for the latest version.</string>
+    <string name="update_up_to_date">You are on the latest version.</string>
+    <string name="update_available">Version %1$s is available.</string>
+    <string name="update_open_source">Open %1$s</string>
+    <string name="update_open_play_store">Open Play Store</string>
+    <string name="update_play_store_description">The Play Store manages updates for this build.</string>
+    <string name="update_not_published">No releases found on %1$s yet.</string>
+    <string name="update_error">Could not check for updates. Check your connection and try again.</string>
+    <string name="about_description">High-fidelity global sound booster and 5-band equalizer for Android.</string>
 </resources>

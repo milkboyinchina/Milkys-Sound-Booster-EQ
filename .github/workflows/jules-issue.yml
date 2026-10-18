@@ -1,0 +1,59 @@
+name: Jules Issue Task
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: jules-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Dispatch labeled issue to Jules
+    if: >-
+      github.event.label.name == 'jules' &&
+      github.event.sender.login == github.repository_owner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check Jules API key
+        id: jules_key
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$JULES_API_KEY" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Jules skipped::JULES_API_KEY is not configured for this repository."
+          fi
+
+      - name: Invoke Google Jules
+        if: steps.jules_key.outputs.present == 'true'
+        uses: google-labs-code/jules-action@bff7875eaa123cac6742b7cfc51005b95ba4d566 # v1.0.0
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: main
+          include_last_commit: true
+          include_commit_log: true
+          prompt: |
+            Work on GitHub issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
+
+            Issue body:
+            ${{ github.event.issue.body }}
+
+            Repository rules:
+            1. Read AGENTS.md, .jules/config.yaml, .jules/rules.md, qc/QC_SUMMARY.md, and qc_plan.md §9 before changing code.
+            2. Verify the issue's file paths against the current tree. If the scope is stale (for example a file no longer exists), re-scope to the real component and state that in the PR.
+            3. Respect protected paths: keystore/*, *.jks, *.p12, .env, qc/changelogs/*.
+            4. Never change the audio safety cap (1500 mB / +15 dB) or the hearing warning banner.
+            5. If an open PR already addresses this issue, do not open a duplicate; link it and stop.
+            6. Make the smallest validated fix, add or update tests, and keep changes under 300 lines where possible.
+            7. Run: ./scripts/check_requirements.sh && ./gradlew testDebugUnitTest lintDebug verifyRoborazziDebug. Run verifyRoborazziDebug twice to prove screenshot determinism.
+            8. Open one Pull Request with a summary, verification logs, and the issue reference.

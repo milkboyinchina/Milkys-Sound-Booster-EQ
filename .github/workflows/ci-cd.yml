@@ -7,12 +7,6 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-    inputs:
-      create_release:
-        description: 'Publish a GitHub Release with build binaries'
-        required: false
-        type: boolean
-        default: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,21 +25,23 @@ jobs:
   # =================================================================
   verify:
     name: Run Tests, Lint & Security Checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # pin: check with actionlint
+        uses: actions/checkout@v7 # pin: check with actionlint
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
           java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Grant Execute Permissions
         run: |
@@ -107,16 +103,16 @@ jobs:
           ls -R qc/reports/lint 2>/dev/null | head -n 30 || true
 
       - name: Scan for Hardcoded Secrets (Gitleaks)
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Workflow Files (actionlint)
-        uses: reviewdog/action-actionlint@v1
+        uses: reviewdog/action-actionlint@v1.80.3
 
       - name: Upload QC Reports Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qc-reports
           path: qc/reports/
@@ -125,7 +121,7 @@ jobs:
 
       - name: Upload Lint HTML Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-results
           path: app/build/reports/lint-results-debug.html
@@ -133,32 +129,32 @@ jobs:
           retention-days: 14
 
   # =================================================================
-  # JOB 2: Build, Sign & Release Artifacts (Auto on main/tags + Manual)
+  # JOB 2: Build, Sign & Release Artifacts (tags + manual artifact builds)
   # =================================================================
   build-and-release:
     name: Build, Sign & Publish Release
     needs: verify
-    if: success() && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
+    if: success() && (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
           java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Hydrate .env Configuration
         env:
@@ -176,6 +172,11 @@ jobs:
           fi
           if [ -n "$VARS_APPLICATION_ID" ]; then
             sed -i "s|^APPLICATION_ID=.*|APPLICATION_ID=$VARS_APPLICATION_ID|" .env
+          fi
+          if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+            TAG_VERSION="${GITHUB_REF_NAME#v}"
+            sed -i "s|^VERSION_NAME=.*|VERSION_NAME=${TAG_VERSION}|" .env
+            echo "[*] Tag build: VERSION_NAME=${TAG_VERSION}"
           fi
           echo "[*] .env for release:"
           grep -E "^(APPLICATION_ID|BUILD_TARGET|VERSION_CODE|VERSION_NAME|KEYSTORE_PATH|GOOGLE_ADS_API_KEY)=" .env | sed 's/GOOGLE_ADS_API_KEY=.*/GOOGLE_ADS_API_KEY=***/'
@@ -199,7 +200,7 @@ jobs:
       - name: Make Scripts Executable
         run: chmod +x scripts/*.sh
 
-      - name: Build Debug & Release Binaries
+      - name: Build Release Binaries
         env:
           KEYSTORE_PATH: keystore/release.jks
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
@@ -208,44 +209,29 @@ jobs:
           SKIP_VERSION_BUMP: ${{ startsWith(github.ref, 'refs/tags/v') && '1' || '0' }}
           # ternary form preferred by actionlint, equivalent: startsWith(...) ? '1' : '0'
         run: |
-          echo "[*] SKIP_VERSION_BUMP=$SKIP_VERSION_BUMP (1=tag source of truth, 0=allow bump on main)"
+          echo "[*] SKIP_VERSION_BUMP=$SKIP_VERSION_BUMP (1=tag source of truth, 0=manual build may bump)"
           export SKIP_VERSION_BUMP
           bash scripts/build.sh assembleRelease
           bash scripts/build_play_console_release.sh
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-release-outputs
           path: .build-outputs/
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Generate Tag Name
-        id: tag
-        run: |
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            echo "tag_name=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-            echo "[*] Using git tag as release tag: ${{ github.ref_name }}"
-          else
-            TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
-            SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-            TAG="v0.1-build.${TIMESTAMP}-${SHORT_SHA}"
-            echo "tag_name=$TAG" >> $GITHUB_OUTPUT
-            echo "[*] Generated prerelease tag: $TAG"
-          fi
-
-      - name: Create GitHub Release
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.create_release == true || github.event_name != 'workflow_dispatch' }}
-        uses: softprops/action-gh-release@v2
+      - name: Create GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ steps.tag.outputs.tag_name }}
-          name: "Milkys Sound Booster Release ${{ steps.tag.outputs.tag_name }}"
+          tag_name: ${{ github.ref_name }}
+          name: "Milkys Sound Booster Release ${{ github.ref_name }}"
           body: |
-            Auto Release for `${{ github.ref_name }}` (Commit: `${{ github.sha }}`).
-            Trigger: `${{ github.event_name }}` | Prerelease: `${{ github.ref == 'refs/heads/main' }}`
+            Release for `${{ github.ref_name }}` (Commit: `${{ github.sha }}`).
           draft: false
-          prerelease: ${{ github.ref == 'refs/heads/main' }}
+          prerelease: false
           generate_release_notes: true
           files: |
             .build-outputs/*.apk
@@ -262,32 +248,32 @@ jobs:
     name: Publish QC Reports to Pages
     needs: [verify, build-and-release]
     if: always() && needs.verify.result == 'success' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download QC Reports Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: qc-reports
           path: qc/reports
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: qc/reports
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # =================================================================
   # JOB 4: Auto-Fix Failures via Google Jules (Triggers on ANY Job Failure)
@@ -296,23 +282,39 @@ jobs:
     name: Trigger Google Jules Fixer Agent
     needs: [verify, build-and-release]
     if: always() && (needs.verify.result == 'failure' || needs.build-and-release.result == 'failure')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
+    concurrency:
+      group: jules-fix-${{ github.ref }}
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
+      - name: Check Jules API key
+        id: jules_key
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          if [ -n "$JULES_API_KEY" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Jules skipped::JULES_API_KEY is not configured for this repository."
+          fi
+
       - name: Invoke Google Jules
-        uses: google-labs-code/jules-action@v1
+        if: steps.jules_key.outputs.present == 'true'
+        uses: google-labs-code/jules-action@bff7875eaa123cac6742b7cfc51005b95ba4d566 # v1.0.0
         with:
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          starting_branch: ${{ github.head_ref || format('fix/jules-{0}', github.run_id) }}
+          starting_branch: ${{ github.head_ref || 'main' }}
           include_last_commit: true
           include_commit_log: true
           prompt: |
@@ -325,5 +327,6 @@ jobs:
             1. Review AGENTS.md, qc_plan.md §9, .jules/config.yaml + .jules/rules.md, and scripts/setup_jules_env.sh for repository rules and verification commands.
             2. Check workflow logs to determine whether failure occurred during static verification (./gradlew testDebugUnitTest, lintDebug, verifyRoborazziDebug) or during release compilation (scripts/build.sh, scripts/build_play_console_release.sh — note keystore subfolder handle).
             3. Reproduce and fix the issue inside your environment (respect protected_paths keystore/*, *.jks, .env, qc/changelogs/* and audio safety 1500 mB cap).
-            4. Verify: ./scripts/check_requirements.sh && ./gradlew testDebugUnitTest lintDebug verifyRoborazziDebug && SKIP_VERSION_BUMP=0 ./scripts/build.sh assembleDebug
-            5. Submit a Pull Request with summary, verification logs, and evidence pointers to qc/reports/*.
+            4. Never reintroduce commit hashes or build timestamps into screenshot-visible UI. If a visual diff is intentional, re-record references under app/src/test/screenshots/ and explain why.
+            5. Verify: ./scripts/check_requirements.sh && ./gradlew testDebugUnitTest lintDebug verifyRoborazziDebug && verifyRoborazziDebug again && SKIP_VERSION_BUMP=0 ./scripts/build.sh assembleDebug
+            6. Submit a Pull Request with summary, verification logs, and evidence pointers to qc/reports/*.

@@ -1,6 +1,6 @@
 # QC Summary — Latest
 
-> **Last updated:** 2026-09-06 | **VERSION_NAME:** 0.1.25 (`VERSION_CODE` 26090503, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral | **CI:** Auto main+`v*` tags, Roborazzi blocking, `keystore/release.jks` subfolder, `SKIP_VERSION_BUMP=1` on tags
+> **Last updated:** 2026-10-18 | **VERSION_NAME:** 1.0.4 (`VERSION_CODE` 26101202, `.env:33`) | **Devices:** Redmi Note 8 Pro `hm5xr8gueiz5x4c6` (Android 16 / SDK 36, 1080×2340, 352dpi override, 491dp) + ADVAN TAB A10 `A1013A5320TH000257` (Android 14 / SDK 34, 1280×800, 213dpi, 601dp tablet) | **Env:** JDK 21 (Foojay 1.0.0), AGP 9.1.1, Kotlin 2.0.21, scrcpy 4.1 ephemeral | **CI:** `v*` tag releases + manual artifact builds, `ubuntu-24.04`, Roborazzi blocking, `keystore/release.jks` subfolder, `SKIP_VERSION_BUMP=1` on tags
 > **Source of truth — read top before planning:** This file is the agent queue. `Next Actions` (below) is the ONLY queue to act on. `Run` sections are log history — do not treat as queue. History preserved via `git log --follow qc/QC_SUMMARY.md`. Compare `Last updated` vs `git log --oneline qc/QC_SUMMARY.md` to avoid stale reads.
 
 ---
@@ -16,6 +16,40 @@
 | QC-009 | Re-record Roborazzi 24-combo matrix baseline (verify 0 failures) | `app/src/test/screenshots/`, `qc/reports/roborazzi/` | Medium | Jules | 2026-09-06 | qc_plan.md §5.2 + CI verify blocking |
 
 *Queue seeded 2026-09-06 per CI/CD fix: all 3 delegated to Jules — `CI-001` already landed in this commit (pin+pages), `JULES-001` + `QC-009` remain OPEN for Jules verification. Previous layout Q7/Q8 validated 00:52; keystore now `keystore/release.jks` via `.env`, bump disabled on `v*` tags. Banner fix + device_prep landed 12:48 (see Run 2026-09-06).*
+
+---
+
+## Run 2026-10-18 — CI green path, font-scale EQ, multi-channel update checker
+
+### Root causes fixed
+
+| Bug | Cause | Fix |
+|---|---|---|
+| CI red on every push | Debug header rendered `GIT_SHA`/`BUILD_MOMENT`, so every commit changed pixel baselines | `showDebugInfo=false` in all screenshot tests; debug info remains for manual QA |
+| CI red on clean clone | `PlayConsoleScreenshotsTest` wrote to gitignored `app/screenshots/` | Play Console references are now tracked; matrix refs consolidated under `app/src/test/screenshots/` |
+| Jules fixer never ran | `google-labs-code/jules-action@v1` does not exist; synthetic `starting_branch` did not exist | pinned `v1.0.0` SHA, `starting_branch: main`, secret guard + concurrency |
+| Wrong release cadence | `build-and-release` created timestamped prereleases on every `main` push | releases now only on `v*` tags; manual dispatch builds artifacts only |
+
+### Feature work
+
+- Multi-channel update checker: Play Store link, GitHub Releases API, F-Droid package API. Settings → About shows current version/channel and check state. `INTERNET` permission + real GitHub repo URL.
+- `BUILD_TARGET`/`INCLUDE_GOOGLE_ADS` now honour exported env over `.env`, so sequential playstore/fdroid builds bake the right channel.
+- Issue #3: responsive `FlowRow` layouts for EQ bands (5/3/2 columns) and preset actions (4/2 columns), 48dp targets.
+- Jules automation: issue-label workflow + weekly QC cron workflow; rules/template refreshed (`+15dB` cap, real paths).
+
+### Gates
+
+| Gate | Result |
+|---|---|
+| `testDebugUnitTest` | **PASS 72/72** |
+| `lintDebug` | **PASS 0 errors** (warnings remain) |
+| `verifyRoborazziDebug` after `clean` | **PASS** |
+| `check_requirements.sh` | PASS (3 soft warnings: gitleaks/actionlint/qc scaffold on this host) |
+| `actionlint` | PASS |
+| `gitleaks dir --redact` | PASS, no leaks |
+| `SKIP_VERSION_BUMP=1 scripts/build.sh assembleDebug` | PASS (playstore + fdroid) |
+
+Baselines: `app/src/test/screenshots/` 13 PNGs (matrix 6 + greeting + font-scale 6) and `app/screenshots/` 5 Play Console refs.
 
 ---
 

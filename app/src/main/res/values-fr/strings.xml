@@ -44,4 +44,23 @@
     <string name="github_repository">Dépôt GitHub</string>
     <string name="privacy_terms">Politique de confidentialité et conditions d\'utilisation</string>
     <string name="open_source_licenses">Licences open source</string>
+
+    <!-- Update checker -->
+    <string name="update_title">Mises à jour de l’application</string>
+    <string name="update_current_version">Version actuelle : %1$s (%2$d)</string>
+    <string name="update_source">Source des mises à jour : %1$s</string>
+    <string name="update_source_play_store">Play Store</string>
+    <string name="update_source_github">GitHub Releases</string>
+    <string name="update_source_fdroid">F-Droid</string>
+    <string name="update_check_button">Vérifier les mises à jour</string>
+    <string name="update_checking">Vérification…</string>
+    <string name="update_idle_description">Vérifiez %1$s pour obtenir la dernière version.</string>
+    <string name="update_up_to_date">Vous utilisez déjà la dernière version.</string>
+    <string name="update_available">La version %1$s est disponible.</string>
+    <string name="update_open_source">Ouvrir %1$s</string>
+    <string name="update_open_play_store">Ouvrir le Play Store</string>
+    <string name="update_play_store_description">Le Play Store gère les mises à jour de cette version.</string>
+    <string name="update_not_published">Aucune version trouvée sur %1$s pour le moment.</string>
+    <string name="update_error">Impossible de vérifier les mises à jour. Vérifiez votre connexion et réessayez.</string>
+    <string name="about_description">Boost audio global haute fidélité et égaliseur 5 bandes pour Android.</string>
 </resources>

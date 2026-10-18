@@ -7,6 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -59,6 +62,7 @@ import com.milkys.soundbooster.AudioEffectManager
 import com.milkys.soundbooster.R
 import com.milkys.soundbooster.ui.theme.AppColors
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PresetManagerCard(
     isEnabled: Boolean,
@@ -123,6 +127,8 @@ fun PresetManagerCard(
     val matchedPresetName = remember(eqBands, customPresets) {
         AudioEffectManager.getMatchedPresetName(eqBands)
     }
+    val fontScale = LocalDensity.current.fontScale
+    val actionColumns = if (fontScale >= 1.5f) 2 else 4
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -134,35 +140,61 @@ fun PresetManagerCard(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.preset_manager_title),
-                    color = textPrimary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f).padding(end = 8.dp)
-                )
-                // Q1-A: live slot usage — favorites feed the overlay panel (capped),
-                // labeled explicitly so x/4 needs no guessing
-                Text(
-                    text = "Favorites ${favoritePresets.size}/${AudioEffectManager.MAX_FAVORITES}",
-                    color = textSecondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
-                )
+            val favoritesLabel = stringResource(
+                R.string.preset_favorites_count,
+                favoritePresets.size,
+                AudioEffectManager.MAX_FAVORITES,
+            )
+            if (fontScale >= 1.5f) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.preset_manager_title),
+                        color = textPrimary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    // Q1-A: live slot usage — favorites feed the overlay panel (capped),
+                    // labeled explicitly so x/4 needs no guessing
+                    Text(
+                        text = favoritesLabel,
+                        color = textSecondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.preset_manager_title),
+                        color = textPrimary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f).padding(end = 8.dp)
+                    )
+                    Text(
+                        text = favoritesLabel,
+                        color = textSecondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1
+                    )
+                }
             }
 
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                maxItemsInEachRow = actionColumns
             ) {
                 Button(
                     onClick = {
