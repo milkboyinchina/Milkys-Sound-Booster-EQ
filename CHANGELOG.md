@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Versioning is driven by `VERSION_CODE`/`VERSION_NAME` in `.env` (bumped by `scripts/bump_version.py` on `scripts/build.sh`). Per-tag verbose QC notes live in `qc/changelogs/`.
 
+## [1.0.5] - 2026-10-18 (CI green, font-scale EQ, update checker)
+### Added
+- Settings → About update checker with per-channel sources: Play Store listing, GitHub Releases API, and F-Droid package API. Shows current version/channel, checking/up-to-date/available/not-found/error states, and opens the store/release page. Play Core native in-app updates remain deferred to the flavor work.
+- `EqualizerFontScaleTest` 320dp matrix at 1.0x/1.5x/2.0x, light/dark, with 48dp and `+1 dB` callback assertions.
+- Jules issue-label and weekly QC workflows with secret guards, concurrency, and pinned action SHA.
+
+### Changed
+- Screenshot tests render with `showDebugInfo = false`; matrix references moved under `app/src/test/screenshots/` and Play Console references tracked under `app/screenshots/`.
+- EQ bands wrap responsively (5/3/2 columns) and preset actions use 2 columns at ≥1.5x; 48dp targets preserved.
+- `BUILD_TARGET` / `INCLUDE_GOOGLE_ADS` now honour exported environment values over `.env`, fixing per-target builds.
+- GitHub releases are tags-only; action majors bumped; CI pinned to `ubuntu-24.04`; Pages gated behind `ENABLE_PAGES`.
+- Example developer/privacy URLs aligned with production (`milkboy.my.id`) so CI screenshots match local baselines.
+
+### Fixed
+- Per-commit Roborazzi failures caused by commit SHA/build time in the debug header.
+- Missing Play Console reference images on clean CI checkouts.
+- Invalid `google-labs-code/jules-action@v1` reference and non-existent synthetic `starting_branch`.
+- Font-scale clipping in the equalizer header, band controls, and preset action row (issue #3).
+
+### Verified
+- Unit tests 72/72, `lintDebug` 0 errors, clean `verifyRoborazziDebug`, actionlint, Gitleaks, playstore+fdroid debug build, GitHub Actions run #44 green.
+
 ## [1.0.4] - 2026-10-12 (cold-start black-screen fix, API 28)
 ### Fixed
 - Black screen on second launch on Android 9 and below (API ≤32) for users with a persisted per-app language (Play review: Vivo V1901K, Indonesian): unconditional `AppCompatDelegate.setApplicationLocales()` in `MainActivity.onCreate` re-triggered Activity recreation forever (377 `onCreate` loop observed on an API 28 emulator, no crash, `mCurrentFocus=null`). `AudioEffectManager.applyLanguageToApp` is now idempotent (skip when AppCompat already holds the list + re-entry guard) and the deprecated `resources.updateConfiguration()` block is removed. Full notes: `qc/changelogs/20261012-004500-v1.0.4.md`.

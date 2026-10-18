@@ -175,8 +175,11 @@ jobs:
           fi
           if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
             TAG_VERSION="${GITHUB_REF_NAME#v}"
+            TAG_SUFFIX=$(printf '%03d' $((GITHUB_RUN_NUMBER % 1000)))
+            TAG_CODE="$(date +%y%m%d)${TAG_SUFFIX}"
             sed -i "s|^VERSION_NAME=.*|VERSION_NAME=${TAG_VERSION}|" .env
-            echo "[*] Tag build: VERSION_NAME=${TAG_VERSION}"
+            sed -i "s|^VERSION_CODE=.*|VERSION_CODE=${TAG_CODE}|" .env
+            echo "[*] Tag build: VERSION_NAME=${TAG_VERSION}, VERSION_CODE=${TAG_CODE}"
           fi
           echo "[*] .env for release:"
           grep -E "^(APPLICATION_ID|BUILD_TARGET|VERSION_CODE|VERSION_NAME|KEYSTORE_PATH|GOOGLE_ADS_API_KEY)=" .env | sed 's/GOOGLE_ADS_API_KEY=.*/GOOGLE_ADS_API_KEY=***/'
