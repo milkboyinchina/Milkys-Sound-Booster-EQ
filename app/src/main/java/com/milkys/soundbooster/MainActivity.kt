@@ -1125,7 +1125,7 @@ fun DashboardScreen(
                                 )
                             }
 
-                            Divider(color = borderDivider, thickness = 1.dp)
+                            HorizontalDivider(color = borderDivider, thickness = 1.dp)
 
                             // Notification Bar Controls Toggle
                             Row(
@@ -1160,7 +1160,7 @@ fun DashboardScreen(
                                 )
                             }
 
-                            Divider(color = borderDivider, thickness = 1.dp)
+                            HorizontalDivider(color = borderDivider, thickness = 1.dp)
 
                             // Disable Hearing Protection Warning Toggle
                             Row(
@@ -1195,7 +1195,7 @@ fun DashboardScreen(
                                 )
                             }
 
-                            Divider(color = borderDivider, thickness = 1.dp)
+                            HorizontalDivider(color = borderDivider, thickness = 1.dp)
 
                             // Overlay Control Settings Card Row
                             Row(
@@ -1429,7 +1429,7 @@ fun DashboardScreen(
                                 }
                             }
 
-                            Divider(color = borderDivider, thickness = 1.dp)
+                            HorizontalDivider(color = borderDivider, thickness = 1.dp)
 
                             var languageDropdownExpanded by remember { mutableStateOf(false) }
 
@@ -1710,7 +1710,7 @@ fun DashboardScreen(
                                     )
                                 }
                                 if (AdConsentManager.isUmpAvailable()) {
-                                    Divider(color = borderDivider, thickness = 1.dp)
+                                    HorizontalDivider(color = borderDivider, thickness = 1.dp)
                                     TextButton(
                                         onClick = {
                                             (context as? android.app.Activity)?.let { act ->

@@ -13,7 +13,7 @@
 |---|---|---|---|---|---|---|
 | CI-001 | Pin GitHub Actions to SHA + add qc-reports/pages upload + Full+Pages artifacts | `.github/workflows/ci-cd.yml:1-200` | High | Jules | 2026-09-06 | CI/CD plan §1 (Full+Pages, pin @v4→SHA) |
 | JULES-001 | Fix setup_jules_env.sh keystore/release.jks subfolder + SKIP_VERSION_BUMP guard + qc dirs | `scripts/setup_jules_env.sh:11-38`, `.jules/config.yaml:14-41`, `.jules/rules.md:27-50` | High | Jules | 2026-09-06 | CI/CD plan §3 keystore subfolder |
-| QC-009 | Re-record Roborazzi 24-combo matrix baseline (verify 0 failures) | `app/src/test/screenshots/`, `qc/reports/roborazzi/` | Medium | Jules | 2026-09-06 | qc_plan.md §5.2 + CI verify blocking |
+| QC-009 | Re-record Roborazzi 24-combo matrix baseline (verify 0 failures) | `app/src/test/screenshots/`, `qc/reports/roborazzi/` | Medium | Jules | 2026-09-06 | FIXED |
 
 *Queue seeded 2026-09-06 per CI/CD fix: all 3 delegated to Jules — `CI-001` already landed in this commit (pin+pages), `JULES-001` + `QC-009` remain OPEN for Jules verification. Previous layout Q7/Q8 validated 00:52; keystore now `keystore/release.jks` via `.env`, bump disabled on `v*` tags. Banner fix + device_prep landed 12:48 (see Run 2026-09-06).*
 

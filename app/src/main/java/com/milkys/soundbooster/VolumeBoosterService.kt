@@ -687,7 +687,7 @@ fun FloatingDashboard(
                 }
             }
 
-            Divider(color = ovTrack, thickness = 1.dp)
+            HorizontalDivider(color = ovTrack, thickness = 1.dp)
 
             // Header / Power Toggle Button (Q2-A: ⏻ — bold when enabled, greyed when disabled)
             Row(
