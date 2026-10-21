@@ -22,6 +22,16 @@ A high-fidelity global audio booster and 5-band graphic equalizer designed for A
 
 ---
 
+## 🛠️ Engineering Highlights
+
+- **Safety-first DSP**: Volume amplification hard-capped at 200% (+15 dB); hearing/speaker-damage warnings surfaced in UI.
+- **System-level integration**: Foreground audio service, floating overlay widget, and Quick Settings tile for instant control.
+- **Localization**: 13 locales with per-app language selection.
+- **Quality gates**: JVM unit tests, Roborazzi visual matrix (multi-size/font-scale/theme), Android Lint, and accessibility checks.
+- **Development approach**: AI-assisted scaffolding with human review of architecture, safety limits, and verification.
+
+---
+
 ## ⚡ AI Model Delegation & Zero-Delay Shortcuts
 
 This workspace uses **Subagent Model Delegation** and **Workspace Rules** (`.gemini/rules/model_delegation.md`) to optimize token usage and execution speed:
