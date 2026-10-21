@@ -1,0 +1,42 @@
+Categories:
+  - Multimedia
+License: GPL-3.0-only
+SourceCode: https://github.com/milkboyinchina/Milkys-Sound-Booster-EQ
+IssueTracker: https://github.com/milkboyinchina/Milkys-Sound-Booster-EQ/issues
+Changelog: https://github.com/milkboyinchina/Milkys-Sound-Booster-EQ/blob/main/CHANGELOG.md
+
+AutoName: Milkys Sound Booster & EQ
+Summary: High-fidelity global audio booster and 5-band graphic equalizer
+Description: |-
+    Milkys Sound Booster & EQ amplifies system audio output up to 200% and provides
+    a 5-band graphic equalizer with presets, a floating overlay widget, a Quick
+    Settings tile, and multilingual support. This build is free of ads and
+    proprietary dependencies.
+
+RepoType: git
+Repo: https://github.com/milkboyinchina/Milkys-Sound-Booster-EQ.git
+
+Builds:
+  - versionName: '1.0.5'
+    versionCode: 26101301
+    commit: v1.0.5
+    subdir: .
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-21-jdk
+    gradle:
+      - release
+    prebuild: |
+      cp .env.example .env
+      sed -i 's/^BUILD_TARGET=.*/BUILD_TARGET=fdroid/' .env
+      sed -i 's/^INCLUDE_GOOGLE_ADS=.*/INCLUDE_GOOGLE_ADS=false/' .env
+      sed -i 's/^VERSION_NAME=.*/VERSION_NAME=1.0.5/' .env
+      sed -i 's/^VERSION_CODE=.*/VERSION_CODE=26101301/' .env
+    env:
+      BUILD_TARGET: fdroid
+      INCLUDE_GOOGLE_ADS: 'false'
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.5
+CurrentVersionCode: 26101301
